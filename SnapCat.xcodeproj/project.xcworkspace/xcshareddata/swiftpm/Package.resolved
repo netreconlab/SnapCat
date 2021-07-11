@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "DZNEmptyDataSet",
+        "repositoryURL": "https://github.com/dzenbot/DZNEmptyDataSet.git",
+        "state": {
+          "branch": "master",
+          "revision": "9bffa69a83a9fa58a14b3cf43cb6dd8a63774179",
+          "version": null
+        }
+      },
+      {
+        "package": "ParseSwift",
+        "repositoryURL": "https://github.com/parse-community/Parse-Swift.git",
+        "state": {
+          "branch": null,
+          "revision": "b6f349cda6aadceda1abd8970cb56615b5def01c",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
