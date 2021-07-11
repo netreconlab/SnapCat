@@ -136,7 +136,8 @@ extension UIImage {
     }
 }
 
-// Source https://stackoverflow.com/questions/29726643/how-to-compress-of-reduce-the-size-of-an-image-before-uploading-to-parse-as-pffi/29726675
+// swiftlint:disable:next line_length
+// Source: https://stackoverflow.com/questions/29726643/how-to-compress-of-reduce-the-size-of-an-image-before-uploading-to-parse-as-pffi/29726675
 extension UIImage {
     // MARK: - UIImage+Resize
     func compressTo(_ expectedSizeInMb: Int) -> Data? {
@@ -160,7 +161,7 @@ extension UIImage {
                 return data
             }
         }
-        
+
         return nil
     }
 }

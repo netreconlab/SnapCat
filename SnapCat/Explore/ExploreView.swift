@@ -44,6 +44,7 @@ struct ExploreView: View {
                             HStack {
                                 Text("@\(user.username!)")
                                     .font(.headline)
+                                Spacer()
                                 Button(action: {
                                     viewModel.followUser(user)
                                 }, label: {

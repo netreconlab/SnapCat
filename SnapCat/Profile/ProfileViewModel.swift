@@ -11,6 +11,7 @@ import os.log
 import ParseSwift
 import UIKit
 
+// swiftlint:disable type_body_length
 class ProfileViewModel: ObservableObject {
 
     @Published var user: User
@@ -51,65 +52,67 @@ class ProfileViewModel: ObservableObject {
         }
     }
     @Published var isHasChanges = false
+    private var settingProfilePicForFirstTime = true
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
             objectWillChange.send()
             if !settingProfilePicForFirstTime {
                 guard var user = User.current,
                     let image = newValue,
-                    let compressed = image.compressTo(3) else{
+                    let compressed = image.compressTo(3) else {
                     return
                 }
 
                 if let cachedURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String {
-                    try? AssuageUtility.removeFilesAtDirectory(cachedURL,
-                                                               isDirectory: false)
+                    try? Utility.removeFilesAtDirectory(cachedURL,
+                                                        isDirectory: false)
                 }
 
                 let newProfilePicture = ParseFile(name: "profile.jpeg", data: compressed)
                 user.profileImage = newProfilePicture
                 user.save { result in
                     switch result {
-                    
+
                     case .success(let user):
-                        
+
                         user.fetch { result in
                             switch result {
-                            
+
                             case .success(let fetchedUser):
-                                guard let cloudFileName = fetchedUser.profilePicture?.name else {
-                                    print("Error saving profile pic. File should contain a name.")
+                                guard let cloudFileName = fetchedUser.profileImage?.name else {
+                                    Logger.profile.error("Error saving profile pic. File should contain a name.")
                                     return
                                 }
-
+                                // swiftlint:disable:next line_length
                                 if let cachedProfilePicURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String {
-                                    let cachedProfileFileName = AssuageUtility.getFileNameFromPath(cachedProfilePicURL)
+                                    let cachedProfileFileName = Utility.getFileNameFromPath(cachedProfilePicURL)
                                     if cloudFileName == cachedProfileFileName {
                                         return
                                     }
                                 }
-                                
-                                fetchedUser.profilePicture?.fetch { result in
+
+                                fetchedUser.profileImage?.fetch { result in
                                     switch result {
-                                    
+
                                     case .success(let profilePic):
                                         if let path = profilePic.localURL?.relativePath {
-                                            //If there's a newer file in the cloud, need to fetch it
+                                            // If there's a newer file in the cloud, need to fetch it
                                             UserDefaults.standard.setValue(path, forKey: Constants.lastProfilePicURL)
                                             UserDefaults.standard.synchronize()
                                         }
                                     case .failure(let error):
-                                        print("Error fetching pic \(error)")
+                                        Logger.profile.error("Error fetching pic \(error)")
                                     }
                                 }
 
                             case .failure(let error):
-                                print("Error fetching profile pic from cloud: \(error)")
+                                Logger.profile.error("Error fetching profile pic from cloud: \(error)")
                             }
                         }
-                        
+
                     case .failure(let error):
-                        print("Error saving profile pic \(error)")
+                        Logger.profile.error("Error saving profile pic \(error)")
+                        self.error = SnapCatError(parseError: error)
                     }
                 }
             }
@@ -118,10 +121,17 @@ class ProfileViewModel: ObservableObject {
     private var isSettingForFirstTime = true
 
     init(user: User?) {
+        guard let currentUser = User.current else {
+            Logger.profile.error("User should be logged in to perfom action.")
+            self.user = User()
+            return
+        }
         if let user = user {
             self.user = user
         } else {
-            self.user = User.current!
+            self.user = currentUser
+        }
+        if self.user.hasSameObjectId(as: currentUser) {
             checkCacheForProfileImage()
         }
         if let username = self.user.username {
@@ -144,11 +154,41 @@ class ProfileViewModel: ObservableObject {
 
     func checkCacheForProfileImage() {
         let cachedProfilePicURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String
-        
+
         if let cachedProfileURL = cachedProfilePicURL {
             profilePicture = UIImage(contentsOfFile: cachedProfileURL)
         }
+        let cachedProfileFileName = Utility.getFileNameFromPath(cachedProfilePicURL)
+        // If there's a newer file in the cloud, need to fetch it
+        if cachedProfileFileName != User.current?.profileImage?.name || self.profilePicture == nil {
+            if let cachedURL = cachedProfilePicURL {
+                try? Utility.removeFilesAtDirectory(cachedURL,
+                                                    isDirectory: false)
+            }
+            if let image = User.current?.profileImage {
+                image.fetch { fetchResult in
+                    switch fetchResult {
+
+                    case .success(let profilePicture):
+                        if let path = profilePicture.localURL?.relativePath {
+                            self.profilePicture = UIImage(contentsOfFile: path)
+                            UserDefaults.standard.setValue(path, forKey: Constants.lastProfilePicURL)
+                            UserDefaults.standard.synchronize()
+                        }
+                        self.settingProfilePicForFirstTime = false
+                    case .failure(let error):
+                        Logger.profile.error("Couldn't fetch profile pic: \(error)")
+                        self.settingProfilePicForFirstTime = false
+                    }
+                }
+            } else {
+                self.settingProfilePicForFirstTime = false
+            }
+        } else {
+            self.settingProfilePicForFirstTime = false
+        }
     }
+
     // MARK: - Intents
 
     // swiftlint:disable:next function_body_length

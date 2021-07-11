@@ -15,9 +15,10 @@ struct ProfileView: View {
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var viewModel: ProfileViewModel
-    @State var isShowPost = false
-    @State var isShowOptions = false
-    @State var isShowEditProfile = false
+    @State var isShowingImagePicker = false
+    @State var isShowingPost = false
+    @State var isShowingOptions = false
+    @State var isShowingEditProfile = false
 
     var body: some View {
         VStack {
@@ -31,7 +32,7 @@ struct ProfileView: View {
                 Spacer()
                 if viewModel.user.objectId == User.current?.objectId {
                     Button(action: {
-                        self.isShowPost = true
+                        self.isShowingPost = true
                     }, label: {
                         Image(systemName: "square.and.pencil")
                             .resizable()
@@ -39,7 +40,7 @@ struct ProfileView: View {
                             .frame(width: 30, height: 30, alignment: .trailing)
                     })
                     Button(action: {
-                        self.isShowOptions = true
+                        self.isShowingOptions = true
                     }, label: {
                         Image(systemName: "slider.horizontal.3")
                             .resizable()
@@ -51,7 +52,7 @@ struct ProfileView: View {
             }
             HStack {
                 Button(action: {
-
+                    self.isShowingImagePicker = true
                 }, label: {
                     Image(systemName: "person.circle")
                         .resizable()
@@ -114,7 +115,7 @@ struct ProfileView: View {
             }
             if viewModel.user.objectId == User.current?.objectId {
                 Button(action: {
-                    self.isShowEditProfile = true
+                    self.isShowingEditProfile = true
                 }, label: {
                     Text("Edit Profile")
                         .frame(minWidth: 0, maxWidth: .infinity)
@@ -132,11 +133,13 @@ struct ProfileView: View {
         }.onAppear(perform: {
             followersViewModel.find()
             followingsViewModel.find()
-        }).sheet(isPresented: $isShowPost, onDismiss: {}, content: {
+        }).sheet(isPresented: $isShowingImagePicker, onDismiss: {}, content: {
+            ImagePickerView(image: $viewModel.profilePicture)
+        }).sheet(isPresented: $isShowingPost, onDismiss: {}, content: {
             PostView()
-        }).sheet(isPresented: $isShowOptions, onDismiss: {}, content: {
+        }).sheet(isPresented: $isShowingOptions, onDismiss: {}, content: {
             SettingsView()
-        }).sheet(isPresented: $isShowEditProfile, onDismiss: {}, content: {
+        }).sheet(isPresented: $isShowingEditProfile, onDismiss: {}, content: {
             ProfileEditView(viewModel: viewModel)
         })
     }
