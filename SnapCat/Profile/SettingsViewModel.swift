@@ -61,16 +61,18 @@ class SettingsViewModel: ObservableObject {
         }
     }
 
-    func logout() {
+    func logout(completion: @escaping (Result<Void, SnapCatError>) -> Void) {
         User.logout { result in
             switch result {
 
             case .success():
-                self.loggedOut = true
                 Logger.settings.info("User logged out")
+                self.loggedOut = true
+                completion(.success(()))
             case .failure(let error):
                 Logger.settings.error("Error logging out: \(error)")
                 self.linkError = SnapCatError(parseError: error)
+                completion(.failure(self.linkError!))
             }
         }
     }

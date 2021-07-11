@@ -54,13 +54,23 @@ struct ProfileView: View {
                 Button(action: {
                     self.isShowingImagePicker = true
                 }, label: {
-                    Image(systemName: "person.circle")
-                        .resizable()
-                        .frame(width: 90, height: 90, alignment: .leading)
-                            .clipShape(Circle())
-                            .shadow(radius: 3)
-                            .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
-                        .padding()
+                    if let image = viewModel.profilePicture {
+                        Image(uiImage: image)
+                            .resizable()
+                            .frame(width: 90, height: 90, alignment: .leading)
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
+                            .padding()
+                    } else {
+                        Image(systemName: "person.circle")
+                            .resizable()
+                            .frame(width: 90, height: 90, alignment: .leading)
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
+                            .padding()
+                    }
                 })
                 .buttonStyle(PlainButtonStyle())
                 Spacer()

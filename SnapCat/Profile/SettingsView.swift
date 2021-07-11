@@ -32,7 +32,9 @@ struct SettingsView: View {
                     .cornerRadius(15)
             }
             Button(action: {
-                viewModel.logout()
+                viewModel.logout { _ in
+                    presentationMode.wrappedValue.dismiss()
+                }
             }, label: {
                 Text("Log out")
                     .font(.headline)
