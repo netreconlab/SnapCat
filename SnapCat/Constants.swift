@@ -11,6 +11,7 @@ import Foundation
 enum Constants {
     static let firstRun                         = "FirstRun"
     static let lastProfilePicURL                = "lastProfilePicURL"
+    static let numberOfImagesToDownload         = 50
 }
 
 // MARK: - Standard Parse Class Keys

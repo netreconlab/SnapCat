@@ -11,7 +11,7 @@ import ParseSwift
 
 struct ProfileView: View {
     @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
-    @ObservedObject var timelineViewModel: QueryViewModel<Post>
+    @ObservedObject var timelineViewModel: QueryImageViewModel<Post>
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var viewModel: ProfileViewModel
@@ -139,7 +139,6 @@ struct ProfileView: View {
             Divider()
             TimeLineView(viewModel: timelineViewModel)
                 .navigationBarHidden(true)
-                .padding()
         }.onAppear(perform: {
             followersViewModel.find()
             followingsViewModel.find()
@@ -164,7 +163,7 @@ struct ProfileView: View {
         viewModel = ProfileViewModel(user: userProfile)
         timelineViewModel = ProfileViewModel
             .queryUserTimeLine(userProfile)
-            .viewModel
+            .imageViewModel
         followersViewModel = ProfileViewModel
             .queryFollowers(userProfile)
             .viewModel

@@ -9,8 +9,32 @@
 import Foundation
 import ParseSwift
 import os.log
+import UIKit
 
 struct Utility {
+
+    static func fetchImage(_ file: ParseFile?, completion: @escaping (UIImage?) -> Void) {
+        let defaultImage = UIImage(systemName: "camera")
+        guard let file = file else {
+            completion(defaultImage)
+            return
+        }
+        file.fetch { result in
+            switch result {
+            case .success(let image):
+                if let path = image.localURL?.relativePath {
+                    let image = UIImage(contentsOfFile: path)
+                    completion(image)
+                } else {
+                    completion(defaultImage)
+                }
+            case .failure(let error):
+                Logger.home.error("Error fetching picture: \(error)")
+                completion(defaultImage)
+            }
+        }
+    }
+
     static func getFileNameFromPath(_ path: String?) -> String {
         guard let filePath = path else {
             return ""

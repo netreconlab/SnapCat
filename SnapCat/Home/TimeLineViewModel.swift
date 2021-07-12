@@ -12,6 +12,8 @@ import ParseSwift
 
 class TimeLineViewModel: ObservableObject {
 
+    // MARK: Helper Methods
+
     // MARK: Queries
     class func queryTimeLine() -> Query<Post> {
         guard let pointer = try? User.current?.toPointer() else {

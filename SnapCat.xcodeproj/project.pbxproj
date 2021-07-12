@@ -54,6 +54,8 @@
 		91F346B3269B4770005727B6 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F346B2269B4770005727B6 /* ImagePickerView.swift */; };
 		91F346B5269B48CF005727B6 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F346B4269B48CF005727B6 /* PostView.swift */; };
 		91F346B7269B4B10005727B6 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F346B6269B4B10005727B6 /* PostViewModel.swift */; };
+		91F346C9269C83AF005727B6 /* QueryImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F346C8269C83AE005727B6 /* QueryImageViewModel.swift */; };
+		91F346CC269C91E1005727B6 /* CloudImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F346CB269C91E1005727B6 /* CloudImageViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +128,8 @@
 		91F346B2269B4770005727B6 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		91F346B4269B48CF005727B6 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		91F346B6269B4B10005727B6 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
+		91F346C8269C83AE005727B6 /* QueryImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryImageViewModel.swift; sourceTree = "<group>"; };
+		91F346CB269C91E1005727B6 /* CloudImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudImageViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +191,7 @@
 				916E0961269159B400356C08 /* Utility.swift */,
 				916E09A22692AC5000356C08 /* Activity */,
 				916E092B26914E9C00356C08 /* Assets.xcassets */,
+				91F346CA269C83C2005727B6 /* CustomViewModels */,
 				916E096D26916BFB00356C08 /* Explore */,
 				916E098226921C0B00356C08 /* Extentions */,
 				916E096C26916BEA00356C08 /* Home */,
@@ -315,6 +320,15 @@
 				916E09A92692ACF200356C08 /* EmptyActivityViewController.swift */,
 			);
 			path = Activity;
+			sourceTree = "<group>";
+		};
+		91F346CA269C83C2005727B6 /* CustomViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				91F346C8269C83AE005727B6 /* QueryImageViewModel.swift */,
+				91F346CB269C91E1005727B6 /* CloudImageViewModel.swift */,
+			);
+			path = CustomViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -478,6 +492,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91F346CC269C91E1005727B6 /* CloudImageViewModel.swift in Sources */,
 				91F346B7269B4B10005727B6 /* PostViewModel.swift in Sources */,
 				91F346AD269A7B55005727B6 /* SettingsView.swift in Sources */,
 				916E09A62692ACCC00356C08 /* ActivityViewModel.swift in Sources */,
@@ -517,6 +532,7 @@
 				91F346AB269A4244005727B6 /* SearchBarView.swift in Sources */,
 				916E098126921ACF00356C08 /* EmptyDefaultViewController.swift in Sources */,
 				91F346B5269B48CF005727B6 /* PostView.swift in Sources */,
+				91F346C9269C83AF005727B6 /* QueryImageViewModel.swift in Sources */,
 				91F346AF269A7B72005727B6 /* SettingsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -842,7 +858,7 @@
 			repositoryURL = "https://github.com/parse-community/Parse-Swift.git";
 			requirement = {
 				kind = revision;
-				revision = e2d9e1010fdb94f7bd97f9cac166f3ecebd93b0c;
+				revision = 136f5a32b80c4fc5f54ac8ed0c3324796044f69c;
 			};
 		};
 		916E09752691D61100356C08 /* XCRemoteSwiftPackageReference "DZNEmptyDataSet" */ = {

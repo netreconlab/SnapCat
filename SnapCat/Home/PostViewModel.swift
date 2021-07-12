@@ -80,6 +80,28 @@ class PostViewModel: NSObject, ObservableObject {
             .order([.descending(ParseKey.createdAt)])
         return query
     }
+
+    class func queryLikes(post: Post?) -> Query<Activity> {
+        guard let pointer = try? post?.toPointer() else {
+            Logger.home.error("Should have created pointer.")
+            return Activity.query().limit(0)
+        }
+        let query = Activity.query(ActivityKey.post == pointer,
+                                   ActivityKey.type == Activity.ActionType.like)
+            .order([.descending(ParseKey.createdAt)])
+        return query
+    }
+
+    class func queryComments(post: Post?) -> Query<Activity> {
+        guard let pointer = try? post?.toPointer() else {
+            Logger.home.error("Should have created pointer.")
+            return Activity.query().limit(0)
+        }
+        let query = Activity.query(ActivityKey.post == pointer,
+                                   ActivityKey.type == Activity.ActionType.comment)
+            .order([.descending(ParseKey.createdAt)])
+        return query
+    }
 }
 
 // MARK: CLLocationManagerDelegate
