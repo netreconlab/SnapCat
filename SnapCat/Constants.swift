@@ -66,4 +66,5 @@ enum PostKey {
     static let thumbnail                                = "thumbnail"
     static let postedAt                                 = "postedAt"
     static let location                                 = "location"
+    static let caption                                  = "caption"
 }

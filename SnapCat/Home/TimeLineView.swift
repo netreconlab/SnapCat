@@ -8,6 +8,8 @@
 
 import SwiftUI
 import ParseSwift
+import os.log
+import UIKit
 
 struct TimeLineView: View {
 
@@ -19,8 +21,14 @@ struct TimeLineView: View {
             if !timeLineViewModel.results.isEmpty {
                 List(timeLineViewModel.results, id: \.objectId) { result in
                     VStack(alignment: .leading) {
-                        Text("\(result.updatedAt!.description)")
-                            .font(.headline)
+                        /*self.fetchImage(result.image) { image in
+                            if let image = image {
+                                Image(uiImage: uiImage)
+                            }
+                        }*/
+                        if let caption = result.caption {
+                            Text(caption)
+                        }
                         if let createdAt = result.createdAt {
                             Text(createdAt.relativeTime)
                         }
@@ -42,6 +50,28 @@ struct TimeLineView: View {
             return
         }
         timeLineViewModel = viewModel
+    }
+
+    func fetchImage(_ file: ParseFile?, completion: @escaping (UIImage?) -> Void) {
+        guard let file = file else {
+            let image = UIImage(systemName: "camera")
+            completion(image)
+            return
+        }
+        file.fetch { result in
+            switch result {
+            case .success(let image):
+                if let path = image.localURL?.relativePath {
+                    let image = UIImage(contentsOfFile: path)
+                    completion(image)
+                } else {
+                    let image = UIImage(systemName: "camera")
+                    completion(image)
+                }
+            case .failure(let error):
+                Logger.home.error("Error fetching picture: \(error)")
+            }
+        }
     }
 }
 

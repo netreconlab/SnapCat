@@ -145,7 +145,7 @@ struct ProfileView: View {
             followingsViewModel.find()
         }).sheet(isPresented: $isShowingImagePicker, onDismiss: {}, content: {
             ImagePickerView(image: $viewModel.profilePicture)
-        }).sheet(isPresented: $isShowingPost, onDismiss: {}, content: {
+        }).fullScreenCover(isPresented: $isShowingPost, content: {
             PostView()
         }).sheet(isPresented: $isShowingOptions, onDismiss: {}, content: {
             SettingsView()

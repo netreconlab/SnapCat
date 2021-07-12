@@ -21,8 +21,9 @@ struct Post: ParseObject {
     var thumbnail: ParseFile?
     var postedAt: Date?
     var location: ParseGeoPoint?
+    var caption: String?
 
-    init(image: ParseFile) {
+    init(image: ParseFile? = nil) {
         user = User.current
         self.image = image
         ACL = try? ParseACL.defaultACL()

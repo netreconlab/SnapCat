@@ -12,6 +12,7 @@ import ParseSwift
 struct HomeView: View {
 
     @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
+    @State var isShowingPost = false
 
     var body: some View {
         VStack {
@@ -22,7 +23,7 @@ struct HomeView: View {
                     .padding()
                 Spacer()
                 Button(action: {
-
+                    self.isShowingPost = true
                 }, label: {
                     Image(systemName: "square.and.pencil")
                         .resizable()
@@ -34,7 +35,9 @@ struct HomeView: View {
             Divider()
             TimeLineView()
             Spacer()
-        }
+        }.fullScreenCover(isPresented: $isShowingPost, content: {
+            PostView()
+        })
     }
 }
 

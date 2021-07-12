@@ -677,6 +677,7 @@
 				CODE_SIGN_ENTITLEMENTS = SnapCat/SnapCat.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SnapCat/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SnapCat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -699,6 +700,7 @@
 				CODE_SIGN_ENTITLEMENTS = SnapCat/SnapCat.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SnapCat/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SnapCat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;

@@ -10,10 +10,57 @@ import Foundation
 import os.log
 import ParseSwift
 import UIKit
+import CoreLocation
 
-class PostViewModel: ObservableObject {
+class PostViewModel: NSObject, ObservableObject {
     @Published var post: Post?
-    @Published var image = UIImage(named: "ProfileIcon")
+    @Published var image: UIImage?
+    @Published var caption = ""
+    @Published var location: ParseGeoPoint?
+    @Published var currentPlacemark: CLPlacemark? {
+        willSet {
+            if let currentLocation = newValue?.location {
+                location = try? ParseGeoPoint(location: currentLocation)
+            } else {
+                location = nil
+            }
+        }
+    }
+
+    private var authorizationStatus: CLAuthorizationStatus
+    private var lastSeenLocation: CLLocation?
+    private let locationManager: CLLocationManager
+
+    init(post: Post? = nil) {
+        if post != nil {
+            self.post = post
+        } else {
+            self.post = Post()
+        }
+        locationManager = CLLocationManager()
+        authorizationStatus = locationManager.authorizationStatus
+
+        super.init()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+        locationManager.startUpdatingLocation()
+    }
+
+    // MARK: Intents
+    func requestPermission() {
+        locationManager.requestWhenInUseAuthorization()
+    }
+
+    func save() {
+        guard let image = image,
+              let compressed = image.compressTo(3) else {
+            return
+        }
+        post?.image = ParseFile(data: compressed)
+        post?.caption = caption
+        post?.location = location
+        post?.save { _ in }
+    }
 
     // MARK: Queries
     class func queryTimeLine() -> Query<Post> {
@@ -32,5 +79,28 @@ class PostViewModel: ObservableObject {
             .include(PostKey.user)
             .order([.descending(ParseKey.createdAt)])
         return query
+    }
+}
+
+// MARK: CLLocationManagerDelegate
+
+// Source: https://www.andyibanez.com/posts/using-corelocation-with-swiftui/
+extension PostViewModel: CLLocationManagerDelegate {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        authorizationStatus = manager.authorizationStatus
+    }
+
+    func locationManager(_ manager: CLLocationManager,
+                         didUpdateLocations locations: [CLLocation]) {
+        lastSeenLocation = locations.first
+        fetchCountryAndCity(for: locations.first)
+    }
+
+    func fetchCountryAndCity(for location: CLLocation?) {
+        guard let location = location else { return }
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(location) { (placemarks, _) in
+            self.currentPlacemark = placemarks?.first
+        }
     }
 }

@@ -67,7 +67,6 @@ class ProfileViewModel: ObservableObject {
                     try? Utility.removeFilesAtDirectory(cachedURL,
                                                         isDirectory: false)
                 }
-
                 let newProfilePicture = ParseFile(name: "profile.jpeg", data: compressed)
                 user.profileImage = newProfilePicture
                 user.save { result in
