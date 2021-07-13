@@ -15,15 +15,15 @@ class EmptyDefaultViewController: UITableViewController {
     let defaultImage = UIImage(systemName: "house")
 
     deinit {
-        self.tableView.emptyDataSetSource = nil
-        self.tableView.emptyDataSetDelegate = nil
+        self.tableView?.emptyDataSetSource = nil
+        self.tableView?.emptyDataSetDelegate = nil
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.emptyDataSetSource = self
-        self.tableView.emptyDataSetDelegate = self
-        self.tableView.tableFooterView = UIView()
+        self.tableView?.emptyDataSetSource = self
+        self.tableView?.emptyDataSetDelegate = self
+        self.tableView?.tableFooterView = UIView()
     }
 }
 

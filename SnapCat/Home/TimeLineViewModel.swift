@@ -28,7 +28,6 @@ class TimeLineViewModel: ObservableObject {
         let findTimeLineDataForCurrentUser = Post.query(PostKey.user == pointer)
         let subQueries = [findTimeLineData, findTimeLineDataForCurrentUser]
         let query = Post.query(or(queries: subQueries))
-            .include(PostKey.user)
             .order([.descending(ParseKey.createdAt)])
         return query
     }

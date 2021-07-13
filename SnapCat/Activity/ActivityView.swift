@@ -11,6 +11,7 @@ import SwiftUI
 struct ActivityView: View {
     @ObservedObject var followingsActivityViewModel = ActivityViewModel
         .queryFollowingsActivity
+        .include(ActivityKey.fromUser)
         .viewModel
 
     var body: some View {

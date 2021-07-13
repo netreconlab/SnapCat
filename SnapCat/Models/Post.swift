@@ -19,7 +19,6 @@ struct Post: ParseObject {
     var user: User?
     var image: ParseFile?
     var thumbnail: ParseFile?
-    var postedAt: Date?
     var location: ParseGeoPoint?
     var caption: String?
 

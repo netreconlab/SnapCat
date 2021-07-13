@@ -291,13 +291,11 @@ class ProfileViewModel: ObservableObject {
                 query = Activity.query(ActivityKey.toUser == user.objectId,
                                        ActivityKey.fromUser != user.objectId,
                                        ActivityKey.type == Activity.ActionType.follow.rawValue)
-                    .include(ActivityKey.fromUser)
                     .order([.descending(ParseKey.updatedAt)])
             } else {
                 query = Activity.query(ActivityKey.toUser == currentUser.objectId,
                                        ActivityKey.fromUser != currentUser.objectId,
                                        ActivityKey.type == Activity.ActionType.follow.rawValue)
-                    .include(ActivityKey.fromUser)
                     .order([.descending(ParseKey.updatedAt)])
             }
         }
@@ -310,7 +308,6 @@ class ProfileViewModel: ObservableObject {
             return Activity.query(ActivityKey.fromUser == user.objectId,
                                   ActivityKey.toUser != user.objectId,
                                   ActivityKey.type == Activity.ActionType.follow.rawValue)
-                .include(ActivityKey.toUser)
                 .order([.descending(ParseKey.updatedAt)])
         } else {
             guard let currentUser = User.current else {
@@ -320,7 +317,6 @@ class ProfileViewModel: ObservableObject {
             return Activity.query(ActivityKey.fromUser == currentUser.objectId,
                                   ActivityKey.toUser != currentUser.objectId,
                                   ActivityKey.type == Activity.ActionType.follow.rawValue)
-                .include(ActivityKey.toUser)
                 .order([.descending(ParseKey.updatedAt)])
         }
     }

@@ -97,11 +97,6 @@ struct TimeLineView: View {
                 }
                 Spacer()
             }.onAppear(perform: {
-                /*if geometry.size.width < geometry.size.height {
-                    sizeOfImageSide = 0.8 * geometry.size.width
-                } else {
-                    sizeOfImageSide = 0.8 * geometry.size.height
-                }*/
                 timeLineViewModel.find()
             })
         }
@@ -114,7 +109,9 @@ struct TimeLineView: View {
             currentObjectId = ""
         }
         guard let viewModel = viewModel else {
-            timeLineViewModel = TimeLineViewModel.queryTimeLine().imageViewModel
+            timeLineViewModel = TimeLineViewModel.queryTimeLine()
+                .include(PostKey.user)
+                .imageViewModel
             timeLineViewModel.find()
             return
         }

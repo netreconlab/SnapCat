@@ -22,7 +22,7 @@ struct ProfileEditView: View {
                     TextField("Email", text: $viewModel.email)
                     TextField("Name", text: $viewModel.name)
                     TextField("Bio", text: $viewModel.bio)
-                    SecureField("Link", text: $viewModel.link)
+                    TextField("Link", text: $viewModel.link)
                 }
 
                 Section {

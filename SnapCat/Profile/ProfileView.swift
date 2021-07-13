@@ -163,12 +163,15 @@ struct ProfileView: View {
         viewModel = ProfileViewModel(user: userProfile)
         timelineViewModel = ProfileViewModel
             .queryUserTimeLine(userProfile)
+            .include(PostKey.user)
             .imageViewModel
         followersViewModel = ProfileViewModel
             .queryFollowers(userProfile)
+            .include(ActivityKey.fromUser)
             .viewModel
         followingsViewModel = ProfileViewModel
             .queryFollowings(userProfile)
+            .include(ActivityKey.toUser)
             .viewModel
         timelineViewModel.find()
         followersViewModel.find()
