@@ -12,7 +12,25 @@ import ParseSwift
 
 class TimeLineViewModel: ObservableObject {
 
-    // MARK: Helper Methods
+    // MARK: Intents
+    class func likePost(_ post: Post, currentLikes: [Activity]?) {
+        guard let alreadyLikes = currentLikes?
+                .first(where: { User.current?.id == $0.fromUser?.id }) else {
+            let likeActivity = Activity.like(post: post)
+            likeActivity.save { result in
+                if case .failure(let error) = result {
+                    Logger.home.error("Error liking post \(post): Error: \(error)")
+                }
+            }
+            return
+        }
+        alreadyLikes.delete { result in
+            if case .failure(let error) = result {
+                Logger.home.error("Error deleting like: \(error)")
+            }
+        }
+        return
+    }
 
     // MARK: Queries
     class func queryTimeLine() -> Query<Post> {

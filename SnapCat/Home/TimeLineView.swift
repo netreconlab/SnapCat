@@ -32,6 +32,11 @@ struct TimeLineView: View {
                                                height: 0.75 * geometry.size.width,
                                                alignment: .center)
                                         .clipShape(Rectangle())
+                                        .onTapGesture(count: 2) {
+                                            TimeLineViewModel.likePost(result,
+                                                                       currentLikes: timeLineViewModel
+                                                                        .likes[result.id])
+                                        }
                                 } else {
                                     Image(systemName: "camera")
                                         .resizable()
@@ -43,7 +48,8 @@ struct TimeLineView: View {
                                 Spacer()
                             }
                             HStack {
-                                if timeLineViewModel.likes[currentObjectId] != nil {
+                                if let likes = timeLineViewModel.likes[result.id],
+                                   likes.count > 0 {
                                     Image(systemName: "heart.fill")
                                 } else {
                                     Image(systemName: "heart")
