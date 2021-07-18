@@ -1,7 +1,7 @@
 # SnapCat
 ![Swift](https://img.shields.io/badge/swift-5.4-brightgreen.svg) ![Xcode 12.0+](https://img.shields.io/badge/xcode-12.0%2B-blue.svg) ![iOS 14.0+](https://img.shields.io/badge/iOS-14.0%2B-blue.svg) ![ci](https://github.com/netreconlab/SnapCat/workflows/ci/badge.svg?branch=main)
 
-<img src="https://user-images.githubusercontent.com/8621344/126083109-b8479a63-f8bc-4010-b835-28687226c100.png" width="300"> <img src="https://user-images.githubusercontent.com/8621344/126083115-73208f2f-3816-4a95-84fd-c8be21d61c01.png" width="300"> <img src="https://user-images.githubusercontent.com/8621344/126083134-6f9ba634-0f90-4b56-b2e1-dd6d9b5dadff.png" width="300">
+<img src="https://user-images.githubusercontent.com/8621344/126083109-b8479a63-f8bc-4010-b835-28687226c100.png" width="250"> <img src="https://user-images.githubusercontent.com/8621344/126083115-73208f2f-3816-4a95-84fd-c8be21d61c01.png" width="250"> <img src="https://user-images.githubusercontent.com/8621344/126083134-6f9ba634-0f90-4b56-b2e1-dd6d9b5dadff.png" width="250">
 
 
 SnapCat is a social media application for posting pictures, comments, and finding friends. SnapCat is designed using SwiftUI and the [ParseSwift SDK](https://github.com/parse-community/Parse-Swift). The app is meant to serve as a base app for University of Kentucky graudate researchers and undergraduate students learning iOS mobile app development.
