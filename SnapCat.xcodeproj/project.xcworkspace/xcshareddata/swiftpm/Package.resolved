@@ -11,7 +11,7 @@
         }
       },
       {
-        "package": "Parse-Swift",
+        "package": "ParseSwift",
         "repositoryURL": "https://github.com/parse-community/Parse-Swift.git",
         "state": {
           "branch": null,
