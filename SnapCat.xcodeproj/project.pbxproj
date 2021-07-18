@@ -15,6 +15,8 @@
 		9116F67426A38FB10082F6D6 /* ViewAllComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9116F67326A38FB00082F6D6 /* ViewAllComments.swift */; };
 		91285B0F269356B20051B544 /* TimeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91285B0E269356B20051B544 /* TimeLineView.swift */; };
 		91285B11269356EA0051B544 /* TimeLineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91285B10269356EA0051B544 /* TimeLineViewModel.swift */; };
+		91337F3E26A48C84002649D1 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91337F3D26A48C84002649D1 /* ProfileHeaderView.swift */; };
+		91337F4026A48CAA002649D1 /* ProfileUserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91337F3F26A48CAA002649D1 /* ProfileUserDetailsView.swift */; };
 		916E092826914E9A00356C08 /* SnapCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E092726914E9A00356C08 /* SnapCatApp.swift */; };
 		916E092A26914E9A00356C08 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E092926914E9A00356C08 /* OnboardingView.swift */; };
 		916E092C26914E9C00356C08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 916E092B26914E9C00356C08 /* Assets.xcassets */; };
@@ -90,6 +92,8 @@
 		9116F67326A38FB00082F6D6 /* ViewAllComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAllComments.swift; sourceTree = "<group>"; };
 		91285B0E269356B20051B544 /* TimeLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineView.swift; sourceTree = "<group>"; };
 		91285B10269356EA0051B544 /* TimeLineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineViewModel.swift; sourceTree = "<group>"; };
+		91337F3D26A48C84002649D1 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
+		91337F3F26A48CAA002649D1 /* ProfileUserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileUserDetailsView.swift; sourceTree = "<group>"; };
 		916E092426914E9A00356C08 /* SnapCat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnapCat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		916E092726914E9A00356C08 /* SnapCatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCatApp.swift; sourceTree = "<group>"; };
 		916E092926914E9A00356C08 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -309,6 +313,8 @@
 			isa = PBXGroup;
 			children = (
 				916E097326916C7B00356C08 /* ProfileView.swift */,
+				91337F3D26A48C84002649D1 /* ProfileHeaderView.swift */,
+				91337F3F26A48CAA002649D1 /* ProfileUserDetailsView.swift */,
 				91F346B0269A8E30005727B6 /* ProfileEditView.swift */,
 				916E099726924B3000356C08 /* ProfileViewModel.swift */,
 				91F346AC269A7B55005727B6 /* SettingsView.swift */,
@@ -512,6 +518,7 @@
 			files = (
 				91F346CC269C91E1005727B6 /* CloudImageViewModel.swift in Sources */,
 				91F346B7269B4B10005727B6 /* PostViewModel.swift in Sources */,
+				91337F4026A48CAA002649D1 /* ProfileUserDetailsView.swift in Sources */,
 				91F346AD269A7B55005727B6 /* SettingsView.swift in Sources */,
 				916E09A62692ACCC00356C08 /* ActivityViewModel.swift in Sources */,
 				916E09682691638600356C08 /* SnapCatError.swift in Sources */,
@@ -556,6 +563,7 @@
 				916E098126921ACF00356C08 /* EmptyDefaultViewController.swift in Sources */,
 				91F346B5269B48CF005727B6 /* PostView.swift in Sources */,
 				91F346C9269C83AF005727B6 /* QueryImageViewModel.swift in Sources */,
+				91337F3E26A48C84002649D1 /* ProfileHeaderView.swift in Sources */,
 				91F346AF269A7B72005727B6 /* SettingsViewModel.swift in Sources */,
 				9116F66B26A1CC420082F6D6 /* CommentView.swift in Sources */,
 			);
@@ -882,7 +890,7 @@
 			repositoryURL = "https://github.com/parse-community/Parse-Swift.git";
 			requirement = {
 				kind = revision;
-				revision = 957ff0c5d50db0361a94c050e4fce81ad58429cc;
+				revision = db40f1076af73855a94230f921b4447982958943;
 			};
 		};
 		916E09752691D61100356C08 /* XCRemoteSwiftPackageReference "DZNEmptyDataSet" */ = {

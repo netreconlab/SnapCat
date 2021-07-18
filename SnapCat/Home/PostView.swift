@@ -11,7 +11,7 @@ import ParseSwift
 
 struct PostView: View {
     @ObservedObject var viewModel = PostViewModel()
-    @State private var isShowingImagePicker = true
+    @State private var isShowingImagePicker = false
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
