@@ -11,7 +11,7 @@ import os.log
 import ParseSwift
 import UIKit
 
-class QueryImageViewModel<T: ParseObject>: QueryViewModel<T> {
+class QueryImageViewModel<T: ParseObject>: Subscription<T> {
 
     override var results: [QueryViewModel<T>.Object] {
         willSet {
@@ -21,6 +21,34 @@ class QueryImageViewModel<T: ParseObject>: QueryViewModel<T> {
             } else if let users = newValue as? [User] {
                 userResults = users
             }
+            objectWillChange.send()
+        }
+    }
+
+    override var event: (query: Query<T>, event: Event<T>)? {
+        willSet {
+            guard let event = newValue?.event else {
+                return
+            }
+            switch event {
+
+            case .created(let object):
+                if let post = object as? Post {
+                    postResults.insert(post, at: 0)
+                } else if let user = object as? User {
+                    userResults.insert(user, at: 0)
+                }
+            case .deleted(let object):
+                if let post = object as? Post {
+                    postResults.removeAll(where: { $0.id == post.id })
+                } else if let user = object as? User {
+                    userResults.removeAll(where: { $0.id == user.id })
+                }
+            default:
+                break
+            }
+            subscribed = nil
+            unsubscribed = nil
             objectWillChange.send()
         }
     }
@@ -156,8 +184,37 @@ class QueryImageViewModel<T: ParseObject>: QueryViewModel<T> {
     }
 }
 
+// MARK: ParseLiveQuery
+public extension ParseLiveQuery {
+    internal func subscribeCustom<T>(_ query: Query<T>) throws -> QueryImageViewModel<T> {
+        try subscribe(QueryImageViewModel(query: query))
+    }
+}
+
 // MARK: QueryImageViewModel
 public extension Query {
+
+    /**
+     Registers the query for live updates, using the default subscription handler,
+     and the default `ParseLiveQuery` client. Suitable for `ObjectObserved`
+     as the subscription can be used as a SwiftUI publisher. Meaning it can serve
+     indepedently as a ViewModel in MVVM.
+     */
+    internal var subscribeCustom: QueryImageViewModel<ResultType>? {
+        try? ParseLiveQuery.client?.subscribeCustom(self)
+    }
+
+    /**
+     Registers the query for live updates, using the default subscription handler,
+     and a specific `ParseLiveQuery` client. Suitable for `ObjectObserved`
+     as the subscription can be used as a SwiftUI publisher. Meaning it can serve
+     indepedently as a ViewModel in MVVM.
+     - parameter client: A specific client.
+     - returns: The subscription that has just been registered
+     */
+    internal func subscribeCustom(_ client: ParseLiveQuery) throws -> QueryImageViewModel<ResultType> {
+        try client.subscribe(QueryImageViewModel(query: self))
+    }
 
     /**
      Creates a view model for this query. Suitable for `ObjectObserved`

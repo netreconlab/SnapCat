@@ -164,7 +164,7 @@ struct ProfileView: View {
         timelineViewModel = ProfileViewModel
             .queryUserTimeLine(userProfile)
             .include(PostKey.user)
-            .imageViewModel
+            .subscribeCustom!
         followersViewModel = ProfileViewModel
             .queryFollowers(userProfile)
             .include(ActivityKey.fromUser)

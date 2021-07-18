@@ -55,7 +55,7 @@ struct TimeLineView: View {
         guard let viewModel = viewModel else {
             timeLineViewModel = TimeLineViewModel.queryTimeLine()
                 .include(PostKey.user)
-                .imageViewModel
+                .subscribeCustom!
             timeLineViewModel.find()
             return
         }
