@@ -9,24 +9,40 @@
 import SwiftUI
 
 struct ViewAllComments: View {
+    @Environment(\.presentationMode) var presentationMode
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var post: Post
     var body: some View {
         if let comments = timeLineViewModel.comments[post.id] {
-            List(comments, id: \.id) { result in
-                VStack(alignment: .leading) {
-                    HStack {
-                        if let username = result.fromUser?.username {
-                            Text("\(username)")
-                                .font(.headline)
+            NavigationView {
+                List(comments, id: \.id) { result in
+                    VStack(alignment: .leading) {
+                        HStack {
+                            if let username = result.fromUser?.username {
+                                Text("\(username)")
+                                    .font(.headline)
+                            }
+                            if let lastComment = result.comment {
+                                Text(lastComment)
+                            }
                         }
-                        if let lastComment = result.comment {
-                            Text(lastComment)
-                        }
+                        Divider()
+                            .padding()
                     }
-                    Divider()
-                        .padding()
                 }
+                .navigationBarBackButtonHidden(true)
+                .navigationTitle(Text("Comments"))
+                .navigationBarItems(leading: Button(action: {
+                    self.presentationMode.wrappedValue.dismiss()
+                }, label: {
+                    Text("Cancel")
+                }), trailing: Button(action: {
+                    self.presentationMode.wrappedValue.dismiss()
+                }, label: {
+                    Text("Done")
+                }))
+                Text("Hello")
+                Spacer()
             }
         }
         Text("")

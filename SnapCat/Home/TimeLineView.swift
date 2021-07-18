@@ -104,15 +104,15 @@ struct TimeLineView: View {
                             }
                             if let comments = timeLineViewModel.comments[result.id],
                                comments.count > 0 {
+                                if comments.count > 1 {
+                                    Text("View all \(comments.count)")
+                                        .font(.footnote)
+                                        .onTapGesture(count: 1) {
+                                            self.timeLineViewModel.postSelected = result
+                                            self.isShowingAllComments = true
+                                        }
+                                }
                                 HStack {
-                                    if comments.count > 1 {
-                                        Text("View all \(comments.count)")
-                                            .font(.footnote)
-                                            .onTapGesture(count: 1) {
-                                                // self.timeLineViewModel.postSelected = result
-                                                self.isShowingAllComments = true
-                                            }
-                                    }
                                     if let username = comments.last?.fromUser?.username {
                                         Text("\(username)")
                                             .font(.headline)
@@ -142,7 +142,7 @@ struct TimeLineView: View {
                     CommentView(post: post)
                 }
             })
-            .sheet(isPresented: $isShowingAllComments, content: {
+            .fullScreenCover(isPresented: $isShowingAllComments, content: {
                 if let post = timeLineViewModel.postSelected {
                     ViewAllComments(timeLineViewModel: timeLineViewModel,
                                     post: post)
