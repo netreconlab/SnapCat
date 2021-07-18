@@ -20,7 +20,7 @@ struct Activity: ParseObject {
     var toUser: User?
     var type: ActionType?
     var comment: String?
-    var post: Pointer<Post>?
+    var post: Post?
     var activity: Pointer<Activity>?
 
     enum ActionType: String, Codable {
@@ -38,7 +38,7 @@ struct Activity: ParseObject {
 
     static func like(post: Post) -> Self {
         var activity = Activity(type: .like, from: User.current, to: post.user)
-        activity.post = try? post.toPointer()
+        activity.post = post
         return activity
     }
 }

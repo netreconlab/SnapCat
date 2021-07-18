@@ -43,6 +43,7 @@ class QueryImageViewModel<T: ParseObject>: QueryViewModel<T> {
                 if comments[object.id] == nil {
                     PostViewModel
                         .queryComments(post: object)
+                        .include(ActivityKey.fromUser)
                         .find { results in
                             switch results {
                             case .success(let foundComments):
@@ -113,6 +114,45 @@ class QueryImageViewModel<T: ParseObject>: QueryViewModel<T> {
         willSet {
             objectWillChange.send()
         }
+    }
+
+    var postSelected: Post?
+
+    // MARK: Helpers
+    func isLikedPost(_ post: Post, userObjectId: String? = nil) -> Bool {
+        let userOfInterest: String!
+        if let user = userObjectId {
+            userOfInterest = user
+        } else {
+            guard let currentUser = User.current?.id else {
+                Logger.home.error("User is suppose to be logged")
+                return false
+            }
+            userOfInterest = currentUser
+        }
+        guard let activities = likes[post.id],
+              activities.first(where: { $0.fromUser?.objectId == userOfInterest }) != nil else {
+            return false
+        }
+        return true
+    }
+
+    func isCommentedOnPost(_ post: Post, userObjectId: String? = nil) -> Bool {
+        let userOfInterest: String!
+        if let user = userObjectId {
+            userOfInterest = user
+        } else {
+            guard let currentUser = User.current?.id else {
+                Logger.home.error("User is suppose to be logged")
+                return false
+            }
+            userOfInterest = currentUser
+        }
+        guard let activities = comments[post.id],
+              activities.first(where: { $0.fromUser?.objectId == userOfInterest }) != nil else {
+            return false
+        }
+        return true
     }
 }
 

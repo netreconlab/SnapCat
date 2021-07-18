@@ -16,12 +16,14 @@ struct TimeLineView: View {
     @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     let currentObjectId: String
+    @State var isShowingComment = false
+    @State var isShowingAllComments = false
 
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 if !timeLineViewModel.results.isEmpty {
-                    List(timeLineViewModel.results, id: \.objectId) { result in
+                    List(timeLineViewModel.results, id: \.id) { result in
                         VStack(alignment: .leading) {
                             HStack {
                                 Spacer()
@@ -37,6 +39,7 @@ struct TimeLineView: View {
                                                                        currentLikes: timeLineViewModel
                                                                         .likes[result.id])
                                         }
+                                        .padding([.top, .bottom])
                                 } else {
                                     Image(systemName: "camera")
                                         .resizable()
@@ -48,37 +51,44 @@ struct TimeLineView: View {
                                 Spacer()
                             }
                             HStack {
-                                if let likes = timeLineViewModel.likes[result.id],
-                                   likes.count > 0 {
-                                    Image(systemName: "heart.fill")
-                                } else {
-                                    Image(systemName: "heart")
+                                VStack {
+                                    if timeLineViewModel.isLikedPost(result,
+                                                                     userObjectId: currentObjectId) {
+                                        Image(systemName: "heart.fill")
+                                    } else {
+                                        Image(systemName: "heart")
+                                    }
+                                }.onTapGesture(count: 1) {
+                                    TimeLineViewModel.likePost(result,
+                                                               currentLikes: timeLineViewModel
+                                                                .likes[result.id])
                                 }
-                                Image(systemName: "bubble.left")
+                                VStack {
+                                    if timeLineViewModel.isCommentedOnPost(result,
+                                                                           userObjectId: currentObjectId) {
+                                        Image(systemName: "bubble.left.fill")
+                                    } else {
+                                        Image(systemName: "bubble.left")
+                                    }
+                                }.onTapGesture(count: 1) {
+                                    self.timeLineViewModel.postSelected = result
+                                    self.isShowingComment = true
+                                }
                                 Spacer()
                             }
                             HStack {
-                                if let likes = timeLineViewModel.likes[currentObjectId] {
-                                    Text("Liked by ")
+                                if let likes = timeLineViewModel.likes[result.id] {
+                                    Text("Liked by")
                                     if likes.count > 2 {
                                         if let lastLikeUsername = likes.last?.fromUser?.username {
                                             Text("\(lastLikeUsername) ")
                                                 .font(.headline)
                                         }
                                         Text("and \(likes.count - 1) others")
+                                    } else if likes.count == 1 {
+                                        Text("\(likes.count) person")
                                     } else {
                                         Text("\(likes.count) people")
-                                    }
-                                    Spacer()
-                                }
-                            }
-                            HStack {
-                                if let comments = timeLineViewModel.comments[currentObjectId] {
-                                    if let lastComment = comments.last?.comment {
-                                        Text(lastComment)
-                                    }
-                                    if comments.count > 1 {
-                                        Text("View all \(comments.count)")
                                     }
                                     Spacer()
                                 }
@@ -92,6 +102,27 @@ struct TimeLineView: View {
                                     Text(caption)
                                 }
                             }
+                            if let comments = timeLineViewModel.comments[result.id],
+                               comments.count > 0 {
+                                HStack {
+                                    if comments.count > 1 {
+                                        Text("View all \(comments.count)")
+                                            .font(.footnote)
+                                            .onTapGesture(count: 1) {
+                                                // self.timeLineViewModel.postSelected = result
+                                                self.isShowingAllComments = true
+                                            }
+                                    }
+                                    if let username = comments.last?.fromUser?.username {
+                                        Text("\(username)")
+                                            .font(.headline)
+                                    }
+                                    if let lastComment = comments.last?.comment {
+                                        Text(lastComment)
+                                    }
+                                }
+                                Spacer()
+                            }
                             if let createdAt = result.createdAt {
                                 Text(createdAt.relativeTime)
                                     .font(.footnote)
@@ -102,8 +133,20 @@ struct TimeLineView: View {
                     EmptyTimeLineView()
                 }
                 Spacer()
-            }.onAppear(perform: {
+            }
+            .onAppear(perform: {
                 timeLineViewModel.find()
+            })
+            .sheet(isPresented: $isShowingComment, content: {
+                if let post = timeLineViewModel.postSelected {
+                    CommentView(post: post)
+                }
+            })
+            .sheet(isPresented: $isShowingAllComments, content: {
+                if let post = timeLineViewModel.postSelected {
+                    ViewAllComments(timeLineViewModel: timeLineViewModel,
+                                    post: post)
+                }
             })
         }
     }

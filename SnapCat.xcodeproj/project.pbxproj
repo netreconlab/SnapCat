@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9116F66B26A1CC420082F6D6 /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9116F66A26A1CC420082F6D6 /* CommentView.swift */; };
+		9116F66D26A1CC500082F6D6 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9116F66C26A1CC500082F6D6 /* CommentViewModel.swift */; };
+		9116F67426A38FB10082F6D6 /* ViewAllComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9116F67326A38FB00082F6D6 /* ViewAllComments.swift */; };
 		91285B0F269356B20051B544 /* TimeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91285B0E269356B20051B544 /* TimeLineView.swift */; };
 		91285B11269356EA0051B544 /* TimeLineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91285B10269356EA0051B544 /* TimeLineViewModel.swift */; };
 		916E092826914E9A00356C08 /* SnapCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E092726914E9A00356C08 /* SnapCatApp.swift */; };
@@ -76,6 +79,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9116F66A26A1CC420082F6D6 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
+		9116F66C26A1CC500082F6D6 /* CommentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
+		9116F67326A38FB00082F6D6 /* ViewAllComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAllComments.swift; sourceTree = "<group>"; };
 		91285B0E269356B20051B544 /* TimeLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineView.swift; sourceTree = "<group>"; };
 		91285B10269356EA0051B544 /* TimeLineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineViewModel.swift; sourceTree = "<group>"; };
 		916E092426914E9A00356C08 /* SnapCat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnapCat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -262,15 +268,18 @@
 		916E096C26916BEA00356C08 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				9116F66A26A1CC420082F6D6 /* CommentView.swift */,
+				9116F66C26A1CC500082F6D6 /* CommentViewModel.swift */,
 				916E09872692223600356C08 /* EmptyTimeLineView.swift */,
 				916E098526921FD800356C08 /* EmptyTimeLineViewController.swift */,
 				916E096F26916C4000356C08 /* HomeView.swift */,
 				916E099926924BC000356C08 /* HomeViewModel.swift */,
-				91285B0E269356B20051B544 /* TimeLineView.swift */,
-				91285B10269356EA0051B544 /* TimeLineViewModel.swift */,
 				91F346B2269B4770005727B6 /* ImagePickerView.swift */,
 				91F346B4269B48CF005727B6 /* PostView.swift */,
 				91F346B6269B4B10005727B6 /* PostViewModel.swift */,
+				9116F67326A38FB00082F6D6 /* ViewAllComments.swift */,
+				91285B0E269356B20051B544 /* TimeLineView.swift */,
+				91285B10269356EA0051B544 /* TimeLineViewModel.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -499,6 +508,7 @@
 				916E09682691638600356C08 /* SnapCatError.swift in Sources */,
 				91F346B1269A8E30005727B6 /* ProfileEditView.swift in Sources */,
 				916E09A12692A08F00356C08 /* View+extension.swift in Sources */,
+				9116F67426A38FB10082F6D6 /* ViewAllComments.swift in Sources */,
 				916E09882692223600356C08 /* EmptyTimeLineView.swift in Sources */,
 				916E0996269247AE00356C08 /* Date+extension.swift in Sources */,
 				916E09792691DC5700356C08 /* Logger+extension.swift in Sources */,
@@ -508,6 +518,7 @@
 				916E09A82692ACE000356C08 /* EmptyActivityView.swift in Sources */,
 				916E092826914E9A00356C08 /* SnapCatApp.swift in Sources */,
 				916E09AA2692ACF200356C08 /* EmptyActivityViewController.swift in Sources */,
+				9116F66D26A1CC500082F6D6 /* CommentViewModel.swift in Sources */,
 				91285B11269356EA0051B544 /* TimeLineViewModel.swift in Sources */,
 				916E098A269227D200356C08 /* EmptyExploreView.swift in Sources */,
 				916E095D2691564200356C08 /* Post.swift in Sources */,
@@ -534,6 +545,7 @@
 				91F346B5269B48CF005727B6 /* PostView.swift in Sources */,
 				91F346C9269C83AF005727B6 /* QueryImageViewModel.swift in Sources */,
 				91F346AF269A7B72005727B6 /* SettingsViewModel.swift in Sources */,
+				9116F66B26A1CC420082F6D6 /* CommentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -858,7 +870,7 @@
 			repositoryURL = "https://github.com/parse-community/Parse-Swift.git";
 			requirement = {
 				kind = revision;
-				revision = 5d46e07ca578ecf9fef2df9845691b1bdb28bc86;
+				revision = 1a4a5d008c6a9b050421676abd76aa832725aeb3;
 			};
 		};
 		916E09752691D61100356C08 /* XCRemoteSwiftPackageReference "DZNEmptyDataSet" */ = {
