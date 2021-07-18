@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ParseClientConfiguration</key>
+	<dict>
+		<key>ApplicationID</key>
+		<string>applicationId</string>
+		<key>ClientKey</key>
+		<string>clientKey</string>
+		<key>Server</key>
+		<string>http://localhost:1337/1</string>
+		<key>UseTransactionsInternally</key>
+		<false/>
+		<key>CacheMemoryCapacity</key>
+		<integer>30000000</integer>
+		<key>CacheDiskCapacity</key>
+		<integer>100000000</integer>
+	</dict>
+</dict>
+</plist>
