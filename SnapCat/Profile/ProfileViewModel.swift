@@ -188,6 +188,14 @@ class ProfileViewModel: ObservableObject {
         }
     }
 
+    class func getUsersFromFollowers(_ activities: [Activity]) -> [User] {
+        activities.compactMap { $0.fromUser }
+    }
+
+    class func getUsersFromFollowings(_ activities: [Activity]) -> [User] {
+        activities.compactMap { $0.toUser }
+    }
+
     // MARK: - Intents
 
     // swiftlint:disable:next function_body_length

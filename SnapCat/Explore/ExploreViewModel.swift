@@ -9,18 +9,43 @@
 import Foundation
 import os.log
 import ParseSwift
+import UIKit
 
 @dynamicMemberLookup
 class ExploreViewModel: ObservableObject {
 
-    @Published var notFollowing = [User]()
-
-    subscript(dynamicMember member: String) -> [User] {
-        return notFollowing
+    @Published var users = [User]() {
+        willSet {
+            newValue.forEach { object in
+                // Fetch images
+                if profileImages.count == Constants.numberOfImagesToDownload {
+                    return
+                }
+                guard profileImages[object.id] == nil else {
+                    return
+                }
+                Utility.fetchImage(object.profileImage) { image in
+                    if let image = image {
+                        self.profileImages[object.id] = image
+                    }
+                }
+            }
+        }
     }
 
-    init() {
-        queryUsersNotFollowing()
+    /// Contains all fetched images.
+    @Published var profileImages = [String: UIImage]()
+
+    subscript(dynamicMember member: String) -> [User] {
+        return users
+    }
+
+    init(users: [User]? = nil) {
+        guard let users = users else {
+            queryUsersNotFollowing()
+            return
+        }
+        self.users = users
     }
 
     // MARK: Intents
@@ -41,7 +66,7 @@ class ExploreViewModel: ObservableObject {
                     switch result {
 
                     case .success(let users):
-                        self.notFollowing = users
+                        self.users = users
                     case .failure(let error):
                         Logger.explore.error("Couldn't query users: \(error)")
                     }
@@ -58,7 +83,7 @@ class ExploreViewModel: ObservableObject {
             switch result {
 
             case .success(let activity):
-                self.notFollowing = self.notFollowing.filter({ $0.objectId != activity.toUser?.objectId })
+                self.users = self.users.filter({ $0.objectId != activity.toUser?.objectId })
             case .failure(let error):
                 Logger.explore.error("Couldn't save follow: \(error)")
             }

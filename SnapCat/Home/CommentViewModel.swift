@@ -26,10 +26,10 @@ class CommentViewModel: ObservableObject {
 
     // MARK: Intents
 
-    func save() {
+    func save(completion: @escaping (Result<Activity, ParseError>) -> Void) {
         if !comment.isEmpty {
             activity?.comment = comment
-            activity?.save { _ in }
+            activity?.save(completion: completion)
         }
     }
 }

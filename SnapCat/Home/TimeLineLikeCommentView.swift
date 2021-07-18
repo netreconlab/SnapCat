@@ -80,7 +80,8 @@ struct TimeLineLikeCommentView: View {
             }
         }.sheet(isPresented: $isShowingComment, content: {
             if let post = timeLineViewModel.postSelected {
-                CommentView(post: post)
+                CommentView(timeLineViewModel: timeLineViewModel,
+                            post: post)
             }
         })
     }

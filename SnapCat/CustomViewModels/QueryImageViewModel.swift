@@ -33,17 +33,17 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
             switch event {
 
             case .created(let object):
-                if let post = object as? Post {
-                    postResults.insert(post, at: 0)
-                } else if let user = object as? User {
-                    userResults.insert(user, at: 0)
+                results.insert(object, at: 0)
+            case .updated(let object):
+                guard let index = results.firstIndex(of: object) else {
+                    return
                 }
+                results[index] = object
             case .deleted(let object):
-                if let post = object as? Post {
-                    postResults.removeAll(where: { $0.id == post.id })
-                } else if let user = object as? User {
-                    userResults.removeAll(where: { $0.id == user.id })
+                guard let index = results.firstIndex(of: object) else {
+                    return
                 }
+                results.remove(at: index)
             default:
                 break
             }

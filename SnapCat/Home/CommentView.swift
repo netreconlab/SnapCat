@@ -11,6 +11,7 @@ import ParseSwift
 
 struct CommentView: View {
     @ObservedObject var viewModel: CommentViewModel
+    @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
@@ -27,7 +28,13 @@ struct CommentView: View {
             }, label: {
                 Text("Cancel")
             }), trailing: Button(action: {
-                viewModel.save()
+                viewModel.save { result in
+                    if case .success(let comment) = result {
+                        if let postId = viewModel.activity?.post?.id {
+                            timeLineViewModel.comments[postId]?.insert(comment, at: 0)
+                        }
+                    }
+                }
                 self.presentationMode.wrappedValue.dismiss()
             }, label: {
                 Text("Done")
@@ -35,13 +42,16 @@ struct CommentView: View {
         }
     }
 
-    init(post: Post, activity: Activity? = nil) {
+    init(timeLineViewModel: QueryImageViewModel<Post>,
+         post: Post,
+         activity: Activity? = nil) {
+        self.timeLineViewModel = timeLineViewModel
         viewModel = CommentViewModel(post: post, activity: activity)
     }
 }
 
 struct CommentView_Previews: PreviewProvider {
     static var previews: some View {
-        CommentView(post: Post())
+        CommentView(timeLineViewModel: .init(query: Post.query()), post: Post())
     }
 }

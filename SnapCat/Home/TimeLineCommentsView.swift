@@ -28,11 +28,11 @@ struct TimeLineCommentsView: View {
                     }
                 }
                 HStack {
-                    if let username = comments.last?.fromUser?.username {
+                    if let username = comments.first?.fromUser?.username {
                         Text("\(username)")
                             .font(.headline)
                     }
-                    if let lastComment = comments.last?.comment {
+                    if let lastComment = comments.first?.comment {
                         Text(lastComment)
                     }
                     Spacer()

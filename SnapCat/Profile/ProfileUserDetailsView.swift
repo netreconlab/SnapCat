@@ -17,6 +17,9 @@ struct ProfileUserDetailsView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var isShowingImagePicker = false
     @State var isShowingEditProfile = false
+    @State var isShowingExplorer = false
+    @State var explorerView = ExploreView()
+
     var body: some View {
         VStack {
             HStack {
@@ -50,7 +53,10 @@ struct ProfileUserDetailsView: View {
                         .padding(.trailing)
                 }
                 Button(action: {
-
+                    self.explorerView = ExploreView(viewModel: .init(users: ProfileViewModel
+                                                                .getUsersFromFollowers(followersViewModel
+                                                                                        .results)), searchText: "")
+                    self.isShowingExplorer = true
                 }, label: {
                     VStack {
                         Text("\(followersViewModel.results.count)")
@@ -61,7 +67,10 @@ struct ProfileUserDetailsView: View {
                 })
                 .buttonStyle(PlainButtonStyle())
                 Button(action: {
-
+                    self.explorerView = ExploreView(viewModel: .init(users: ProfileViewModel
+                                                                .getUsersFromFollowings(followingsViewModel
+                                                                                        .results)), searchText: "")
+                    self.isShowingExplorer = true
                 }, label: {
                     VStack {
                         Text("\(followingsViewModel.results.count)")
@@ -109,6 +118,9 @@ struct ProfileUserDetailsView: View {
             ImagePickerView(image: $viewModel.profilePicture)
         }).sheet(isPresented: $isShowingEditProfile, onDismiss: {}, content: {
             ProfileEditView(viewModel: viewModel)
+        })
+        .sheet(isPresented: $isShowingExplorer, onDismiss: {}, content: {
+            self.explorerView
         })
     }
 }

@@ -70,7 +70,7 @@ struct PostView: View {
             }), trailing: Button(action: {
                 viewModel.save { result in
                     if case .success(let post) = result {
-                        timeLineViewModel.postResults.insert(post, at: 0)
+                        timeLineViewModel.results.insert(post, at: 0)
                     }
                 }
                 self.presentationMode.wrappedValue.dismiss()

@@ -21,7 +21,7 @@ struct TimeLineView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            VStack {
+
                 if !timeLineViewModel.results.isEmpty {
                     List(timeLineViewModel.results, id: \.id) { result in
                         VStack {
@@ -38,12 +38,11 @@ struct TimeLineView: View {
                 } else {
                     EmptyTimeLineView()
                 }
-                Spacer()
-            }
-            .onAppear(perform: {
-                timeLineViewModel.find()
-            })
-        }
+            Spacer()
+
+        }.onAppear(perform: {
+            timeLineViewModel.find()
+        })
     }
 
     init(viewModel: QueryImageViewModel<Post>? = nil) {
