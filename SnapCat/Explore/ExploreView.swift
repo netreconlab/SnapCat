@@ -17,18 +17,16 @@ struct ExploreView: View {
     var body: some View {
         VStack {
             if !viewModel.users.isEmpty {
-                NavigationView {
-                    Form {
-                        Section {
-                            SearchBarView(searchText: $searchText)
-                        }
+                // NavigationView {
+                    VStack {
+                        SearchBarView(searchText: $searchText)
                         ForEach(viewModel
                                     .users
                                     .filter({
                                         // swiftlint:disable:next line_length
                                         searchText == "" ? true : $0.username!.lowercased().contains(searchText.lowercased())
                                     }), id: \.id) { user in
-                            NavigationLink(destination: ProfileView(user: user), label: {
+                            /*NavigationLink(destination: ProfileView(user: user), label: {*/
 
                                 HStack {
 
@@ -70,10 +68,11 @@ struct ExploreView: View {
                                             .border(Color(tintColor))
                                     })
                                 }
-                            })
+                            // })
                         }
                     }
-                }
+                    .padding()
+                // }
                 Spacer()
             } else {
                 EmptyExploreView()
