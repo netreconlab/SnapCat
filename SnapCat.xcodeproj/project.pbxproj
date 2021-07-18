@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7026163626A3C3690002E374 /* TimeLineImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163526A3C3690002E374 /* TimeLineImageView.swift */; };
+		7026163826A3C7AA0002E374 /* TimeLineLikeCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163726A3C7AA0002E374 /* TimeLineLikeCommentView.swift */; };
+		7026163A26A3CA920002E374 /* TimeLineCommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163926A3CA920002E374 /* TimeLineCommentsView.swift */; };
 		9116F66B26A1CC420082F6D6 /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9116F66A26A1CC420082F6D6 /* CommentView.swift */; };
 		9116F66D26A1CC500082F6D6 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9116F66C26A1CC500082F6D6 /* CommentViewModel.swift */; };
 		9116F67426A38FB10082F6D6 /* ViewAllComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9116F67326A38FB00082F6D6 /* ViewAllComments.swift */; };
@@ -79,6 +82,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7026163526A3C3690002E374 /* TimeLineImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineImageView.swift; sourceTree = "<group>"; };
+		7026163726A3C7AA0002E374 /* TimeLineLikeCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineLikeCommentView.swift; sourceTree = "<group>"; };
+		7026163926A3CA920002E374 /* TimeLineCommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineCommentsView.swift; sourceTree = "<group>"; };
 		9116F66A26A1CC420082F6D6 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
 		9116F66C26A1CC500082F6D6 /* CommentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		9116F67326A38FB00082F6D6 /* ViewAllComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAllComments.swift; sourceTree = "<group>"; };
@@ -277,9 +283,12 @@
 				91F346B2269B4770005727B6 /* ImagePickerView.swift */,
 				91F346B4269B48CF005727B6 /* PostView.swift */,
 				91F346B6269B4B10005727B6 /* PostViewModel.swift */,
-				9116F67326A38FB00082F6D6 /* ViewAllComments.swift */,
+				7026163926A3CA920002E374 /* TimeLineCommentsView.swift */,
+				7026163526A3C3690002E374 /* TimeLineImageView.swift */,
+				7026163726A3C7AA0002E374 /* TimeLineLikeCommentView.swift */,
 				91285B0E269356B20051B544 /* TimeLineView.swift */,
 				91285B10269356EA0051B544 /* TimeLineViewModel.swift */,
+				9116F67326A38FB00082F6D6 /* ViewAllComments.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -513,6 +522,8 @@
 				916E0996269247AE00356C08 /* Date+extension.swift in Sources */,
 				916E09792691DC5700356C08 /* Logger+extension.swift in Sources */,
 				916E095B2691539700356C08 /* Activity.swift in Sources */,
+				7026163826A3C7AA0002E374 /* TimeLineLikeCommentView.swift in Sources */,
+				7026163A26A3CA920002E374 /* TimeLineCommentsView.swift in Sources */,
 				916E098C2692280400356C08 /* EmptyExploreViewController.swift in Sources */,
 				916E092A26914E9A00356C08 /* OnboardingView.swift in Sources */,
 				916E09A82692ACE000356C08 /* EmptyActivityView.swift in Sources */,
@@ -524,6 +535,7 @@
 				916E095D2691564200356C08 /* Post.swift in Sources */,
 				916E099A26924BC000356C08 /* HomeViewModel.swift in Sources */,
 				91F346B3269B4770005727B6 /* ImagePickerView.swift in Sources */,
+				7026163626A3C3690002E374 /* TimeLineImageView.swift in Sources */,
 				916E099826924B3000356C08 /* ProfileViewModel.swift in Sources */,
 				916E098426921C2700356C08 /* UIImage+extension.swift in Sources */,
 				916E096426915BC200356C08 /* OnboardingViewModel.swift in Sources */,
