@@ -10,6 +10,7 @@ import Foundation
 import ParseSwift
 
 // swiftlint:disable line_length
+// swiftlint:disable function_body_length
 
 extension ParseSwift {
     /** Can setup a connection to Parse Server based on a ParseCareKit.plist file.
@@ -34,6 +35,8 @@ extension ParseSwift {
         var clientKey: String?
         var liveQueryURL: URL?
         var useTransactionsInternally = false
+        var cacheMemoryCapacity = 512_000
+        var cacheDiskCapacity = 10_000_000
         guard let path = Bundle.main.path(forResource: "ParseSwift", ofType: "plist"),
             let xml = FileManager.default.contents(atPath: path) else {
                 fatalError("Error in ParseCareKit.setupServer(). Can't find ParseCareKit.plist in this project")
@@ -67,11 +70,22 @@ extension ParseSwift {
             useTransactionsInternally = internalTransactions
         }
 
+        if let capacity = parseDictionary["CacheMemoryCapacity"] as? Int {
+            cacheMemoryCapacity = capacity
+        }
+
+        if let capacity = parseDictionary["CacheDiskCapacity"] as? Int {
+            cacheDiskCapacity = capacity
+        }
+
         ParseSwift.initialize(applicationId: appID,
                               clientKey: clientKey,
                               serverURL: serverURL,
                               liveQueryServerURL: liveQueryURL,
                               useTransactionsInternally: useTransactionsInternally,
+                              requestCachePolicy: .useProtocolCachePolicy,
+                              cacheMemoryCapacity: cacheMemoryCapacity,
+                              cacheDiskCapacity: cacheDiskCapacity,
                               authentication: authentication)
     }
 }

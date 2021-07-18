@@ -12,6 +12,10 @@
 		<string>http://localhost:1337/1</string>
 		<key>UseTransactionsInternally</key>
 		<false/>
+		<key>CacheMemoryCapacity</key>
+		<integer>30000000</integer>
+		<key>CacheDiskCapacity</key>
+		<integer>100000000</integer>
 	</dict>
 </dict>
 </plist>
