@@ -1,6 +1,6 @@
 //
-//  TimeLineImageView.swift
-//  TimeLineImageView
+//  TimeLinePostView.swift
+//  TimeLinePostView
 //
 //  Created by Corey Baker on 7/17/21.
 //  Copyright © 2021 Network Reconnaissance Lab. All rights reserved.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct TimeLineImageView: View {
+struct TimeLinePostView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var post: Post
     var body: some View {
@@ -21,7 +21,17 @@ struct TimeLineImageView: View {
                     .onTapGesture(count: 2) {
                         TimeLineViewModel.likePost(post,
                                                    currentLikes: timeLineViewModel
-                                                    .likes[post.id])
+                                                    .likes[post.id]) { (activity, status) in
+                            switch status {
+
+                            case .like:
+                                timeLineViewModel.likes[post.id]?.append(activity)
+                            case .unlike:
+                                timeLineViewModel.likes[post.id]?.removeAll(where: {$0.hasSameObjectId(as: activity)})
+                            case .error:
+                                break
+                            }
+                        }
                     }
                     .padding([.top, .bottom])
             } else {
@@ -36,6 +46,6 @@ struct TimeLineImageView: View {
 
 struct TimeLineImageView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeLineImageView(timeLineViewModel: .init(query: Post.query()), post: Post())
+        TimeLinePostView(timeLineViewModel: .init(query: Post.query()), post: Post())
     }
 }

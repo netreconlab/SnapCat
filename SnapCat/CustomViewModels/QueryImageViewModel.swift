@@ -94,6 +94,7 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                     }
                 }
             }
+            objectWillChange.send()
         }
     }
 

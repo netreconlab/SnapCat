@@ -29,6 +29,12 @@ struct Activity: ParseObject {
         case comment
     }
 
+    enum LikeState: String, Codable {
+        case like
+        case unlike
+        case error
+    }
+
     init(type: ActionType, from fromUser: User?, to toUser: User?) {
         self.type = type
         self.fromUser = fromUser

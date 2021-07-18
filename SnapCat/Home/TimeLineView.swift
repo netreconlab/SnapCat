@@ -25,7 +25,7 @@ struct TimeLineView: View {
                 if !timeLineViewModel.results.isEmpty {
                     List(timeLineViewModel.results, id: \.id) { result in
                         VStack {
-                            TimeLineImageView(timeLineViewModel: timeLineViewModel, post: result)
+                            TimeLinePostView(timeLineViewModel: timeLineViewModel, post: result)
                                 .frame(width: 0.75 * geometry.size.width,
                                        height: 0.75 * geometry.size.width,
                                        alignment: .center)

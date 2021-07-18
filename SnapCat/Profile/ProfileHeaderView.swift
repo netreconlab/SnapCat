@@ -11,6 +11,7 @@ import SwiftUI
 struct ProfileHeaderView: View {
     @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
     @ObservedObject var viewModel: ProfileViewModel
+    @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var isShowingPost = false
     @State var isShowingOptions = false
     var body: some View {
@@ -42,7 +43,7 @@ struct ProfileHeaderView: View {
                 })
             }
         }.fullScreenCover(isPresented: $isShowingPost, content: {
-            PostView()
+            PostView(timeLineViewModel: timeLineViewModel)
         }).sheet(isPresented: $isShowingOptions, onDismiss: {}, content: {
             SettingsView()
         })
@@ -51,6 +52,7 @@ struct ProfileHeaderView: View {
 
 struct ProfileHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileHeaderView(viewModel: .init(user: User()))
+        ProfileHeaderView(viewModel: .init(user: User()),
+                          timeLineViewModel: .init(query: Post.query()))
     }
 }

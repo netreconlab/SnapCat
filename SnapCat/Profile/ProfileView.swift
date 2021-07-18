@@ -18,7 +18,8 @@ struct ProfileView: View {
 
     var body: some View {
         VStack {
-            ProfileHeaderView(viewModel: viewModel)
+            ProfileHeaderView(viewModel: viewModel,
+                              timeLineViewModel: timeLineViewModel)
             ProfileUserDetailsView(viewModel: viewModel,
                                    followersViewModel: followersViewModel,
                                    followingsViewModel: followingsViewModel,

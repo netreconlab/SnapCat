@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7026163626A3C3690002E374 /* TimeLineImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163526A3C3690002E374 /* TimeLineImageView.swift */; };
+		7026163626A3C3690002E374 /* TimeLinePostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163526A3C3690002E374 /* TimeLinePostView.swift */; };
 		7026163826A3C7AA0002E374 /* TimeLineLikeCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163726A3C7AA0002E374 /* TimeLineLikeCommentView.swift */; };
 		7026163A26A3CA920002E374 /* TimeLineCommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163926A3CA920002E374 /* TimeLineCommentsView.swift */; };
 		9116F66B26A1CC420082F6D6 /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9116F66A26A1CC420082F6D6 /* CommentView.swift */; };
@@ -84,7 +84,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		7026163526A3C3690002E374 /* TimeLineImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineImageView.swift; sourceTree = "<group>"; };
+		7026163526A3C3690002E374 /* TimeLinePostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLinePostView.swift; sourceTree = "<group>"; };
 		7026163726A3C7AA0002E374 /* TimeLineLikeCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineLikeCommentView.swift; sourceTree = "<group>"; };
 		7026163926A3CA920002E374 /* TimeLineCommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineCommentsView.swift; sourceTree = "<group>"; };
 		9116F66A26A1CC420082F6D6 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
@@ -288,8 +288,8 @@
 				91F346B4269B48CF005727B6 /* PostView.swift */,
 				91F346B6269B4B10005727B6 /* PostViewModel.swift */,
 				7026163926A3CA920002E374 /* TimeLineCommentsView.swift */,
-				7026163526A3C3690002E374 /* TimeLineImageView.swift */,
 				7026163726A3C7AA0002E374 /* TimeLineLikeCommentView.swift */,
+				7026163526A3C3690002E374 /* TimeLinePostView.swift */,
 				91285B0E269356B20051B544 /* TimeLineView.swift */,
 				91285B10269356EA0051B544 /* TimeLineViewModel.swift */,
 				9116F67326A38FB00082F6D6 /* ViewAllComments.swift */,
@@ -312,10 +312,10 @@
 		916E096E26916C0D00356C08 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				916E097326916C7B00356C08 /* ProfileView.swift */,
+				91F346B0269A8E30005727B6 /* ProfileEditView.swift */,
 				91337F3D26A48C84002649D1 /* ProfileHeaderView.swift */,
 				91337F3F26A48CAA002649D1 /* ProfileUserDetailsView.swift */,
-				91F346B0269A8E30005727B6 /* ProfileEditView.swift */,
+				916E097326916C7B00356C08 /* ProfileView.swift */,
 				916E099726924B3000356C08 /* ProfileViewModel.swift */,
 				91F346AC269A7B55005727B6 /* SettingsView.swift */,
 				91F346AE269A7B72005727B6 /* SettingsViewModel.swift */,
@@ -542,7 +542,7 @@
 				916E095D2691564200356C08 /* Post.swift in Sources */,
 				916E099A26924BC000356C08 /* HomeViewModel.swift in Sources */,
 				91F346B3269B4770005727B6 /* ImagePickerView.swift in Sources */,
-				7026163626A3C3690002E374 /* TimeLineImageView.swift in Sources */,
+				7026163626A3C3690002E374 /* TimeLinePostView.swift in Sources */,
 				916E099826924B3000356C08 /* ProfileViewModel.swift in Sources */,
 				916E098426921C2700356C08 /* UIImage+extension.swift in Sources */,
 				916E096426915BC200356C08 /* OnboardingViewModel.swift in Sources */,

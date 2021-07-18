@@ -51,7 +51,7 @@ class PostViewModel: NSObject, ObservableObject {
         locationManager.requestWhenInUseAuthorization()
     }
 
-    func save() {
+    func save(completion: @escaping (Result<Post, ParseError>) -> Void) {
         guard let image = image,
               let compressed = image.compressTo(3) else {
             return
@@ -59,7 +59,16 @@ class PostViewModel: NSObject, ObservableObject {
         post?.image = ParseFile(data: compressed)
         post?.caption = caption
         post?.location = location
-        post?.save { _ in }
+        post?.save { result in
+            switch result {
+
+            case .success(let post):
+                // Need to fetch new file location
+                post.fetch(completion: completion)
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 
     // MARK: Queries

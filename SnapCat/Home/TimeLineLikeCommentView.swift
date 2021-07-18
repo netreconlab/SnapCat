@@ -26,7 +26,17 @@ struct TimeLineLikeCommentView: View {
                 }.onTapGesture(count: 1) {
                     TimeLineViewModel.likePost(post,
                                                currentLikes: timeLineViewModel
-                                                .likes[post.id])
+                                                .likes[post.id]) { (activity, status) in
+                        switch status {
+
+                        case .like:
+                            timeLineViewModel.likes[post.id]?.append(activity)
+                        case .unlike:
+                            timeLineViewModel.likes[post.id]?.removeAll(where: {$0.hasSameObjectId(as: activity)})
+                        case .error:
+                            break
+                        }
+                    }
                 }
                 VStack {
                     if timeLineViewModel.isCommentedOnPost(post,

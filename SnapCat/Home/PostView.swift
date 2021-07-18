@@ -10,6 +10,7 @@ import SwiftUI
 import ParseSwift
 
 struct PostView: View {
+    @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @ObservedObject var viewModel = PostViewModel()
     @State private var isShowingImagePicker = false
     @Environment(\.presentationMode) var presentationMode
@@ -67,7 +68,11 @@ struct PostView: View {
             }, label: {
                 Text("Cancel")
             }), trailing: Button(action: {
-                viewModel.save()
+                viewModel.save { result in
+                    if case .success(let post) = result {
+                        timeLineViewModel.postResults.insert(post, at: 0)
+                    }
+                }
                 self.presentationMode.wrappedValue.dismiss()
             }, label: {
                 Text("Done")
@@ -81,6 +86,6 @@ struct PostView: View {
 
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
-        PostView()
+        PostView(timeLineViewModel: .init(query: Post.query()))
     }
 }
