@@ -18,7 +18,7 @@ struct TimeLineCommentsView: View {
                comments.count > 0 {
                 if comments.count > 1 {
                     HStack {
-                        Text("View all \(comments.count)")
+                        Text("View all \(comments.count) comments")
                             .font(.footnote)
                             .onTapGesture(count: 1) {
                                 self.timeLineViewModel.postSelected = post

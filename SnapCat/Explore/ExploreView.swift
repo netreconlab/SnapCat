@@ -77,9 +77,7 @@ struct ExploreView: View {
             } else {
                 EmptyExploreView()
             }
-        }.onAppear(perform: {
-            viewModel.queryUsersNotFollowing()
-        })
+        }
     }
 }
 

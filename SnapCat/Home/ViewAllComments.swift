@@ -26,8 +26,13 @@ struct ViewAllComments: View {
                                 Text(lastComment)
                             }
                         }
-                        Divider()
-                            .padding()
+                        if let createdAt = result.createdAt {
+                            HStack {
+                                Text(createdAt.relativeTime)
+                                    .font(.footnote)
+                                Spacer()
+                            }
+                        }
                     }
                 }
                 .navigationBarBackButtonHidden(true)

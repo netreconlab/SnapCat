@@ -13,7 +13,7 @@
 		<key>UseTransactionsInternally</key>
 		<false/>
 		<key>CacheMemoryCapacity</key>
-		<integer>30000000</integer>
+		<real>60000000</real>
 		<key>CacheDiskCapacity</key>
 		<integer>100000000</integer>
 	</dict>

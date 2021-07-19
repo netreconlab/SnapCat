@@ -58,7 +58,7 @@ class ExploreViewModel: ObservableObject {
             switch result {
 
             case .success(let foundUsers):
-                var objectIds = foundUsers.compactMap { $0.objectId }
+                var objectIds = foundUsers.compactMap { $0.toUser?.id }
                 objectIds.append(currentUserObjectId)
                 let query = User.query(notContainedIn(key: ParseKey.objectId, array: objectIds))
 
