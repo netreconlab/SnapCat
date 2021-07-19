@@ -82,7 +82,7 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                         }
                 }
                 // Fetch images
-                if imageResults.count == Constants.numberOfImagesToDownload {
+                if imageResults.count >= Constants.numberOfImagesToDownload {
                     return
                 }
                 guard imageResults[object.id] == nil else {
@@ -91,6 +91,13 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                 Utility.fetchImage(object.image) { image in
                     if let image = image {
                         self.imageResults[object.id] = image
+                    }
+                }
+                Utility.fetchImage(object.user?.profileImage) { image in
+                    if let image = image {
+                        if let userObjectId = object.user?.id {
+                            self.imageResults[userObjectId] = image
+                        }
                     }
                 }
             }

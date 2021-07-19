@@ -27,9 +27,7 @@ struct PostView: View {
                             if let image = viewModel.image {
                                 Image(uiImage: image)
                                     .resizable()
-                                    .frame(width: 200, height: 200, alignment: .center)
-                                    .clipShape(Rectangle())
-                                    .padding()
+                                    .scaledToFill()
                             } else {
                                 Image(systemName: "camera")
                                     .resizable()
@@ -68,11 +66,7 @@ struct PostView: View {
             }, label: {
                 Text("Cancel")
             }), trailing: Button(action: {
-                viewModel.save { result in
-                    if case .success(let post) = result {
-                        timeLineViewModel.results.insert(post, at: 0)
-                    }
-                }
+                viewModel.save { _ in }
                 self.presentationMode.wrappedValue.dismiss()
             }, label: {
                 Text("Done")

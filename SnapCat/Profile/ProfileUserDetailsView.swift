@@ -10,7 +10,10 @@ import SwiftUI
 import ParseSwift
 
 struct ProfileUserDetailsView: View {
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
+    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1) }
+    @State var gradient = LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1)), Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1))]),
+                                         startPoint: .top,
+                                         endPoint: .bottom)
     @ObservedObject var viewModel: ProfileViewModel
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
@@ -32,7 +35,7 @@ struct ProfileUserDetailsView: View {
                             .frame(width: 90, height: 90, alignment: .leading)
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
-                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
+                                .overlay(Circle().stroke(gradient, lineWidth: 3))
                             .padding()
                     } else {
                         Image(systemName: "person.circle")
@@ -40,7 +43,7 @@ struct ProfileUserDetailsView: View {
                             .frame(width: 90, height: 90, alignment: .leading)
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
-                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
+                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 3))
                             .padding()
                     }
                 })
