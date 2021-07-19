@@ -31,15 +31,13 @@ struct OnboardingView: View {
                     .foregroundColor(.white)
                     .padding([.top], 40)
 
-                Image(systemName: "camera")
-                    .renderingMode(.template)
+                Image("Snapcat")
                     .resizable()
-                    .frame(width: 150, height: 150, alignment: .center)
+                    .frame(width: 250, height: 250, alignment: .center)
                     .clipShape(Circle())
-                    .overlay(Circle().stroke(Color(.white), lineWidth: 4))
+                    .overlay(Circle().stroke(Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1)), lineWidth: 4))
                     .shadow(radius: 10)
                     .padding()
-                    .layoutPriority(-100)
 
                 Picker(selection: $signupLoginSegmentValue, label: Text("Login Picker"), content: {
                     Text("Login").tag(0)

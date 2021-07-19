@@ -17,7 +17,8 @@ struct TimeLinePostView: View {
             if let image = timeLineViewModel.imageResults[post.id] {
                 Image(uiImage: image)
                     .resizable()
-                    .clipShape(Rectangle())
+                    .scaledToFill()
+                    // .clipShape(Rectangle())
                     .onTapGesture(count: 2) {
                         TimeLineViewModel.likePost(post,
                                                    currentLikes: timeLineViewModel
