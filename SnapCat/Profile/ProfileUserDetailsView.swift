@@ -21,7 +21,6 @@ struct ProfileUserDetailsView: View {
     @State var isShowingImagePicker = false
     @State var isShowingEditProfile = false
     @State var isShowingExplorer = false
-    @State var explorerView = ExploreView()
 
     var body: some View {
         VStack {
@@ -56,9 +55,10 @@ struct ProfileUserDetailsView: View {
                         .padding(.trailing)
                 }
                 Button(action: {
-                    self.explorerView = ExploreView(viewModel: .init(users: ProfileViewModel
-                                                                .getUsersFromFollowers(followersViewModel
-                                                                                        .results)), searchText: "")
+                    let explorerViewModel = ExploreViewModel(isShowingFollowers: true,
+                                                             followersViewModel: followersViewModel,
+                                                             followingsViewModel: followingsViewModel)
+                    self.viewModel.explorerView = ExploreView(viewModel: explorerViewModel, searchText: "")
                     self.isShowingExplorer = true
                 }, label: {
                     VStack {
@@ -70,9 +70,10 @@ struct ProfileUserDetailsView: View {
                 })
                 .buttonStyle(PlainButtonStyle())
                 Button(action: {
-                    self.explorerView = ExploreView(viewModel: .init(users: ProfileViewModel
-                                                                .getUsersFromFollowings(followingsViewModel
-                                                                                        .results)), searchText: "")
+                    let explorerViewModel = ExploreViewModel(isShowingFollowers: false,
+                                                             followersViewModel: followersViewModel,
+                                                             followingsViewModel: followingsViewModel)
+                    self.viewModel.explorerView = ExploreView(viewModel: explorerViewModel, searchText: "")
                     self.isShowingExplorer = true
                 }, label: {
                     VStack {
@@ -110,10 +111,10 @@ struct ProfileUserDetailsView: View {
                 }, label: {
                     Text("Edit Profile")
                         .frame(minWidth: 0, maxWidth: .infinity)
-                        .foregroundColor(Color(tintColor))
+                        .foregroundColor(.white)
                         .padding()
                         .cornerRadius(15)
-                        .border(Color(tintColor))
+                        .background(Color(tintColor))
                 })
                 .padding([.leading, .trailing], 20)
             }
@@ -123,7 +124,7 @@ struct ProfileUserDetailsView: View {
             ProfileEditView(viewModel: viewModel)
         })
         .sheet(isPresented: $isShowingExplorer, onDismiss: {}, content: {
-            self.explorerView
+            self.viewModel.explorerView
         })
     }
 }

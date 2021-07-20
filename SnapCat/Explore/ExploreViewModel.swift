@@ -13,7 +13,28 @@ import UIKit
 
 @dynamicMemberLookup
 class ExploreViewModel: ObservableObject {
-
+    var isSettingForFirstTime = true
+    var isShowingFollowers: Bool?
+    var followersViewModel: QueryViewModel<Activity>? {
+        willSet {
+            if !isSettingForFirstTime {
+                guard let followers = newValue else {
+                    return
+                }
+                users = followers.results.compactMap { $0.fromUser }
+            }
+        }
+    }
+    var followingsViewModel: QueryViewModel<Activity>? {
+        willSet {
+            if !isSettingForFirstTime {
+                guard let followings = newValue else {
+                    return
+                }
+                users = followings.results.compactMap { $0.toUser }
+            }
+        }
+    }
     @Published var users = [User]() {
         willSet {
             newValue.forEach { object in
@@ -40,12 +61,26 @@ class ExploreViewModel: ObservableObject {
         return users
     }
 
-    init(users: [User]? = nil) {
-        guard let users = users else {
+    init(isShowingFollowers: Bool? = nil,
+         followersViewModel: QueryViewModel<Activity>? = nil,
+         followingsViewModel: QueryViewModel<Activity>? = nil) {
+        if let isShowingFollowers = isShowingFollowers {
+            guard let followersViewModel = followersViewModel,
+                  let followingsViewModel = followingsViewModel else {
+                return
+            }
+            self.followersViewModel = followersViewModel
+            self.followingsViewModel = followingsViewModel
+            self.isShowingFollowers = isShowingFollowers
+            if isShowingFollowers {
+                updateFollowers()
+            } else {
+                updateFollowings()
+            }
+            self.isSettingForFirstTime = false
+        } else {
             queryUsersNotFollowing()
-            return
         }
-        self.users = users
     }
 
     // MARK: Intents
@@ -88,5 +123,45 @@ class ExploreViewModel: ObservableObject {
                 Logger.explore.error("Couldn't save follow: \(error)")
             }
         }
+    }
+
+    func unfollowUser(_ toUser: User) {
+        guard let currentUser = User.current,
+              let activity = followingsViewModel?.results.first(where: { activity in
+                  guard let activityToUser = activity.toUser,
+                        let activityFromUser = activity.fromUser,
+                        let activityType = activity.type,
+                        activityToUser.hasSameObjectId(as: toUser),
+                        activityFromUser.hasSameObjectId(as: currentUser),
+                        activityType == Activity.ActionType.follow else {
+                      return false
+                  }
+                  return true
+              }) else {
+            return
+        }
+
+        activity.delete { result in
+            if case .failure(let error) = result {
+                Logger.explore.error("Couldn't delete activity \(error)")
+            } else {
+                self.followingsViewModel?.results.removeAll(where: { $0.hasSameObjectId(as: activity) })
+                self.updateFollowings()
+            }
+        }
+    }
+
+    // MARK: Helpers
+    func updateFollowers() {
+        guard let followersViewModel = followersViewModel else {
+            return
+        }
+        self.users = followersViewModel.results.compactMap { $0.fromUser }
+    }
+    func updateFollowings() {
+        guard let followingsViewModel = followingsViewModel else {
+            return
+        }
+        self.users = followingsViewModel.results.compactMap { $0.toUser }
     }
 }

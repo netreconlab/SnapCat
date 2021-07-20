@@ -57,14 +57,27 @@ struct ExploreView: View {
                                 }
                                 Spacer()
                             })
-                            Button(action: {
-                                viewModel.followUser(user)
-                            }, label: {
-                                Text("Follow")
-                                    .foregroundColor(Color(tintColor))
-                                    .padding()
-                                    .border(Color(tintColor))
-                            })
+                            if viewModel.isShowingFollowers == nil || viewModel.isShowingFollowers == true {
+                                Button(action: {
+                                    viewModel.followUser(user)
+                                }, label: {
+                                    Text("Follow")
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .background(Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1)))
+                                        .cornerRadius(15)
+                                })
+                            } else {
+                                Button(action: {
+                                    viewModel.unfollowUser(user)
+                                }, label: {
+                                    Text("Unfollow")
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .background(Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1)))
+                                        .cornerRadius(15)
+                                })
+                            }
                         }
                     }
                     .navigationBarHidden(true)

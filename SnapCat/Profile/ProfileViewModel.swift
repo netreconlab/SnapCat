@@ -9,10 +9,11 @@
 import Foundation
 import os.log
 import ParseSwift
+import SwiftUI
 import UIKit
 
 class ProfileViewModel: ObservableObject {
-
+    var explorerView: ExploreView?
     @Published var user: User
     @Published var error: SnapCatError?
     @Published var username: String = "" {
