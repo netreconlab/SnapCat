@@ -33,12 +33,56 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
             switch event {
 
             case .created(let object):
-                results.insert(object, at: 0)
+                if var post = object as? Post {
+                    // LiveQuery doesn't include pointers, need to check to fetch
+                    guard let userObjectId = post.user?.id,
+                        let user = relatedUser[userObjectId] else {
+                        post.fetch(includeKeys: [PostKey.user]) { result in
+                            switch result {
+
+                            case .success(let fetchPost):
+                                if let parseObject = fetchPost as? T {
+                                    self.results.insert(parseObject, at: 0)
+                                }
+                            case .failure(let error):
+                                Logger.post.error("Couldn't fetch \(error)")
+                            }
+                        }
+                        return
+                    }
+                    post.user = user
+                    if let parseObject = post as? T {
+                        self.results.insert(parseObject, at: 0)
+                    }
+                }
+
             case .updated(let object):
                 guard let index = results.firstIndex(of: object) else {
                     return
                 }
-                results[index] = object
+                if var post = object as? Post {
+                    // LiveQuery doesn't include pointers, need to check to fetch
+                    guard let userObjectId = post.user?.id,
+                        let user = relatedUser[userObjectId] else {
+                        post.fetch(includeKeys: [PostKey.user]) { result in
+                            switch result {
+
+                            case .success(let fetchPost):
+                                if let parseObject = fetchPost as? T {
+                                    self.results[index] = parseObject
+                                }
+                            case .failure(let error):
+                                Logger.post.error("Couldn't fetch \(error)")
+                            }
+                        }
+                        return
+                    }
+                    post.user = user
+                    if let parseObject = post as? T {
+                        self.results[index] = parseObject
+                    }
+                }
+
             case .deleted(let object):
                 guard let index = results.firstIndex(of: object) else {
                     return
@@ -49,7 +93,6 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
             }
             subscribed = nil
             unsubscribed = nil
-            objectWillChange.send()
         }
     }
 
@@ -58,6 +101,7 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
     var postResults = [Post]() {
         willSet {
             newValue.forEach { object in
+                storeRelatedUser(object.user)
                 if likes[object.id] == nil {
                     PostViewModel
                         .queryLikes(post: object)
@@ -110,6 +154,7 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
     var userResults = [User]() {
         willSet {
             newValue.forEach { object in
+                storeRelatedUser(object)
                 // Fetch images
                 if imageResults.count == Constants.numberOfImagesToDownload {
                     return
@@ -125,6 +170,8 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
             }
         }
     }
+
+    var relatedUser = [String: User]()
 
     /// Contains all fetched images.
     var imageResults = [String: UIImage]() {
@@ -157,6 +204,14 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
     var postSelected: Post?
 
     // MARK: Helpers
+    func storeRelatedUser(_ user: User?) {
+        guard let userObjectId = user?.id,
+              relatedUser[userObjectId] == nil else {
+            return
+        }
+        relatedUser[userObjectId] = user
+    }
+
     func isLikedPost(_ post: Post, userObjectId: String? = nil) -> Bool {
         let userOfInterest: String!
         if let user = userObjectId {

@@ -54,7 +54,6 @@ struct TimeLineView: View {
                         TimeLinePostView(timeLineViewModel: timeLineViewModel,
                                          post: result)
                             .scaledToFill()
-                            .padding(.bottom)
                         TimeLineLikeCommentView(timeLineViewModel: timeLineViewModel,
                                                 post: result,
                                                 currentObjectId: currentObjectId)

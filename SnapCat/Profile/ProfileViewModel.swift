@@ -11,7 +11,6 @@ import os.log
 import ParseSwift
 import UIKit
 
-// swiftlint:disable type_body_length
 class ProfileViewModel: ObservableObject {
 
     @Published var user: User
@@ -77,12 +76,8 @@ class ProfileViewModel: ObservableObject {
                                 fetchedUser.profileImage?.fetch { result in
                                     switch result {
 
-                                    case .success(let profilePic):
-                                        if let path = profilePic.localURL?.relativePath {
-                                            // If there's a newer file in the cloud, need to fetch it
-                                            UserDefaults.standard.setValue(path, forKey: Constants.lastProfilePicURL)
-                                            UserDefaults.standard.synchronize()
-                                        }
+                                    case .success:
+                                        Logger.profile.info("Saved profile pic to cache")
                                     case .failure(let error):
                                         Logger.profile.error("Error fetching pic \(error)")
                                     }
@@ -136,43 +131,6 @@ class ProfileViewModel: ObservableObject {
             self.link = link.absoluteString
         }
         self.isSettingForFirstTime = false
-    }
-
-    func checkCacheForProfileImage() {
-        let cachedProfilePicURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String
-
-        if let cachedProfileURL = cachedProfilePicURL {
-            profilePicture = UIImage(contentsOfFile: cachedProfileURL)
-        }
-        let cachedProfileFileName = Utility.getFileNameFromPath(cachedProfilePicURL)
-        // If there's a newer file in the cloud, need to fetch it
-        if cachedProfileFileName != User.current?.profileImage?.name || self.profilePicture == nil {
-            if let cachedURL = cachedProfilePicURL {
-                try? Utility.removeFilesAtDirectory(cachedURL,
-                                                    isDirectory: false)
-            }
-            if let image = User.current?.profileImage {
-                image.fetch { fetchResult in
-                    switch fetchResult {
-
-                    case .success(let profilePicture):
-                        if let path = profilePicture.localURL?.relativePath {
-                            self.profilePicture = UIImage(contentsOfFile: path)
-                            UserDefaults.standard.setValue(path, forKey: Constants.lastProfilePicURL)
-                            UserDefaults.standard.synchronize()
-                        }
-                        self.settingProfilePicForFirstTime = false
-                    case .failure(let error):
-                        Logger.profile.error("Couldn't fetch profile pic: \(error)")
-                        self.settingProfilePicForFirstTime = false
-                    }
-                }
-            } else {
-                self.settingProfilePicForFirstTime = false
-            }
-        } else {
-            self.settingProfilePicForFirstTime = false
-        }
     }
 
     class func getUsersFromFollowers(_ activities: [Activity]) -> [User] {
