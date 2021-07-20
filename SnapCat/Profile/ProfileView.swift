@@ -46,7 +46,6 @@ struct ProfileView: View {
     }
 
     init(user: User? = nil, isShowingHeading: Bool = true) {
-        self.isShowingHeading = isShowingHeading
         var userProfile: User!
         if let user = user {
             userProfile = user
@@ -70,6 +69,7 @@ struct ProfileView: View {
             .queryFollowings(userProfile)
             .include(ActivityKey.toUser)
             .viewModel
+        self.isShowingHeading = isShowingHeading
         timeLineViewModel.find()
         followersViewModel.find()
         followingsViewModel.find()
