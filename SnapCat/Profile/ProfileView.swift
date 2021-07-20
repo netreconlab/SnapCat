@@ -15,7 +15,7 @@ struct ProfileView: View {
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var viewModel: ProfileViewModel
-    @State var isShowingHeading: Bool
+    @State var isShowingHeading = true
 
     var body: some View {
         VStack {

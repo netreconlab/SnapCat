@@ -11,15 +11,10 @@ import os.log
 import ParseSwift
 import UIKit
 
+// swiftlint:disable type_body_length
 class ProfileViewModel: ObservableObject {
 
-    @Published var user: User {
-        willSet {
-            Utility.fetchImage(user.profileImage) { image in
-                self.profilePicture = image
-            }
-        }
-    }
+    @Published var user: User
     @Published var error: SnapCatError?
     @Published var username: String = "" {
         willSet {
@@ -60,7 +55,51 @@ class ProfileViewModel: ObservableObject {
     private var settingProfilePicForFirstTime = true
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
-            objectWillChange.send()
+            if !isSettingForFirstTime {
+                guard let currentUser = User.current,
+                      currentUser.hasSameObjectId(as: user),
+                      let image = newValue,
+                      let compressed = image.compressTo(3) else {
+                    return
+                }
+                let newProfilePicture = ParseFile(name: "profile.jpeg", data: compressed)
+                user.profileImage = newProfilePicture
+                user.save { result in
+                    switch result {
+
+                    case .success(let user):
+
+                        user.fetch { result in
+                            switch result {
+
+                            case .success(let fetchedUser):
+
+                                fetchedUser.profileImage?.fetch { result in
+                                    switch result {
+
+                                    case .success(let profilePic):
+                                        if let path = profilePic.localURL?.relativePath {
+                                            // If there's a newer file in the cloud, need to fetch it
+                                            UserDefaults.standard.setValue(path, forKey: Constants.lastProfilePicURL)
+                                            UserDefaults.standard.synchronize()
+                                        }
+                                    case .failure(let error):
+                                        Logger.profile.error("Error fetching pic \(error)")
+                                    }
+                                }
+
+                            case .failure(let error):
+                                Logger.profile.error("Error fetching profile pic from cloud: \(error)")
+                            }
+                        }
+
+                    case .failure(let error):
+                        Logger.profile.error("Error saving profile pic \(error)")
+                        self.error = SnapCatError(parseError: error)
+                    }
+                }
+                objectWillChange.send()
+            }
         }
     }
     private var isSettingForFirstTime = true
@@ -77,7 +116,9 @@ class ProfileViewModel: ObservableObject {
             self.user = currentUser
         }
         Utility.fetchImage(self.user.profileImage) { image in
+            self.isSettingForFirstTime = true
             self.profilePicture = image
+            self.isSettingForFirstTime = false
         }
         if let username = self.user.username {
             self.username = username
