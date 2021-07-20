@@ -53,6 +53,8 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
         }
     }
 
+    var userOfInterest: User?
+
     var postResults = [Post]() {
         willSet {
             newValue.forEach { object in

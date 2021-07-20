@@ -11,10 +11,15 @@ import os.log
 import ParseSwift
 import UIKit
 
-// swiftlint:disable type_body_length
 class ProfileViewModel: ObservableObject {
 
-    @Published var user: User
+    @Published var user: User {
+        willSet {
+            Utility.fetchImage(user.profileImage) { image in
+                self.profilePicture = image
+            }
+        }
+    }
     @Published var error: SnapCatError?
     @Published var username: String = "" {
         willSet {
@@ -56,65 +61,6 @@ class ProfileViewModel: ObservableObject {
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
             objectWillChange.send()
-            if !settingProfilePicForFirstTime {
-                guard var user = User.current,
-                    let image = newValue,
-                    let compressed = image.compressTo(3) else {
-                    return
-                }
-
-                if let cachedURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String {
-                    try? Utility.removeFilesAtDirectory(cachedURL,
-                                                        isDirectory: false)
-                }
-                let newProfilePicture = ParseFile(name: "profile.jpeg", data: compressed)
-                user.profileImage = newProfilePicture
-                user.save { result in
-                    switch result {
-
-                    case .success(let user):
-
-                        user.fetch { result in
-                            switch result {
-
-                            case .success(let fetchedUser):
-                                guard let cloudFileName = fetchedUser.profileImage?.name else {
-                                    Logger.profile.error("Error saving profile pic. File should contain a name.")
-                                    return
-                                }
-                                // swiftlint:disable:next line_length
-                                if let cachedProfilePicURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String {
-                                    let cachedProfileFileName = Utility.getFileNameFromPath(cachedProfilePicURL)
-                                    if cloudFileName == cachedProfileFileName {
-                                        return
-                                    }
-                                }
-
-                                fetchedUser.profileImage?.fetch { result in
-                                    switch result {
-
-                                    case .success(let profilePic):
-                                        if let path = profilePic.localURL?.relativePath {
-                                            // If there's a newer file in the cloud, need to fetch it
-                                            UserDefaults.standard.setValue(path, forKey: Constants.lastProfilePicURL)
-                                            UserDefaults.standard.synchronize()
-                                        }
-                                    case .failure(let error):
-                                        Logger.profile.error("Error fetching pic \(error)")
-                                    }
-                                }
-
-                            case .failure(let error):
-                                Logger.profile.error("Error fetching profile pic from cloud: \(error)")
-                            }
-                        }
-
-                    case .failure(let error):
-                        Logger.profile.error("Error saving profile pic \(error)")
-                        self.error = SnapCatError(parseError: error)
-                    }
-                }
-            }
         }
     }
     private var isSettingForFirstTime = true
@@ -130,8 +76,8 @@ class ProfileViewModel: ObservableObject {
         } else {
             self.user = currentUser
         }
-        if self.user.hasSameObjectId(as: currentUser) {
-            checkCacheForProfileImage()
+        Utility.fetchImage(self.user.profileImage) { image in
+            self.profilePicture = image
         }
         if let username = self.user.username {
             self.username = username
