@@ -15,11 +15,24 @@ struct ProfileView: View {
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var viewModel: ProfileViewModel
+    @State var isShowingHeading: Bool
 
     var body: some View {
         VStack {
-            ProfileHeaderView(viewModel: viewModel,
-                              timeLineViewModel: timeLineViewModel)
+            if isShowingHeading {
+                ProfileHeaderView(viewModel: viewModel,
+                                  timeLineViewModel: timeLineViewModel)
+            } else {
+                HStack {
+                    if let username = viewModel.user.username {
+                        Text(username)
+                            .font(.title)
+                            .frame(alignment: .leading)
+                            .padding()
+                    }
+                    Spacer()
+                }
+            }
             ProfileUserDetailsView(viewModel: viewModel,
                                    followersViewModel: followersViewModel,
                                    followingsViewModel: followingsViewModel,
@@ -32,7 +45,8 @@ struct ProfileView: View {
         })
     }
 
-    init(user: User? = nil) {
+    init(user: User? = nil, isShowingHeading: Bool = true) {
+        self.isShowingHeading = isShowingHeading
         var userProfile: User!
         if let user = user {
             userProfile = user

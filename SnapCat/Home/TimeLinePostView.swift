@@ -11,7 +11,6 @@ import SwiftUI
 struct TimeLinePostView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var post: Post
-    @State var width: CGFloat
     var body: some View {
         VStack {
             HStack {
@@ -19,9 +18,7 @@ struct TimeLinePostView: View {
                     Spacer()
                     Image(uiImage: image)
                         .resizable()
-                        .frame(width: 0.85 * width,
-                               height: 0.85 * width,
-                               alignment: .center)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                         .clipShape(Rectangle())
                         .onTapGesture(count: 2) {
                             TimeLineViewModel.likePost(post,
@@ -54,6 +51,6 @@ struct TimeLinePostView: View {
 struct TimeLineImageView_Previews: PreviewProvider {
     static var previews: some View {
         TimeLinePostView(timeLineViewModel: .init(query: Post.query()),
-                         post: Post(), width: 0.0)
+                         post: Post())
     }
 }

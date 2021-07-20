@@ -62,6 +62,7 @@ struct ProfileEditView: View {
                     return Alert(title: Text("Error"),
                                  message: Text(error.message),
                                  dismissButton: .default(Text("Ok"), action: {
+                                    self.viewModel.error = nil
                                  })
                     )
                 } else if self.isPasswordResetSuccess {
