@@ -6,7 +6,7 @@
 SnapCat is a social media application for posting pictures, comments, and finding friends. SnapCat is designed using SwiftUI and the [ParseSwift SDK](https://github.com/parse-community/Parse-Swift). The app is meant to serve as a base app for University of Kentucky graudate researchers and undergraduate students learning iOS mobile app development.
 
 ## Setup Your Parse Server
-You can setup your parse-server locally to test using [snapcat](https://github.com/netreconlab/parse-hipaa/tree/snapcat) branch of [parse-hipaa](https://github.com/netreconlab/parse-hipaa). Simply type the following to get your parse-server running with postgres locally:
+You can setup your parse-server locally to test using [snapcat branch](https://github.com/netreconlab/parse-hipaa/tree/snapcat) of [parse-hipaa](https://github.com/netreconlab/parse-hipaa). Simply type the following to get your parse-server running with postgres locally:
 
 1. Fork [parse-hipaa](https://github.com/netreconlab/parse-hipaa/tree/snapcat)
 2. `cd parse-hipaa`
@@ -15,7 +15,7 @@ You can setup your parse-server locally to test using [snapcat](https://github.c
 
 ## Fork this repo 
 
-1. Fork [SnapCat](https://github.com/netreconlab/SnapCat.git)
+1. Fork [SnapCat](https://github.com/netreconlab/SnapCat.git), in particular the [snapcat branch](https://github.com/netreconlab/parse-hipaa/tree/snapcat).
 2. Open `SnapCat.xcodeproj` in Xcode
 3. You may need to configure your "Team" and "Bundle Identifier" in "Signing and Capabilities"
 4. Run the app and data will synchronize with parse-hipaa via http://localhost:1337/parse automatically
