@@ -15,6 +15,7 @@ struct ProfileView: View {
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var viewModel: ProfileViewModel
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         VStack {
@@ -43,6 +44,10 @@ struct ProfileView: View {
             Divider()
             TimeLineView(viewModel: timeLineViewModel)
         }.onAppear(perform: {
+            guard User.current != nil else {
+                self.presentationMode.wrappedValue.dismiss()
+                return
+            }
             followersViewModel.find()
             followingsViewModel.find()
         })
