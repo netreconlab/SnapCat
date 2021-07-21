@@ -17,6 +17,9 @@
 		91285B11269356EA0051B544 /* TimeLineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91285B10269356EA0051B544 /* TimeLineViewModel.swift */; };
 		91337F3E26A48C84002649D1 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91337F3D26A48C84002649D1 /* ProfileHeaderView.swift */; };
 		91337F4026A48CAA002649D1 /* ProfileUserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91337F3F26A48CAA002649D1 /* ProfileUserDetailsView.swift */; };
+		916548E026A87DE3008174EA /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 916548DF26A87DE3008174EA /* README.md */; };
+		916548E426A87DF1008174EA /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 916548E226A87DF1008174EA /* LICENSE */; };
+		916548E626A87E06008174EA /* CONTRIBUTING.md in Resources */ = {isa = PBXBuildFile; fileRef = 916548E526A87E06008174EA /* CONTRIBUTING.md */; };
 		916E092826914E9A00356C08 /* SnapCatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E092726914E9A00356C08 /* SnapCatApp.swift */; };
 		916E092A26914E9A00356C08 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E092926914E9A00356C08 /* OnboardingView.swift */; };
 		916E092C26914E9C00356C08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 916E092B26914E9C00356C08 /* Assets.xcassets */; };
@@ -94,6 +97,9 @@
 		91285B10269356EA0051B544 /* TimeLineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineViewModel.swift; sourceTree = "<group>"; };
 		91337F3D26A48C84002649D1 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		91337F3F26A48CAA002649D1 /* ProfileUserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileUserDetailsView.swift; sourceTree = "<group>"; };
+		916548DF26A87DE3008174EA /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		916548E226A87DF1008174EA /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		916548E526A87E06008174EA /* CONTRIBUTING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 		916E092426914E9A00356C08 /* SnapCat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnapCat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		916E092726914E9A00356C08 /* SnapCatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCatApp.swift; sourceTree = "<group>"; };
 		916E092926914E9A00356C08 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -178,6 +184,9 @@
 		916E091B26914E9A00356C08 = {
 			isa = PBXGroup;
 			children = (
+				916548E526A87E06008174EA /* CONTRIBUTING.md */,
+				916548E226A87DF1008174EA /* LICENSE */,
+				916548DF26A87DE3008174EA /* README.md */,
 				916E092626914E9A00356C08 /* SnapCat */,
 				916E093826914E9C00356C08 /* SnapCatTests */,
 				916E094326914E9D00356C08 /* SnapCatUITests */,
@@ -468,8 +477,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				916548E426A87DF1008174EA /* LICENSE in Resources */,
 				916E092F26914E9C00356C08 /* Preview Assets.xcassets in Resources */,
+				916548E626A87E06008174EA /* CONTRIBUTING.md in Resources */,
 				916E099426922E3300356C08 /* ParseSwift.plist in Resources */,
+				916548E026A87DE3008174EA /* README.md in Resources */,
 				916E092C26914E9C00356C08 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
