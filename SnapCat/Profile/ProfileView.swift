@@ -15,7 +15,7 @@ struct ProfileView: View {
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var viewModel: ProfileViewModel
-    @State var isShowingHeading = true
+    @State var isShowingHeading: Bool
 
     var body: some View {
         VStack {
@@ -29,6 +29,10 @@ struct ProfileView: View {
                             .font(.title)
                             .frame(alignment: .leading)
                             .padding()
+                    }
+                    if viewModel.isCurrentFollower() {
+                        Label("Follows You",
+                              systemImage: "checkmark.square.fill")
                     }
                     Spacer()
                 }

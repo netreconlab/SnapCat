@@ -54,6 +54,9 @@ class ExploreViewModel: ObservableObject {
         }
     }
 
+    @Published var currentUserFollowers = [User]()
+    @Published var currentUserFollowings = [User]()
+
     /// Contains all fetched images.
     @Published var profileImages = [String: UIImage]()
 
@@ -81,47 +84,42 @@ class ExploreViewModel: ObservableObject {
         } else {
             queryUsersNotFollowing()
         }
-    }
+        ProfileViewModel.queryFollowers().find { result in
+            switch result {
 
-    // MARK: Intents
-    func queryUsersNotFollowing() {
-        guard let currentUserObjectId = User.current?.objectId else {
-            Logger.explore.error("Couldn't get own objectId")
-            return
+            case .success(let activities):
+                self.currentUserFollowers = activities.compactMap { $0.fromUser }
+            case .failure(let error):
+                Logger.explore.error("Failed to query current followers: \(error)")
+            }
         }
         ProfileViewModel.queryFollowings().find { result in
             switch result {
 
-            case .success(let foundUsers):
-                var objectIds = foundUsers.compactMap { $0.toUser?.id }
-                objectIds.append(currentUserObjectId)
-                let query = User.query(notContainedIn(key: ParseKey.objectId, array: objectIds))
-
-                query.find { result in
-                    switch result {
-
-                    case .success(let users):
-                        self.users = users
-                    case .failure(let error):
-                        Logger.explore.error("Couldn't query users: \(error)")
-                    }
-                }
+            case .success(let activities):
+                self.currentUserFollowings = activities.compactMap { $0.toUser }
             case .failure(let error):
-                Logger.explore.error("Couldn't find followings: \(error)")
+                Logger.explore.error("Failed to query current followings: \(error)")
             }
         }
     }
 
+    // MARK: Intents
     func followUser(_ user: User) {
-        let newActivity = Activity(type: .follow, from: User.current, to: user)
-        newActivity.save { result in
-            switch result {
+        do {
+            let newActivity = try Activity(type: .follow, from: User.current, to: user)
+                .setupForFollowing()
+            newActivity.save { result in
+                switch result {
 
-            case .success(let activity):
-                self.users = self.users.filter({ $0.objectId != activity.toUser?.objectId })
-            case .failure(let error):
-                Logger.explore.error("Couldn't save follow: \(error)")
+                case .success(let activity):
+                    self.users = self.users.filter({ $0.objectId != activity.toUser?.objectId })
+                case .failure(let error):
+                    Logger.explore.error("Couldn't save follow: \(error)")
+                }
             }
+        } catch {
+            Logger.explore.error("Can't create follow activity \(error.localizedDescription)")
         }
     }
 
@@ -152,6 +150,44 @@ class ExploreViewModel: ObservableObject {
     }
 
     // MARK: Helpers
+    func queryUsersNotFollowing() {
+        guard let currentUserObjectId = User.current?.objectId else {
+            Logger.explore.error("Couldn't get own objectId")
+            return
+        }
+        ProfileViewModel.queryFollowings().find { result in
+            switch result {
+
+            case .success(let foundUsers):
+                var objectIds = foundUsers.compactMap { $0.toUser?.id }
+                objectIds.append(currentUserObjectId)
+                let query = User.query(notContainedIn(key: ParseKey.objectId, array: objectIds))
+
+                query.find { result in
+                    switch result {
+
+                    case .success(let users):
+                        self.users = users
+                    case .failure(let error):
+                        Logger.explore.error("Couldn't query users: \(error)")
+                    }
+                }
+            case .failure(let error):
+                Logger.explore.error("Couldn't find followings: \(error)")
+            }
+        }
+    }
+
+    func isCurrentFollower(_ user: User?) -> Bool {
+        guard let user = user else { return false }
+        return currentUserFollowers.first(where: { $0.hasSameObjectId(as: user) }) != nil
+    }
+
+    func isCurrentFollowing(_ user: User?) -> Bool {
+        guard let user = user else { return false }
+        return currentUserFollowings.first(where: { $0.hasSameObjectId(as: user) }) != nil
+    }
+
     func updateFollowers() {
         guard let followersViewModel = followersViewModel else {
             return

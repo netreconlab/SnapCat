@@ -12,6 +12,7 @@ import ParseSwift
 import SwiftUI
 import UIKit
 
+// swiftlint:disable:next type_body_length
 class ProfileViewModel: ObservableObject {
     var explorerView: ExploreView?
     @Published var user: User
@@ -52,6 +53,8 @@ class ProfileViewModel: ObservableObject {
         }
     }
     @Published var isHasChanges = false
+    @Published var currentUserFollowers = [User]()
+    @Published var currentUserFollowings = [User]()
     private var settingProfilePicForFirstTime = true
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
@@ -100,6 +103,7 @@ class ProfileViewModel: ObservableObject {
     }
     private var isSettingForFirstTime = true
 
+    // swiftlint:disable:next cyclomatic_complexity
     init(user: User?) {
         guard let currentUser = User.current else {
             Logger.profile.error("User should be logged in to perfom action.")
@@ -132,6 +136,74 @@ class ProfileViewModel: ObservableObject {
             self.link = link.absoluteString
         }
         self.isSettingForFirstTime = false
+        Self.queryFollowers().find { result in
+            switch result {
+
+            case .success(let activities):
+                self.currentUserFollowers = activities.compactMap { $0.fromUser }
+            case .failure(let error):
+                Logger.explore.error("Failed to query current followers: \(error)")
+            }
+        }
+        Self.queryFollowings().find { result in
+            switch result {
+
+            case .success(let activities):
+                self.currentUserFollowings = activities.compactMap { $0.toUser }
+            case .failure(let error):
+                Logger.explore.error("Failed to query current followings: \(error)")
+            }
+        }
+    }
+
+    // MARK: Intents
+    func followUser() {
+        do {
+            let newActivity = try Activity(type: .follow, from: User.current, to: user)
+                .setupForFollowing()
+            newActivity.save { result in
+                if case .failure(let error) = result {
+                    Logger.profile.error("Couldn't save follow: \(error)")
+                }
+            }
+        } catch {
+            Logger.profile.error("Can't create follow activity \(error.localizedDescription)")
+        }
+    }
+
+    func unfollowUser() {
+        do {
+            guard let currentUser = User.current else {
+                return
+            }
+            let query = try Activity.query(ActivityKey.fromUser == currentUser,
+                                           ActivityKey.toUser == user,
+                                           ActivityKey.type == Activity.ActionType.follow)
+            query.first { result in
+                switch result {
+
+                case .success(let activity):
+                    activity.delete { result in
+                        if case .failure(let error) = result {
+                            Logger.profile.error("Couldn't unfollow user \(error)")
+                        }
+                    }
+                case .failure(let error):
+                    Logger.profile.error("Couldn't find activity to unfollow \(error)")
+                }
+            }
+        } catch {
+            Logger.profile.error("Couldn't unwrap during unfollow \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: Helpers
+    func isCurrentFollower() -> Bool {
+        currentUserFollowers.first(where: { $0.hasSameObjectId(as: user) }) != nil
+    }
+
+    func isCurrentFollowing() -> Bool {
+        currentUserFollowings.first(where: { $0.hasSameObjectId(as: user) }) != nil
     }
 
     class func getUsersFromFollowers(_ activities: [Activity]) -> [User] {

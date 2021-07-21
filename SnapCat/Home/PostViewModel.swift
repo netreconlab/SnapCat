@@ -26,7 +26,6 @@ class PostViewModel: NSObject, ObservableObject {
             }
         }
     }
-
     private var authorizationStatus: CLAuthorizationStatus
     private var lastSeenLocation: CLLocation?
     private let locationManager: CLLocationManager

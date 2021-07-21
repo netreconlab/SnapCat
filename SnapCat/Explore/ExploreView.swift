@@ -50,24 +50,20 @@ struct ExploreView: View {
                                         Text("@\(username)")
                                             .font(.headline)
                                     }
-                                    if let name = user.name {
-                                        Text(name)
-                                            .font(.footnote)
+                                    HStack {
+                                        if let name = user.name {
+                                            Text(name)
+                                                .font(.footnote)
+                                        }
+                                        if viewModel.isCurrentFollower(user) {
+                                            Label("Follows You",
+                                                  systemImage: "checkmark.square.fill")
+                                        }
                                     }
                                 }
                                 Spacer()
                             })
-                            if viewModel.isShowingFollowers == nil || viewModel.isShowingFollowers == true {
-                                Button(action: {
-                                    viewModel.followUser(user)
-                                }, label: {
-                                    Text("Follow")
-                                        .foregroundColor(.white)
-                                        .padding()
-                                        .background(Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1)))
-                                        .cornerRadius(15)
-                                })
-                            } else {
+                            if viewModel.isCurrentFollowing(user) {
                                 Button(action: {
                                     viewModel.unfollowUser(user)
                                 }, label: {
@@ -75,6 +71,16 @@ struct ExploreView: View {
                                         .foregroundColor(.white)
                                         .padding()
                                         .background(Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1)))
+                                        .cornerRadius(15)
+                                })
+                            } else {
+                                Button(action: {
+                                    viewModel.followUser(user)
+                                }, label: {
+                                    Text("Follow")
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .background(Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1)))
                                         .cornerRadius(15)
                                 })
                             }

@@ -117,6 +117,32 @@ struct ProfileUserDetailsView: View {
                         .background(Color(tintColor))
                 })
                 .padding([.leading, .trailing], 20)
+            } else {
+                if viewModel.isCurrentFollowing() {
+                    Button(action: {
+                        self.viewModel.unfollowUser()
+                    }, label: {
+                        Text("Unfollow")
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .foregroundColor(.white)
+                            .padding()
+                            .cornerRadius(15)
+                            .background(Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1)))
+                    })
+                    .padding([.leading, .trailing], 20)
+                } else {
+                    Button(action: {
+                        self.viewModel.followUser()
+                    }, label: {
+                        Text("Follow")
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .foregroundColor(.white)
+                            .padding()
+                            .cornerRadius(15)
+                            .background(Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1)))
+                    })
+                    .padding([.leading, .trailing], 20)
+                }
             }
         }.sheet(isPresented: $isShowingImagePicker, onDismiss: {}, content: {
             ImagePickerView(image: $viewModel.profilePicture)

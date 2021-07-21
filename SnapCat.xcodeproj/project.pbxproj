@@ -55,7 +55,6 @@
 		916E09A62692ACCC00356C08 /* ActivityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E09A52692ACCC00356C08 /* ActivityViewModel.swift */; };
 		916E09A82692ACE000356C08 /* EmptyActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E09A72692ACE000356C08 /* EmptyActivityView.swift */; };
 		916E09AA2692ACF200356C08 /* EmptyActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E09A92692ACF200356C08 /* EmptyActivityViewController.swift */; };
-		91A43A8E26A7590D0092123A /* FollowButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A43A8D26A7590C0092123A /* FollowButtonStyle.swift */; };
 		91F346AB269A4244005727B6 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F346AA269A4244005727B6 /* SearchBarView.swift */; };
 		91F346AD269A7B55005727B6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F346AC269A7B55005727B6 /* SettingsView.swift */; };
 		91F346AF269A7B72005727B6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F346AE269A7B72005727B6 /* SettingsViewModel.swift */; };
@@ -138,7 +137,6 @@
 		916E09A52692ACCC00356C08 /* ActivityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewModel.swift; sourceTree = "<group>"; };
 		916E09A72692ACE000356C08 /* EmptyActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyActivityView.swift; sourceTree = "<group>"; };
 		916E09A92692ACF200356C08 /* EmptyActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyActivityViewController.swift; sourceTree = "<group>"; };
-		91A43A8D26A7590C0092123A /* FollowButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowButtonStyle.swift; sourceTree = "<group>"; };
 		91F346AA269A4244005727B6 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		91F346AC269A7B55005727B6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		91F346AE269A7B72005727B6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
@@ -305,7 +303,6 @@
 				916E0989269227D100356C08 /* EmptyExploreView.swift */,
 				916E098B2692280400356C08 /* EmptyExploreViewController.swift */,
 				916E097126916C6300356C08 /* ExploreView.swift */,
-				91A43A8D26A7590C0092123A /* FollowButtonStyle.swift */,
 				916E099E269292AD00356C08 /* ExploreViewModel.swift */,
 				91F346AA269A4244005727B6 /* SearchBarView.swift */,
 			);
@@ -549,7 +546,6 @@
 				916E099826924B3000356C08 /* ProfileViewModel.swift in Sources */,
 				916E098426921C2700356C08 /* UIImage+extension.swift in Sources */,
 				916E096426915BC200356C08 /* OnboardingViewModel.swift in Sources */,
-				91A43A8E26A7590D0092123A /* FollowButtonStyle.swift in Sources */,
 				916E0962269159B400356C08 /* Utility.swift in Sources */,
 				916E097226916C6300356C08 /* ExploreView.swift in Sources */,
 				916E099226922D0A00356C08 /* ParseSwift+extention.swift in Sources */,
