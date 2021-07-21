@@ -157,7 +157,7 @@ struct ProfileUserDetailsView: View {
 
 struct ProfileUserDetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileUserDetailsView(viewModel: .init(user: User()),
+        ProfileUserDetailsView(viewModel: .init(user: User(), isShowingHeading: true),
                                followersViewModel: .init(query: Activity.query()),
                                followingsViewModel: .init(query: Activity.query()),
                                timeLineViewModel: .init(query: Post.query()))

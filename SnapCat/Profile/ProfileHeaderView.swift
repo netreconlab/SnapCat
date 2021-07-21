@@ -52,7 +52,8 @@ struct ProfileHeaderView: View {
 
 struct ProfileHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileHeaderView(viewModel: .init(user: User()),
+        ProfileHeaderView(viewModel: .init(user: User(),
+                                           isShowingHeading: true),
                           timeLineViewModel: .init(query: Post.query()))
     }
 }

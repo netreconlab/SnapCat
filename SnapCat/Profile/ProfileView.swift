@@ -15,11 +15,10 @@ struct ProfileView: View {
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var viewModel: ProfileViewModel
-    @State var isShowingHeading: Bool
 
     var body: some View {
         VStack {
-            if isShowingHeading {
+            if viewModel.isShowingHeading {
                 ProfileHeaderView(viewModel: viewModel,
                                   timeLineViewModel: timeLineViewModel)
             } else {
@@ -56,7 +55,8 @@ struct ProfileView: View {
         } else {
             userProfile = User.current!
         }
-        viewModel = ProfileViewModel(user: userProfile)
+        viewModel = ProfileViewModel(user: userProfile,
+                                     isShowingHeading: isShowingHeading)
         let timeLineQuery = ProfileViewModel
             .queryUserTimeLine(userProfile)
             .include(PostKey.user)
@@ -73,7 +73,6 @@ struct ProfileView: View {
             .queryFollowings(userProfile)
             .include(ActivityKey.toUser)
             .viewModel
-        self.isShowingHeading = isShowingHeading
         timeLineViewModel.find()
         followersViewModel.find()
         followingsViewModel.find()

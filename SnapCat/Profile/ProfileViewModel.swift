@@ -55,6 +55,7 @@ class ProfileViewModel: ObservableObject {
     @Published var isHasChanges = false
     @Published var currentUserFollowers = [User]()
     @Published var currentUserFollowings = [User]()
+    @Published var isShowingHeading = true
     private var settingProfilePicForFirstTime = true
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
@@ -104,7 +105,7 @@ class ProfileViewModel: ObservableObject {
     private var isSettingForFirstTime = true
 
     // swiftlint:disable:next cyclomatic_complexity
-    init(user: User?) {
+    init(user: User?, isShowingHeading: Bool) {
         guard let currentUser = User.current else {
             Logger.profile.error("User should be logged in to perfom action.")
             self.user = User()
@@ -115,6 +116,7 @@ class ProfileViewModel: ObservableObject {
         } else {
             self.user = currentUser
         }
+        self.isShowingHeading = isShowingHeading
         Utility.fetchImage(self.user.profileImage) { image in
             self.isSettingForFirstTime = true
             self.profilePicture = image

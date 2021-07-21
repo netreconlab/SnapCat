@@ -88,6 +88,7 @@ struct ProfileEditView: View {
 
 struct ProfileEditView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileEditView(viewModel: ProfileViewModel(user: nil))
+        ProfileEditView(viewModel: ProfileViewModel(user: nil,
+                                                    isShowingHeading: true))
     }
 }
