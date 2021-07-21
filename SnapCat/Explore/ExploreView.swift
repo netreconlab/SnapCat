@@ -15,67 +15,86 @@ struct ExploreView: View {
     @State var searchText: String = ""
 
     var body: some View {
-        VStack {
-            if !viewModel.users.isEmpty {
-                // NavigationView {
-                    VStack {
-                        SearchBarView(searchText: $searchText)
-                        ForEach(viewModel
-                                    .users
-                                    .filter({
-                                        // swiftlint:disable:next line_length
-                                        searchText == "" ? true : $0.username!.lowercased().contains(searchText.lowercased())
-                                    }), id: \.id) { user in
-                            /*NavigationLink(destination: ProfileView(user: user), label: {*/
+        if !viewModel.users.isEmpty {
+            NavigationView {
+                VStack {
+                    SearchBarView(searchText: $searchText)
+                    ForEach(viewModel
+                                .users
+                                .filter({
+                                    // swiftlint:disable:next line_length
+                                    searchText == "" ? true : $0.username!.lowercased().contains(searchText.lowercased())
+                                }), id: \.id) { user in
 
-                                HStack {
-
-                                    if let image = viewModel.profileImages[user.id] {
-                                        Image(uiImage: image)
-                                            .resizable()
-                                            .frame(width: 50, height: 50, alignment: .leading)
-                                                .clipShape(Circle())
-                                                .shadow(radius: 3)
-                                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
-                                            .padding()
-                                    } else {
-                                        Image(systemName: "person.circle")
-                                            .resizable()
-                                            .frame(width: 50, height: 50, alignment: .leading)
-                                                .clipShape(Circle())
-                                                .shadow(radius: 3)
-                                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
-                                            .padding()
+                        HStack {
+                            NavigationLink(destination: ProfileView(user: user, isShowingHeading: false), label: {
+                                if let image = viewModel.profileImages[user.id] {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .frame(width: 50, height: 50, alignment: .leading)
+                                            .clipShape(Circle())
+                                            .shadow(radius: 3)
+                                            .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
+                                        .padding()
+                                } else {
+                                    Image(systemName: "person.circle")
+                                        .resizable()
+                                        .frame(width: 50, height: 50, alignment: .leading)
+                                            .clipShape(Circle())
+                                            .shadow(radius: 3)
+                                            .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
+                                        .padding()
+                                }
+                                VStack(alignment: .leading) {
+                                    if let username = user.username {
+                                        Text("@\(username)")
+                                            .font(.headline)
                                     }
-                                    VStack(alignment: .leading) {
-                                        if let username = user.username {
-                                            Text("@\(username)")
-                                                .font(.headline)
-                                        }
+                                    HStack {
                                         if let name = user.name {
                                             Text(name)
                                                 .font(.footnote)
                                         }
+                                        if viewModel.isCurrentFollower(user) {
+                                            Label("Follows You",
+                                                  systemImage: "checkmark.square.fill")
+                                        }
                                     }
-                                    Spacer()
-
-                                    Button(action: {
-                                        viewModel.followUser(user)
-                                    }, label: {
-                                        Text("Follow")
-                                            .foregroundColor(Color(tintColor))
-                                            .padding()
-                                            .border(Color(tintColor))
-                                    })
                                 }
-                            // })
+                                Spacer()
+                            })
+                            if viewModel.isCurrentFollowing(user) {
+                                Button(action: {
+                                    viewModel.unfollowUser(user)
+                                }, label: {
+                                    Text("Unfollow")
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .background(Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1)))
+                                        .cornerRadius(15)
+                                })
+                            } else {
+                                Button(action: {
+                                    viewModel.followUser(user)
+                                }, label: {
+                                    Text("Follow")
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .background(Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1)))
+                                        .cornerRadius(15)
+                                })
+                            }
                         }
                     }
-                    .padding()
-                // }
-                Spacer()
-            } else {
+                    .navigationBarHidden(true)
+                    Spacer()
+                }
+                .padding()
+            }
+        } else {
+            VStack {
                 EmptyExploreView()
+                Spacer()
             }
         }
     }

@@ -10,7 +10,10 @@ import SwiftUI
 import ParseSwift
 
 struct ProfileUserDetailsView: View {
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
+    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1) }
+    @State var gradient = LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1)), Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1))]),
+                                         startPoint: .top,
+                                         endPoint: .bottom)
     @ObservedObject var viewModel: ProfileViewModel
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
@@ -18,7 +21,6 @@ struct ProfileUserDetailsView: View {
     @State var isShowingImagePicker = false
     @State var isShowingEditProfile = false
     @State var isShowingExplorer = false
-    @State var explorerView = ExploreView()
 
     var body: some View {
         VStack {
@@ -32,7 +34,7 @@ struct ProfileUserDetailsView: View {
                             .frame(width: 90, height: 90, alignment: .leading)
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
-                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
+                                .overlay(Circle().stroke(gradient, lineWidth: 3))
                             .padding()
                     } else {
                         Image(systemName: "person.circle")
@@ -40,7 +42,7 @@ struct ProfileUserDetailsView: View {
                             .frame(width: 90, height: 90, alignment: .leading)
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
-                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 1))
+                                .overlay(Circle().stroke(Color(tintColor), lineWidth: 3))
                             .padding()
                     }
                 })
@@ -53,9 +55,10 @@ struct ProfileUserDetailsView: View {
                         .padding(.trailing)
                 }
                 Button(action: {
-                    self.explorerView = ExploreView(viewModel: .init(users: ProfileViewModel
-                                                                .getUsersFromFollowers(followersViewModel
-                                                                                        .results)), searchText: "")
+                    let explorerViewModel = ExploreViewModel(isShowingFollowers: true,
+                                                             followersViewModel: followersViewModel,
+                                                             followingsViewModel: followingsViewModel)
+                    self.viewModel.explorerView = ExploreView(viewModel: explorerViewModel, searchText: "")
                     self.isShowingExplorer = true
                 }, label: {
                     VStack {
@@ -67,9 +70,10 @@ struct ProfileUserDetailsView: View {
                 })
                 .buttonStyle(PlainButtonStyle())
                 Button(action: {
-                    self.explorerView = ExploreView(viewModel: .init(users: ProfileViewModel
-                                                                .getUsersFromFollowings(followingsViewModel
-                                                                                        .results)), searchText: "")
+                    let explorerViewModel = ExploreViewModel(isShowingFollowers: false,
+                                                             followersViewModel: followersViewModel,
+                                                             followingsViewModel: followingsViewModel)
+                    self.viewModel.explorerView = ExploreView(viewModel: explorerViewModel, searchText: "")
                     self.isShowingExplorer = true
                 }, label: {
                     VStack {
@@ -107,12 +111,38 @@ struct ProfileUserDetailsView: View {
                 }, label: {
                     Text("Edit Profile")
                         .frame(minWidth: 0, maxWidth: .infinity)
-                        .foregroundColor(Color(tintColor))
+                        .foregroundColor(.white)
                         .padding()
                         .cornerRadius(15)
-                        .border(Color(tintColor))
+                        .background(Color(tintColor))
                 })
                 .padding([.leading, .trailing], 20)
+            } else {
+                if viewModel.isCurrentFollowing() {
+                    Button(action: {
+                        self.viewModel.unfollowUser()
+                    }, label: {
+                        Text("Unfollow")
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .foregroundColor(.white)
+                            .padding()
+                            .cornerRadius(15)
+                            .background(Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1)))
+                    })
+                    .padding([.leading, .trailing], 20)
+                } else {
+                    Button(action: {
+                        self.viewModel.followUser()
+                    }, label: {
+                        Text("Follow")
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .foregroundColor(.white)
+                            .padding()
+                            .cornerRadius(15)
+                            .background(Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1)))
+                    })
+                    .padding([.leading, .trailing], 20)
+                }
             }
         }.sheet(isPresented: $isShowingImagePicker, onDismiss: {}, content: {
             ImagePickerView(image: $viewModel.profilePicture)
@@ -120,14 +150,14 @@ struct ProfileUserDetailsView: View {
             ProfileEditView(viewModel: viewModel)
         })
         .sheet(isPresented: $isShowingExplorer, onDismiss: {}, content: {
-            self.explorerView
+            self.viewModel.explorerView
         })
     }
 }
 
 struct ProfileUserDetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileUserDetailsView(viewModel: .init(user: User()),
+        ProfileUserDetailsView(viewModel: .init(user: User(), isShowingHeading: true),
                                followersViewModel: .init(query: Activity.query()),
                                followingsViewModel: .init(query: Activity.query()),
                                timeLineViewModel: .init(query: Post.query()))

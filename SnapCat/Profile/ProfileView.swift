@@ -18,8 +18,24 @@ struct ProfileView: View {
 
     var body: some View {
         VStack {
-            ProfileHeaderView(viewModel: viewModel,
-                              timeLineViewModel: timeLineViewModel)
+            if viewModel.isShowingHeading {
+                ProfileHeaderView(viewModel: viewModel,
+                                  timeLineViewModel: timeLineViewModel)
+            } else {
+                HStack {
+                    if let username = viewModel.user.username {
+                        Text(username)
+                            .font(.title)
+                            .frame(alignment: .leading)
+                            .padding()
+                    }
+                    if viewModel.isCurrentFollower() {
+                        Label("Follows You",
+                              systemImage: "checkmark.square.fill")
+                    }
+                    Spacer()
+                }
+            }
             ProfileUserDetailsView(viewModel: viewModel,
                                    followersViewModel: followersViewModel,
                                    followingsViewModel: followingsViewModel,
@@ -32,14 +48,15 @@ struct ProfileView: View {
         })
     }
 
-    init(user: User? = nil) {
+    init(user: User? = nil, isShowingHeading: Bool = true) {
         var userProfile: User!
         if let user = user {
             userProfile = user
         } else {
             userProfile = User.current!
         }
-        viewModel = ProfileViewModel(user: userProfile)
+        viewModel = ProfileViewModel(user: userProfile,
+                                     isShowingHeading: isShowingHeading)
         let timeLineQuery = ProfileViewModel
             .queryUserTimeLine(userProfile)
             .include(PostKey.user)

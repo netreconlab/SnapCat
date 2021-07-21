@@ -9,11 +9,12 @@
 import Foundation
 import os.log
 import ParseSwift
+import SwiftUI
 import UIKit
 
-// swiftlint:disable type_body_length
+// swiftlint:disable:next type_body_length
 class ProfileViewModel: ObservableObject {
-
+    var explorerView: ExploreView?
     @Published var user: User
     @Published var error: SnapCatError?
     @Published var username: String = "" {
@@ -52,20 +53,18 @@ class ProfileViewModel: ObservableObject {
         }
     }
     @Published var isHasChanges = false
+    @Published var currentUserFollowers = [User]()
+    @Published var currentUserFollowings = [User]()
+    @Published var isShowingHeading = true
     private var settingProfilePicForFirstTime = true
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
-            objectWillChange.send()
-            if !settingProfilePicForFirstTime {
-                guard var user = User.current,
-                    let image = newValue,
-                    let compressed = image.compressTo(3) else {
+            if !isSettingForFirstTime {
+                guard let currentUser = User.current,
+                      currentUser.hasSameObjectId(as: user),
+                      let image = newValue,
+                      let compressed = image.compressTo(3) else {
                     return
-                }
-
-                if let cachedURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String {
-                    try? Utility.removeFilesAtDirectory(cachedURL,
-                                                        isDirectory: false)
                 }
                 let newProfilePicture = ParseFile(name: "profile.jpeg", data: compressed)
                 user.profileImage = newProfilePicture
@@ -78,27 +77,12 @@ class ProfileViewModel: ObservableObject {
                             switch result {
 
                             case .success(let fetchedUser):
-                                guard let cloudFileName = fetchedUser.profileImage?.name else {
-                                    Logger.profile.error("Error saving profile pic. File should contain a name.")
-                                    return
-                                }
-                                // swiftlint:disable:next line_length
-                                if let cachedProfilePicURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String {
-                                    let cachedProfileFileName = Utility.getFileNameFromPath(cachedProfilePicURL)
-                                    if cloudFileName == cachedProfileFileName {
-                                        return
-                                    }
-                                }
 
                                 fetchedUser.profileImage?.fetch { result in
                                     switch result {
 
-                                    case .success(let profilePic):
-                                        if let path = profilePic.localURL?.relativePath {
-                                            // If there's a newer file in the cloud, need to fetch it
-                                            UserDefaults.standard.setValue(path, forKey: Constants.lastProfilePicURL)
-                                            UserDefaults.standard.synchronize()
-                                        }
+                                    case .success:
+                                        Logger.profile.info("Saved profile pic to cache")
                                     case .failure(let error):
                                         Logger.profile.error("Error fetching pic \(error)")
                                     }
@@ -114,12 +98,14 @@ class ProfileViewModel: ObservableObject {
                         self.error = SnapCatError(parseError: error)
                     }
                 }
+                objectWillChange.send()
             }
         }
     }
     private var isSettingForFirstTime = true
 
-    init(user: User?) {
+    // swiftlint:disable:next cyclomatic_complexity
+    init(user: User?, isShowingHeading: Bool) {
         guard let currentUser = User.current else {
             Logger.profile.error("User should be logged in to perfom action.")
             self.user = User()
@@ -130,8 +116,11 @@ class ProfileViewModel: ObservableObject {
         } else {
             self.user = currentUser
         }
-        if self.user.hasSameObjectId(as: currentUser) {
-            checkCacheForProfileImage()
+        self.isShowingHeading = isShowingHeading
+        Utility.fetchImage(self.user.profileImage) { image in
+            self.isSettingForFirstTime = true
+            self.profilePicture = image
+            self.isSettingForFirstTime = false
         }
         if let username = self.user.username {
             self.username = username
@@ -149,43 +138,74 @@ class ProfileViewModel: ObservableObject {
             self.link = link.absoluteString
         }
         self.isSettingForFirstTime = false
+        Self.queryFollowers().find { result in
+            switch result {
+
+            case .success(let activities):
+                self.currentUserFollowers = activities.compactMap { $0.fromUser }
+            case .failure(let error):
+                Logger.explore.error("Failed to query current followers: \(error)")
+            }
+        }
+        Self.queryFollowings().find { result in
+            switch result {
+
+            case .success(let activities):
+                self.currentUserFollowings = activities.compactMap { $0.toUser }
+            case .failure(let error):
+                Logger.explore.error("Failed to query current followings: \(error)")
+            }
+        }
     }
 
-    func checkCacheForProfileImage() {
-        let cachedProfilePicURL = UserDefaults.standard.value(forKey: Constants.lastProfilePicURL) as? String
-
-        if let cachedProfileURL = cachedProfilePicURL {
-            profilePicture = UIImage(contentsOfFile: cachedProfileURL)
-        }
-        let cachedProfileFileName = Utility.getFileNameFromPath(cachedProfilePicURL)
-        // If there's a newer file in the cloud, need to fetch it
-        if cachedProfileFileName != User.current?.profileImage?.name || self.profilePicture == nil {
-            if let cachedURL = cachedProfilePicURL {
-                try? Utility.removeFilesAtDirectory(cachedURL,
-                                                    isDirectory: false)
-            }
-            if let image = User.current?.profileImage {
-                image.fetch { fetchResult in
-                    switch fetchResult {
-
-                    case .success(let profilePicture):
-                        if let path = profilePicture.localURL?.relativePath {
-                            self.profilePicture = UIImage(contentsOfFile: path)
-                            UserDefaults.standard.setValue(path, forKey: Constants.lastProfilePicURL)
-                            UserDefaults.standard.synchronize()
-                        }
-                        self.settingProfilePicForFirstTime = false
-                    case .failure(let error):
-                        Logger.profile.error("Couldn't fetch profile pic: \(error)")
-                        self.settingProfilePicForFirstTime = false
-                    }
+    // MARK: Intents
+    func followUser() {
+        do {
+            let newActivity = try Activity(type: .follow, from: User.current, to: user)
+                .setupForFollowing()
+            newActivity.save { result in
+                if case .failure(let error) = result {
+                    Logger.profile.error("Couldn't save follow: \(error)")
                 }
-            } else {
-                self.settingProfilePicForFirstTime = false
             }
-        } else {
-            self.settingProfilePicForFirstTime = false
+        } catch {
+            Logger.profile.error("Can't create follow activity \(error.localizedDescription)")
         }
+    }
+
+    func unfollowUser() {
+        do {
+            guard let currentUser = User.current else {
+                return
+            }
+            let query = try Activity.query(ActivityKey.fromUser == currentUser,
+                                           ActivityKey.toUser == user,
+                                           ActivityKey.type == Activity.ActionType.follow)
+            query.first { result in
+                switch result {
+
+                case .success(let activity):
+                    activity.delete { result in
+                        if case .failure(let error) = result {
+                            Logger.profile.error("Couldn't unfollow user \(error)")
+                        }
+                    }
+                case .failure(let error):
+                    Logger.profile.error("Couldn't find activity to unfollow \(error)")
+                }
+            }
+        } catch {
+            Logger.profile.error("Couldn't unwrap during unfollow \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: Helpers
+    func isCurrentFollower() -> Bool {
+        currentUserFollowers.first(where: { $0.hasSameObjectId(as: user) }) != nil
+    }
+
+    func isCurrentFollowing() -> Bool {
+        currentUserFollowings.first(where: { $0.hasSameObjectId(as: user) }) != nil
     }
 
     class func getUsersFromFollowers(_ activities: [Activity]) -> [User] {

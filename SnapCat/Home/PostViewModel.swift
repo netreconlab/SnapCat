@@ -26,7 +26,6 @@ class PostViewModel: NSObject, ObservableObject {
             }
         }
     }
-
     private var authorizationStatus: CLAuthorizationStatus
     private var lastSeenLocation: CLLocation?
     private let locationManager: CLLocationManager
@@ -59,16 +58,7 @@ class PostViewModel: NSObject, ObservableObject {
         post?.image = ParseFile(data: compressed)
         post?.caption = caption
         post?.location = location
-        post?.save { result in
-            switch result {
-
-            case .success(let post):
-                // Need to fetch new file location
-                post.fetch(completion: completion)
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        post?.save(completion: completion)
     }
 
     // MARK: Queries

@@ -11,7 +11,10 @@ import ParseSwift
 import AuthenticationServices
 
 struct OnboardingView: View {
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
+    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1) }
+    @State var gradient = LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1)), Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1))]),
+                                         startPoint: .top,
+                                         endPoint: .bottom)
     @ObservedObject private var viewModel = OnboardingViewModel()
     @State private var usersname = ""
     @State private var password = ""
@@ -31,15 +34,13 @@ struct OnboardingView: View {
                     .foregroundColor(.white)
                     .padding([.top], 40)
 
-                Image(systemName: "camera")
-                    .renderingMode(.template)
+                Image("Snapcat")
                     .resizable()
-                    .frame(width: 150, height: 150, alignment: .center)
+                    .frame(width: 250, height: 250, alignment: .center)
                     .clipShape(Circle())
-                    .overlay(Circle().stroke(Color(.white), lineWidth: 4))
+                    .overlay(Circle().stroke(gradient, lineWidth: 4))
                     .shadow(radius: 10)
                     .padding()
-                    .layoutPriority(-100)
 
                 Picker(selection: $signupLoginSegmentValue, label: Text("Login Picker"), content: {
                     Text("Login").tag(0)
@@ -121,7 +122,7 @@ struct OnboardingView: View {
                             .frame(width: 300, height: 50)
                     }
                 })
-                .background(Color(.lightGray))
+                .background(Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1)))
                 .cornerRadius(15)
 
                 SignInWithAppleButton(.signIn,
@@ -148,7 +149,7 @@ struct OnboardingView: View {
 
                 Spacer()
             }
-            .background(LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1)), Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1))]),
+            .background(LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1)), Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1))]),
                                        startPoint: .top,
                                        endPoint: .bottom))
             .edgesIgnoringSafeArea(.all)

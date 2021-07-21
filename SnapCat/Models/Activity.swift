@@ -42,6 +42,20 @@ struct Activity: ParseObject {
         ACL = try? ParseACL.defaultACL()
     }
 
+    func setupForFollowing() throws -> Activity {
+        var activity = self
+        if activity.type == .follow {
+            guard let followUser = activity.toUser else {
+                throw SnapCatError(message: "missing \(ActivityKey.toUser)")
+            }
+            activity.ACL?.setWriteAccess(user: followUser, value: true)
+            activity.ACL?.setReadAccess(user: followUser, value: true)
+        } else {
+            throw SnapCatError(message: "Can't setup for following for type: \"\(String(describing: type))\"")
+        }
+        return activity
+    }
+
     static func like(post: Post) -> Self {
         var activity = Activity(type: .like, from: User.current, to: post.user)
         activity.post = post
