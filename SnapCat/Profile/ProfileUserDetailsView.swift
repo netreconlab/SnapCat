@@ -31,7 +31,7 @@ struct ProfileUserDetailsView: View {
                     if let image = viewModel.profilePicture {
                         Image(uiImage: image)
                             .resizable()
-                            .frame(width: 90, height: 90, alignment: .leading)
+                            .frame(idealWidth: 90, maxWidth: 90, idealHeight: 90, maxHeight: 90)
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
                                 .overlay(Circle().stroke(gradient, lineWidth: 3))
@@ -39,7 +39,7 @@ struct ProfileUserDetailsView: View {
                     } else {
                         Image(systemName: "person.circle")
                             .resizable()
-                            .frame(width: 90, height: 90, alignment: .leading)
+                            .frame(idealWidth: 90, maxWidth: 90, idealHeight: 90, maxHeight: 90)
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
                                 .overlay(Circle().stroke(Color(tintColor), lineWidth: 3))
