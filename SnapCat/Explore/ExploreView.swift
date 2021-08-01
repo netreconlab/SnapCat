@@ -17,7 +17,7 @@ struct ExploreView: View {
     var body: some View {
         if !viewModel.users.isEmpty {
             NavigationView {
-                VStack {
+                ScrollView {
                     SearchBarView(searchText: $searchText)
                     ForEach(viewModel
                                 .users
