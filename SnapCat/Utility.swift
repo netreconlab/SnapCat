@@ -15,23 +15,54 @@ struct Utility {
 
     static func fetchImage(_ file: ParseFile?, completion: @escaping (UIImage?) -> Void) {
         let defaultImage = UIImage(systemName: "camera")
-        guard let file = file else {
+        guard let file = file,
+              let fileManager = ParseFileManager(),
+              let defaultDirectoryPath = fileManager.defaultDataDirectoryPath else {
             completion(defaultImage)
             return
         }
-        file.fetch { result in
-            switch result {
-            case .success(let image):
-                if let path = image.localURL?.relativePath {
-                    let image = UIImage(contentsOfFile: path)
-                    completion(image)
-                } else {
-                    completion(defaultImage)
+        let downloadDirectoryPath = defaultDirectoryPath
+            .appendingPathComponent(Constants.fileDownloadsDirectory, isDirectory: true)
+        let fileLocation = downloadDirectoryPath.appendingPathComponent(file.name).relativePath
+        if FileManager.default.fileExists(atPath: fileLocation) {
+            guard let image = UIImage(contentsOfFile: fileLocation) else {
+                file.fetch { result in
+                    switch result {
+                    case .success(let image):
+                        if let path = image.localURL?.relativePath,
+                           let image = UIImage(contentsOfFile: path) {
+                            completion(image)
+                        } else {
+                            completion(defaultImage)
+                        }
+                    case .failure(let error):
+                        Logger.home.error("Error fetching picture: \(error)")
+                        completion(defaultImage)
+                    }
                 }
-            case .failure(let error):
-                Logger.home.error("Error fetching picture: \(error)")
-                completion(defaultImage)
+                return
             }
+            completion(image)
+        } else {
+            guard let path = file.localURL?.relativePath,
+                  let image = UIImage(contentsOfFile: path) else {
+                file.fetch { result in
+                    switch result {
+                    case .success(let image):
+                        if let path = image.localURL?.relativePath,
+                           let image = UIImage(contentsOfFile: path) {
+                            completion(image)
+                        } else {
+                            completion(defaultImage)
+                        }
+                    case .failure(let error):
+                        Logger.home.error("Error fetching picture: \(error)")
+                        completion(defaultImage)
+                    }
+                }
+                return
+            }
+            completion(image)
         }
     }
 
