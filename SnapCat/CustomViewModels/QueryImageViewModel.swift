@@ -32,7 +32,7 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
             }
             switch event {
 
-            case .created(let object):
+            case .created(let object), .entered(let object):
                 if var post = object as? Post {
                     // LiveQuery doesn't include pointers, need to check to fetch
                     guard let userObjectId = post.user?.id,
@@ -57,7 +57,7 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                 }
 
             case .updated(let object):
-                guard let index = results.firstIndex(of: object) else {
+                guard let index = results.firstIndex(where: { $0.hasSameObjectId(as: object) }) else {
                     return
                 }
                 if var post = object as? Post {
@@ -84,7 +84,7 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                 }
 
             case .deleted(let object):
-                guard let index = results.firstIndex(of: object) else {
+                guard let index = results.firstIndex(where: { $0.hasSameObjectId(as: object) }) else {
                     return
                 }
                 results.remove(at: index)
