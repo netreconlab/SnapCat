@@ -11,7 +11,7 @@ import ParseSwift
 
 struct PostView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
-    @ObservedObject var viewModel = PostViewModel()
+    @StateObject var viewModel = PostViewModel()
     @State private var isShowingImagePicker = false
     @Environment(\.presentationMode) var presentationMode
 

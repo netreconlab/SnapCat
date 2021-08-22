@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ExploreView: View {
 
-    @ObservedObject var viewModel = ExploreViewModel()
+    @StateObject var viewModel = ExploreViewModel()
     @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
     @State var searchText: String = ""
 
