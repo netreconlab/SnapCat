@@ -10,7 +10,7 @@ import SwiftUI
 import AuthenticationServices
 
 struct SettingsView: View {
-    @ObservedObject var viewModel = SettingsViewModel()
+    @StateObject var viewModel = SettingsViewModel()
     @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
     @Environment(\.presentationMode) var presentationMode
     var body: some View {

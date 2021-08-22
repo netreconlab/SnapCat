@@ -15,7 +15,7 @@ struct OnboardingView: View {
     @State var gradient = LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1)), Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1))]),
                                          startPoint: .top,
                                          endPoint: .bottom)
-    @ObservedObject private var viewModel = OnboardingViewModel()
+    @StateObject private var viewModel = OnboardingViewModel()
     @State private var usersname = ""
     @State private var password = ""
     @State var name: String = ""
