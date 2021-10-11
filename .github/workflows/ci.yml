@@ -18,3 +18,5 @@ jobs:
           DEVELOPER_DIR: ${{ env.CI_XCODE_13 }}
     - name: Send codecov
       run: bash <(curl https://codecov.io/bash)
+      env:
+          DEVELOPER_DIR: ${{ env.CI_XCODE_13 }}
