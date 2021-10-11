@@ -5,14 +5,18 @@ on:
   pull_request:
     branches: [ main ]
 env:
-  CI_XCODE_VER: '/Applications/Xcode_12.2.app/Contents/Developer'
+  CI_XCODE_13: '/Applications/Xcode_13.0.app/Contents/Developer'
 
 jobs:
   ios:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
     - name: Build-Test
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project SnapCat.xcodeproj -scheme SnapCat -destination platform\=iOS\ Simulator,name\=iPhone\ 12\ Pro\ Max test | xcpretty
+      env:
+          DEVELOPER_DIR: ${{ env.CI_XCODE_13 }}
     - name: Send codecov
       run: bash <(curl https://codecov.io/bash)
+      env:
+          DEVELOPER_DIR: ${{ env.CI_XCODE_13 }}

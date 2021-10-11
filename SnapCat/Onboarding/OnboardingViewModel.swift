@@ -176,6 +176,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
 
     func saveInstallation() {
         // Setup installation to receive push notifications
+        Installation.current?.channels = ["global"]
         Installation.current?.save { result in
             switch result {
 

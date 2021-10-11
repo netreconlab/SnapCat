@@ -60,19 +60,19 @@ class ProfileViewModel: ObservableObject {
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
             if !isSettingForFirstTime {
-                guard let currentUser = User.current,
+                guard var currentUser = User.current?.emptyObject,
                       currentUser.hasSameObjectId(as: user),
                       let image = newValue,
                       let compressed = image.compressTo(3) else {
                     return
                 }
                 let newProfilePicture = ParseFile(name: "profile.jpeg", data: compressed)
-                user.profileImage = newProfilePicture
-                user.save { result in
+                currentUser.profileImage = newProfilePicture
+                currentUser.save { result in
                     switch result {
 
                     case .success(let user):
-
+                        self.user = user
                         user.fetch { result in
                             switch result {
 
@@ -220,7 +220,7 @@ class ProfileViewModel: ObservableObject {
 
     // swiftlint:disable:next function_body_length
     func saveUpdates(completion: @escaping (Result<User, SnapCatError>) -> Void) {
-        guard let currentUser = User.current else {
+        guard var currentUser = User.current else {
             let snapCatError = SnapCatError(message: "Trying to save when user isn't logged in")
             Logger.profile.error("\(snapCatError.message)")
             completion(.failure(snapCatError))
@@ -234,27 +234,27 @@ class ProfileViewModel: ObservableObject {
         }
         var changesNeedToBeSaved = false
         if username != user.username && !username.isEmpty {
-            User.current?.username = username
+            currentUser.username = username
             changesNeedToBeSaved = true
         }
         if email != user.email && !email.isEmpty {
-            User.current?.email = email
+            currentUser.email = email
             changesNeedToBeSaved = true
         }
         if name != user.name && !name.isEmpty {
-            User.current?.name = name
+            currentUser.name = name
             changesNeedToBeSaved = true
         }
         if bio != user.bio && !bio.isEmpty {
-            User.current?.bio = bio
+            currentUser.bio = bio
             changesNeedToBeSaved = true
         }
         if URL(string: link) != user.link && !link.isEmpty {
-            User.current?.link = URL(string: link)
+            currentUser.link = URL(string: link)
             changesNeedToBeSaved = true
         }
         if changesNeedToBeSaved {
-            User.current?.save { result in
+            currentUser.save { result in
                 switch result {
 
                 case .success(let user):

@@ -83,7 +83,7 @@ extension ParseSwift {
                               serverURL: serverURL,
                               liveQueryServerURL: liveQueryURL,
                               useTransactionsInternally: useTransactionsInternally,
-                              requestCachePolicy: .useProtocolCachePolicy,
+                              requestCachePolicy: .reloadIgnoringLocalCacheData,
                               cacheMemoryCapacity: cacheMemoryCapacity,
                               cacheDiskCapacity: cacheDiskCapacity,
                               authentication: authentication)

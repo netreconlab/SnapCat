@@ -30,12 +30,12 @@ struct User: ParseUser {
     var link: URL?
 }
 
-extension User: Identifiable {
+extension User {
 
-    var id: String { // swiftlint:disable:this identifier_name
-        guard let objectId = self.objectId else {
-            return UUID().uuidString
-        }
-        return objectId
+    var emptyObject: Self {
+        var object = Self()
+        object.objectId = objectId
+        object.createdAt = createdAt
+        return object
     }
 }
