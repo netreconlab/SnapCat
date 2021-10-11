@@ -35,13 +35,6 @@ struct Activity: ParseObject {
         case error
     }
 
-    init(type: ActionType, from fromUser: User?, to toUser: User?) {
-        self.type = type
-        self.fromUser = fromUser
-        self.toUser = toUser
-        ACL = try? ParseACL.defaultACL()
-    }
-
     func setupForFollowing() throws -> Activity {
         var activity = self
         if activity.type == .follow {
@@ -63,12 +56,19 @@ struct Activity: ParseObject {
     }
 }
 
-extension Activity: Identifiable {
+extension Activity {
 
-    var id: String { // swiftlint:disable:this identifier_name
-        guard let objectId = self.objectId else {
-            return UUID().uuidString
-        }
-        return objectId
+    var emptyObject: Self {
+        var object = Self()
+        object.objectId = objectId
+        object.createdAt = createdAt
+        return object
+    }
+
+    init(type: ActionType, from fromUser: User?, to toUser: User?) {
+        self.type = type
+        self.fromUser = fromUser
+        self.toUser = toUser
+        ACL = try? ParseACL.defaultACL()
     }
 }
