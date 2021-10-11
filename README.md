@@ -1,5 +1,5 @@
 # SnapCat
-![Swift](https://img.shields.io/badge/swift-5.4-brightgreen.svg) ![Xcode 12.0+](https://img.shields.io/badge/xcode-12.0%2B-blue.svg) ![iOS 14.0+](https://img.shields.io/badge/iOS-14.0%2B-blue.svg) ![ci](https://github.com/netreconlab/SnapCat/workflows/ci/badge.svg?branch=main)
+![Swift](https://img.shields.io/badge/swift-5.4-brightgreen.svg) ![Xcode 12.0+](https://img.shields.io/badge/xcode-12.0%2B-blue.svg) ![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg) ![ci](https://github.com/netreconlab/SnapCat/workflows/ci/badge.svg?branch=main)
 
 <img src="https://user-images.githubusercontent.com/8621344/126432401-b1ffce20-ec39-4a44-9757-ced7ca7f59d7.png" width="250"> <img src="https://user-images.githubusercontent.com/8621344/126432735-10159e91-1a7f-4b70-854c-ffbb087ae239.png" width="250"> <img src="https://user-images.githubusercontent.com/8621344/126432438-143fea01-7e88-4eea-945d-ea81ef9c45b7.png" width="250">
 
