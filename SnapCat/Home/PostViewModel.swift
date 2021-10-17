@@ -12,18 +12,20 @@ import ParseSwift
 import UIKit
 import CoreLocation
 
+@MainActor
 class PostViewModel: NSObject, ObservableObject {
     @Published var post: Post?
     @Published var image: UIImage?
     @Published var caption = ""
     @Published var location: ParseGeoPoint?
-    @Published var currentPlacemark: CLPlacemark? {
+    var currentPlacemark: CLPlacemark? {
         willSet {
             if let currentLocation = newValue?.location {
                 location = try? ParseGeoPoint(location: currentLocation)
             } else {
                 location = nil
             }
+            objectWillChange.send()
         }
     }
     private var authorizationStatus: CLAuthorizationStatus
@@ -50,15 +52,16 @@ class PostViewModel: NSObject, ObservableObject {
         locationManager.requestWhenInUseAuthorization()
     }
 
-    func save(completion: @escaping (Result<Post, ParseError>) -> Void) {
+    func save() async throws -> Post {
         guard let image = image,
-              let compressed = image.compressTo(3) else {
-            return
+              let compressed = image.compressTo(3),
+              var currentPost = post else {
+            return Post()
         }
-        post?.image = ParseFile(data: compressed)
-        post?.caption = caption
-        post?.location = location
-        post?.save(completion: completion)
+        currentPost.image = ParseFile(data: compressed)
+        currentPost.caption = caption
+        currentPost.location = location
+        return try await currentPost.save()
     }
 
     // MARK: Queries

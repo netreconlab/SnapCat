@@ -72,7 +72,9 @@ struct PostView: View {
                 }, label: {
                     Text("Cancel")
                 }), trailing: Button(action: {
-                    viewModel.save { _ in }
+                    Task {
+                        _ = try await viewModel.save()
+                    }
                     self.presentationMode.wrappedValue.dismiss()
                 }, label: {
                     Text("Done")

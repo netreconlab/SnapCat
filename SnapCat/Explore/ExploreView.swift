@@ -85,6 +85,7 @@ struct ExploreView: View {
                                 })
                             }
                         }
+                        Divider()
                     }
                     .navigationBarHidden(true)
                     Spacer()

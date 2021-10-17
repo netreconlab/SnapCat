@@ -12,44 +12,49 @@ import ParseSwift
 import SwiftUI
 import UIKit
 
-// swiftlint:disable:next type_body_length
-class ProfileViewModel: ObservableObject {
+@MainActor
+class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_length
     var explorerView: ExploreView?
     @Published var user: User
     @Published var error: SnapCatError?
-    @Published var username: String = "" {
+    var username: String = "" {
         willSet {
             if !isSettingForFirstTime {
                 isHasChanges = true
             }
+            objectWillChange.send()
         }
     }
-    @Published var email: String = "" {
+    var email: String = "" {
         willSet {
             if !isSettingForFirstTime {
                 isHasChanges = true
             }
+            objectWillChange.send()
         }
     }
-    @Published var name: String = "" {
+    var name: String = "" {
         willSet {
             if !isSettingForFirstTime {
                 isHasChanges = true
             }
+            objectWillChange.send()
         }
     }
-    @Published var bio: String = "" {
+    var bio: String = "" {
         willSet {
             if !isSettingForFirstTime {
                 isHasChanges = true
             }
+            objectWillChange.send()
         }
     }
-    @Published var link: String = "" {
+    var link: String = "" {
         willSet {
             if !isSettingForFirstTime {
                 isHasChanges = true
             }
+            objectWillChange.send()
         }
     }
     @Published var isHasChanges = false
@@ -68,34 +73,28 @@ class ProfileViewModel: ObservableObject {
                 }
                 let newProfilePicture = ParseFile(name: "profile.jpeg", data: compressed)
                 currentUser.profileImage = newProfilePicture
-                currentUser.save { result in
-                    switch result {
-
-                    case .success(let user):
+                let immutableCurrentUser = currentUser
+                Task {
+                    do {
+                        let user = try await immutableCurrentUser.save()
                         self.user = user
-                        user.fetch { result in
-                            switch result {
-
-                            case .success(let fetchedUser):
-
-                                fetchedUser.profileImage?.fetch { result in
-                                    switch result {
-
-                                    case .success:
-                                        Logger.profile.info("Saved profile pic to cache")
-                                    case .failure(let error):
-                                        Logger.profile.error("Error fetching pic \(error)")
-                                    }
-                                }
-
-                            case .failure(let error):
-                                Logger.profile.error("Error fetching profile pic from cloud: \(error)")
+                        do {
+                            let fetchedUser = try await user.fetch()
+                            do {
+                                _ = try await fetchedUser.profileImage?.fetch()
+                                Logger.profile.info("Saved profile pic to cache")
+                            } catch {
+                                Logger.profile.error("Error fetching pic \(error.localizedDescription)")
                             }
+                        } catch {
+                            Logger.profile.error("Error fetching profile pic from cloud: \(error.localizedDescription)")
                         }
-
-                    case .failure(let error):
-                        Logger.profile.error("Error saving profile pic \(error)")
-                        self.error = SnapCatError(parseError: error)
+                    } catch {
+                        guard let parseError = error as? ParseError else {
+                            return
+                        }
+                        Logger.profile.error("Error saving profile pic \(error.localizedDescription)")
+                        self.error = SnapCatError(parseError: parseError)
                     }
                 }
                 objectWillChange.send()
@@ -104,7 +103,6 @@ class ProfileViewModel: ObservableObject {
     }
     private var isSettingForFirstTime = true
 
-    // swiftlint:disable:next cyclomatic_complexity
     init(user: User?, isShowingHeading: Bool) {
         guard let currentUser = User.current else {
             Logger.profile.error("User should be logged in to perfom action.")
@@ -117,11 +115,6 @@ class ProfileViewModel: ObservableObject {
             self.user = currentUser
         }
         self.isShowingHeading = isShowingHeading
-        Utility.fetchImage(self.user.profileImage) { image in
-            self.isSettingForFirstTime = true
-            self.profilePicture = image
-            self.isSettingForFirstTime = false
-        }
         if let username = self.user.username {
             self.username = username
         }
@@ -138,42 +131,46 @@ class ProfileViewModel: ObservableObject {
             self.link = link.absoluteString
         }
         self.isSettingForFirstTime = false
-        Self.queryFollowers().find { result in
-            switch result {
-
-            case .success(let activities):
+        Task {
+            let image = await Utility.fetchImage(self.user.profileImage)
+            self.isSettingForFirstTime = true
+            self.profilePicture = image
+            self.isSettingForFirstTime = false
+        }
+        Task {
+            do {
+                let activities = try await Self.queryFollowers().find()
                 self.currentUserFollowers = activities.compactMap { $0.fromUser }
-            case .failure(let error):
-                Logger.explore.error("Failed to query current followers: \(error)")
+            } catch {
+                Logger.explore.error("Failed to query current followers: \(error.localizedDescription)")
             }
         }
-        Self.queryFollowings().find { result in
-            switch result {
-
-            case .success(let activities):
+        Task {
+            do {
+                let activities = try await Self.queryFollowings().find()
                 self.currentUserFollowings = activities.compactMap { $0.toUser }
-            case .failure(let error):
-                Logger.explore.error("Failed to query current followings: \(error)")
+            } catch {
+                Logger.explore.error("Failed to query current followings: \(error.localizedDescription)")
             }
         }
     }
 
     // MARK: Intents
-    func followUser() {
+    func followUser() async {
         do {
             let newActivity = try Activity(type: .follow, from: User.current, to: user)
                 .setupForFollowing()
-            newActivity.save { result in
-                if case .failure(let error) = result {
-                    Logger.profile.error("Couldn't save follow: \(error)")
-                }
+            do {
+                _ = try await newActivity.save()
+            } catch {
+                Logger.profile.error("Couldn't save follow: \(error.localizedDescription)")
             }
         } catch {
             Logger.profile.error("Can't create follow activity \(error.localizedDescription)")
         }
     }
 
-    func unfollowUser() {
+    func unfollowUser() async {
         do {
             guard let currentUser = User.current else {
                 return
@@ -181,18 +178,16 @@ class ProfileViewModel: ObservableObject {
             let query = try Activity.query(ActivityKey.fromUser == currentUser,
                                            ActivityKey.toUser == user,
                                            ActivityKey.type == Activity.ActionType.follow)
-            query.first { result in
-                switch result {
-
-                case .success(let activity):
-                    activity.delete { result in
-                        if case .failure(let error) = result {
-                            Logger.profile.error("Couldn't unfollow user \(error)")
-                        }
-                    }
-                case .failure(let error):
-                    Logger.profile.error("Couldn't find activity to unfollow \(error)")
+            do {
+                let activity = try await query.first()
+                do {
+                    try await activity.delete()
+                } catch {
+                    Logger.profile.error("Couldn't unfollow user \(error.localizedDescription)")
                 }
+
+            } catch {
+                Logger.profile.error("Couldn't find activity to unfollow \(error.localizedDescription)")
             }
         } catch {
             Logger.profile.error("Couldn't unwrap during unfollow \(error.localizedDescription)")
@@ -218,19 +213,16 @@ class ProfileViewModel: ObservableObject {
 
     // MARK: - Intents
 
-    // swiftlint:disable:next function_body_length
-    func saveUpdates(completion: @escaping (Result<User, SnapCatError>) -> Void) {
-        guard var currentUser = User.current else {
+    func saveUpdates() async throws -> User {
+        guard var currentUser = User.current?.emptyObject else {
             let snapCatError = SnapCatError(message: "Trying to save when user isn't logged in")
             Logger.profile.error("\(snapCatError.message)")
-            completion(.failure(snapCatError))
-            return
+            throw snapCatError
         }
         if !currentUser.hasSameObjectId(as: user) {
             let snapCatError = SnapCatError(message: "Trying to save when this isn't the logged in user")
             Logger.profile.error("\(snapCatError.message)")
-            completion(.failure(snapCatError))
-            return
+            throw snapCatError
         }
         var changesNeedToBeSaved = false
         if username != user.username && !username.isEmpty {
@@ -254,42 +246,33 @@ class ProfileViewModel: ObservableObject {
             changesNeedToBeSaved = true
         }
         if changesNeedToBeSaved {
-            currentUser.save { result in
-                switch result {
-
-                case .success(let user):
-                    Logger.profile.info("User saved updates")
-                    self.user = user
-                    self.isHasChanges = false
-                    completion(.success(user))
-                case .failure(let error):
-                    Logger.profile.error("Couldn't save user updates: \(error)")
-                    self.error = SnapCatError(parseError: error)
-                    completion(.failure(self.error!))
-                }
-            }
+            let user = try await currentUser.save()
+            Logger.profile.info("User saved updates")
+            self.user = user
+            self.isHasChanges = false
+            return user
         } else {
             let snapCatError = SnapCatError(message: "No new changes to save")
             Logger.profile.debug("\(snapCatError.message)")
-            completion(.failure(snapCatError))
+            throw snapCatError
         }
     }
 
-    func resetPassword(completion: @escaping (Result<Void, SnapCatError>) -> Void) {
+    func resetPassword() async throws {
         guard let email = User.current?.email else {
-            self.error = SnapCatError(message: "Need to save a valid email address before reseting password")
-            completion(.failure(self.error!))
-            return
+            let snapCatError = SnapCatError(message: "Need to save a valid email address before reseting password")
+            self.error = snapCatError
+            throw snapCatError
         }
-        User.passwordReset(email: email) { result in
-            switch result {
-
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                self.error = SnapCatError(parseError: error)
-                completion(.failure(self.error!))
+        do {
+            return try await User.passwordReset(email: email)
+        } catch {
+            guard let parseError = error as? ParseError else {
+                return
             }
+            let snapCatError = SnapCatError(parseError: parseError)
+            self.error = snapCatError
+            throw snapCatError
         }
     }
 

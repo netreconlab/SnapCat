@@ -120,7 +120,9 @@ struct ProfileUserDetailsView: View {
             } else {
                 if viewModel.isCurrentFollowing() {
                     Button(action: {
-                        self.viewModel.unfollowUser()
+                        Task {
+                            await self.viewModel.unfollowUser()
+                        }
                     }, label: {
                         Text("Unfollow")
                             .frame(minWidth: 0, maxWidth: .infinity)
@@ -132,7 +134,9 @@ struct ProfileUserDetailsView: View {
                     .padding([.leading, .trailing], 20)
                 } else {
                     Button(action: {
-                        self.viewModel.followUser()
+                        Task {
+                            await self.viewModel.followUser()
+                        }
                     }, label: {
                         Text("Follow")
                             .frame(minWidth: 0, maxWidth: .infinity)

@@ -21,7 +21,9 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
             } else if let users = newValue as? [User] {
                 userResults = users
             }
-            objectWillChange.send()
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
     }
 
@@ -37,18 +39,18 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                     // LiveQuery doesn't include pointers, need to check to fetch
                     guard let userObjectId = post.user?.id,
                         let user = relatedUser[userObjectId] else {
-                        post.fetch(includeKeys: [PostKey.user]) { result in
-                            switch result {
-
-                            case .success(let fetchPost):
-                                if let parseObject = fetchPost as? T {
-                                    self.results.insert(parseObject, at: 0)
+                            let currentPost = post
+                            Task {
+                                do {
+                                    let fetchPost = try await currentPost.fetch(includeKeys: [PostKey.user])
+                                    if let parseObject = fetchPost as? T {
+                                        self.results.insert(parseObject, at: 0)
+                                    }
+                                } catch {
+                                    Logger.post.error("Couldn't fetch \(error.localizedDescription)")
                                 }
-                            case .failure(let error):
-                                Logger.post.error("Couldn't fetch \(error)")
                             }
-                        }
-                        return
+                            return
                     }
                     post.user = user
                     if let parseObject = post as? T {
@@ -64,18 +66,18 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                     // LiveQuery doesn't include pointers, need to check to fetch
                     guard let userObjectId = post.user?.id,
                         let user = relatedUser[userObjectId] else {
-                        post.fetch(includeKeys: [PostKey.user]) { result in
-                            switch result {
-
-                            case .success(let fetchPost):
-                                if let parseObject = fetchPost as? T {
-                                    self.results[index] = parseObject
+                            let currentPost = post
+                            Task {
+                                do {
+                                    let fetchPost = try await currentPost.fetch(includeKeys: [PostKey.user])
+                                    if let parseObject = fetchPost as? T {
+                                        self.results[index] = parseObject
+                                    }
+                                } catch {
+                                    Logger.post.error("Couldn't fetch \(error.localizedDescription)")
                                 }
-                            case .failure(let error):
-                                Logger.post.error("Couldn't fetch \(error)")
                             }
-                        }
-                        return
+                            return
                     }
                     post.user = user
                     if let parseObject = post as? T {
@@ -103,29 +105,32 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
             newValue.forEach { object in
                 storeRelatedUser(object.user)
                 if likes[object.id] == nil {
-                    PostViewModel
-                        .queryLikes(post: object)
-                        .find { results in
-                            switch results {
-                            case .success(let foundLikes):
+                    Task {
+                        do {
+                            let foundLikes = try await PostViewModel
+                                .queryLikes(post: object)
+                                .find()
+                            DispatchQueue.main.async {
                                 self.likes[object.id] = foundLikes
-                            case .failure(let error):
-                                Logger.post.error("QueryImageViewModel: couldn't find likes: \(error)")
                             }
+                        } catch {
+                            Logger.post.error("QueryImageViewModel: couldn't find likes: \(error.localizedDescription)")
                         }
+                    }
                 }
                 if comments[object.id] == nil {
-                    PostViewModel
-                        .queryComments(post: object)
-                        .include(ActivityKey.fromUser)
-                        .find { results in
-                            switch results {
-                            case .success(let foundComments):
-                                self.comments[object.id] = foundComments
-                            case .failure(let error):
-                                Logger.post.error("QueryImageViewModel: couldn't find comments: \(error)")
-                            }
+                    Task {
+                        do {
+                            let foundComments = try await PostViewModel
+                                .queryComments(post: object)
+                                .include(ActivityKey.fromUser)
+                                .find()
+                            self.comments[object.id] = foundComments
+                        } catch {
+                            // swiftlint:disable:next line_length
+                            Logger.post.error("QueryImageViewModel: couldn't find comments: \(error.localizedDescription)")
                         }
+                    }
                 }
                 // Fetch images
                 if imageResults.count >= Constants.numberOfImagesToDownload {
@@ -134,20 +139,27 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                 guard imageResults[object.id] == nil else {
                     return
                 }
-                Utility.fetchImage(object.image) { image in
-                    if let image = image {
-                        self.imageResults[object.id] = image
-                    }
-                }
-                Utility.fetchImage(object.user?.profileImage) { image in
-                    if let image = image {
-                        if let userObjectId = object.user?.id {
-                            self.imageResults[userObjectId] = image
+                Task {
+                    if let image = await Utility.fetchImage(object.image) {
+                        DispatchQueue.main.async {
+                            self.imageResults[object.id] = image
                         }
                     }
                 }
+                Task {
+                    if let image = await Utility.fetchImage(object.user?.profileImage) {
+                        if let userObjectId = object.user?.id {
+                            DispatchQueue.main.async {
+                                self.imageResults[userObjectId] = image
+                            }
+                        }
+                    }
+
+                }
             }
-            objectWillChange.send()
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
     }
 
@@ -162,45 +174,54 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                 guard imageResults[object.id] == nil else {
                     return
                 }
-                Utility.fetchImage(object.profileImage) { image in
-                    if let image = image {
-                        self.imageResults[object.id] = image
+                Task {
+                    if let image = await Utility.fetchImage(object.profileImage) {
+                        DispatchQueue.main.async {
+                            self.imageResults[object.id] = image
+                        }
                     }
                 }
             }
         }
     }
 
-    var relatedUser = [String: User]()
-
     /// Contains all fetched images.
     var imageResults = [String: UIImage]() {
         willSet {
-            objectWillChange.send()
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
     }
 
     /// Contains all fetched thumbnail images.
     var thubmNailImageResults = [String: UIImage]() {
         willSet {
-            objectWillChange.send()
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
     }
 
     /// Contains likes for each post
     var likes = [String: [Activity]]() {
         willSet {
-            objectWillChange.send()
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
     }
 
     /// Contains comments for each post
     var comments = [String: [Activity]]() {
         willSet {
-            objectWillChange.send()
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
     }
 
+    var relatedUser = [String: User]()
     var postSelected: Post?
 
     // MARK: Helpers

@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// swiftlint:disable line_length
+
 struct TimeLineLikeCommentView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var post: Post
@@ -24,9 +26,11 @@ struct TimeLineLikeCommentView: View {
                         Image(systemName: "heart")
                     }
                 }.onTapGesture(count: 1) {
-                    TimeLineViewModel.likePost(post,
-                                               currentLikes: timeLineViewModel
-                                                .likes[post.id]) { (activity, status) in
+                    let currentTimeLine = timeLineViewModel
+                    Task {
+                        let (activity, status) = await TimeLineViewModel.likePost(post,
+                                                                                  currentLikes: currentTimeLine
+                                                                                    .likes[post.id])
                         switch status {
 
                         case .like:
@@ -36,6 +40,7 @@ struct TimeLineLikeCommentView: View {
                         case .error:
                             break
                         }
+
                     }
                 }
                 VStack {

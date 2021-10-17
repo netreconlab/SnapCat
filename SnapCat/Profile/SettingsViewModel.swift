@@ -11,6 +11,7 @@ import os.log
 import ParseSwift
 import AuthenticationServices
 
+@MainActor
 class SettingsViewModel: ObservableObject {
     @Published var loggedOut = false
     @Published var linkError: SnapCatError?
@@ -20,7 +21,7 @@ class SettingsViewModel: ObservableObject {
      Links the user with Apple *asynchronously*.
      - parameter authorization: The encapsulation of a successful authorization performed by a controller..
     */
-    func linkWithApple(authorization: ASAuthorization) {
+    func linkWithApple(authorization: ASAuthorization) async {
         guard let credentials = authorization.credential as? ASAuthorizationAppleIDCredential,
             let identityToken = credentials.identityToken else {
             let error = "Failed unwrapping Apple authorization credentials."
@@ -28,52 +29,51 @@ class SettingsViewModel: ObservableObject {
             return
         }
 
-        User.apple.login(user: credentials.user, identityToken: identityToken) { result in
-            switch result {
-
-            case .success:
-
-                if User.current?.email == nil {
-                    User.current!.email = credentials.email
-                }
-                if User.current?.name == nil {
-                    if let name = credentials.fullName {
-                        var currentName = ""
-                        if let givenName = name.givenName {
-                            currentName = givenName
-                        }
-                        if let familyName = name.familyName {
-                            if currentName != "" {
-                                currentName = "\(currentName) \(familyName)"
-                            } else {
-                                currentName = familyName
-                            }
-                        }
-                        User.current!.name = currentName
-                    }
-                }
-                Logger.settings.debug("Apple Linking Success: \(User.current!, privacy: .private)")
-
-            case .failure(let error):
-                Logger.settings.error("Apple Linking Error: \(error)")
-                self.linkError = SnapCatError(parseError: error)
+        do {
+            _ = try await User.apple.login(user: credentials.user,
+                                           identityToken: identityToken)
+            if User.current?.email == nil {
+                User.current!.email = credentials.email
             }
+            if User.current?.name == nil {
+                if let name = credentials.fullName {
+                    var currentName = ""
+                    if let givenName = name.givenName {
+                        currentName = givenName
+                    }
+                    if let familyName = name.familyName {
+                        if currentName != "" {
+                            currentName = "\(currentName) \(familyName)"
+                        } else {
+                            currentName = familyName
+                        }
+                    }
+                    User.current!.name = currentName
+                }
+            }
+            Logger.settings.debug("Apple Linking Success: \(User.current!, privacy: .private)")
+        } catch {
+            guard let parseError = error as? ParseError else {
+                Logger.settings.error("Apple Linking Error: \(error.localizedDescription)")
+                return
+            }
+            Logger.settings.error("Apple Linking Error: \(parseError)")
+            self.linkError = SnapCatError(parseError: parseError)
         }
     }
 
-    func logout(completion: @escaping (Result<Void, SnapCatError>) -> Void) {
-        User.logout { result in
-            switch result {
-
-            case .success():
-                Logger.settings.info("User logged out")
-                self.loggedOut = true
-                completion(.success(()))
-            case .failure(let error):
-                Logger.settings.error("Error logging out: \(error)")
-                self.linkError = SnapCatError(parseError: error)
-                completion(.failure(self.linkError!))
+    func logout() async {
+        do {
+            _ = try await User.logout()
+            Logger.settings.info("User logged out")
+            self.loggedOut = true
+        } catch {
+            guard let parseError = error as? ParseError else {
+                Logger.settings.error("Error logging out: \(error.localizedDescription)")
+                return
             }
+            Logger.settings.error("Error logging out: \(parseError.localizedDescription)")
+            self.linkError = SnapCatError(parseError: parseError)
         }
     }
 }

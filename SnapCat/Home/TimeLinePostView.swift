@@ -24,9 +24,12 @@ struct TimeLinePostView: View {
                                    alignment: .leading)
                             .clipShape(Rectangle())
                             .onTapGesture(count: 2) {
-                                TimeLineViewModel.likePost(post,
-                                                           currentLikes: timeLineViewModel
-                                                            .likes[post.id]) { (activity, status) in
+                                Task {
+                                    let currentTimeLine = timeLineViewModel
+
+                                    let (activity, status) = await TimeLineViewModel.likePost(post,
+                                                                                              currentLikes: currentTimeLine
+                                                                                                .likes[post.id])
                                     switch status {
 
                                     case .like:

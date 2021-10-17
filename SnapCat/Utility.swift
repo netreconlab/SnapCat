@@ -13,56 +13,49 @@ import UIKit
 
 struct Utility {
 
-    static func fetchImage(_ file: ParseFile?, completion: @escaping (UIImage?) -> Void) {
+    static func fetchImage(_ file: ParseFile?) async -> UIImage? {
         let defaultImage = UIImage(systemName: "camera")
         guard let file = file,
               let fileManager = ParseFileManager(),
               let defaultDirectoryPath = fileManager.defaultDataDirectoryPath else {
-            completion(defaultImage)
-            return
+            return defaultImage
         }
         let downloadDirectoryPath = defaultDirectoryPath
             .appendingPathComponent(Constants.fileDownloadsDirectory, isDirectory: true)
         let fileLocation = downloadDirectoryPath.appendingPathComponent(file.name).relativePath
         if FileManager.default.fileExists(atPath: fileLocation) {
             guard let image = UIImage(contentsOfFile: fileLocation) else {
-                file.fetch { result in
-                    switch result {
-                    case .success(let image):
-                        if let path = image.localURL?.relativePath,
-                           let image = UIImage(contentsOfFile: path) {
-                            completion(image)
-                        } else {
-                            completion(defaultImage)
-                        }
-                    case .failure(let error):
-                        Logger.home.error("Error fetching picture: \(error)")
-                        completion(defaultImage)
+                do {
+                    let image = try await file.fetch()
+                    if let path = image.localURL?.relativePath,
+                       let image = UIImage(contentsOfFile: path) {
+                        return image
+                    } else {
+                        return defaultImage
                     }
+                } catch {
+                    Logger.home.error("Error fetching picture: \(error.localizedDescription)")
+                    return defaultImage
                 }
-                return
             }
-            completion(image)
+            return image
         } else {
             guard let path = file.localURL?.relativePath,
                   let image = UIImage(contentsOfFile: path) else {
-                file.fetch { result in
-                    switch result {
-                    case .success(let image):
-                        if let path = image.localURL?.relativePath,
-                           let image = UIImage(contentsOfFile: path) {
-                            completion(image)
-                        } else {
-                            completion(defaultImage)
-                        }
-                    case .failure(let error):
-                        Logger.home.error("Error fetching picture: \(error)")
-                        completion(defaultImage)
+                      do {
+                          let image = try await file.fetch()
+                          if let path = image.localURL?.relativePath,
+                                let image = UIImage(contentsOfFile: path) {
+                              return image
+                          } else {
+                              return defaultImage
+                          }
+                    } catch {
+                        Logger.home.error("Error fetching picture: \(error.localizedDescription)")
+                        return defaultImage
                     }
-                }
-                return
             }
-            completion(image)
+            return image
         }
     }
 

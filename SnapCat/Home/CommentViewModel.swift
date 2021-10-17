@@ -11,6 +11,7 @@ import os.log
 import ParseSwift
 import UIKit
 
+@MainActor
 class CommentViewModel: ObservableObject {
     @Published var activity: Activity?
     @Published var comment = ""
@@ -26,10 +27,16 @@ class CommentViewModel: ObservableObject {
 
     // MARK: Intents
 
-    func save(completion: @escaping (Result<Activity, ParseError>) -> Void) {
+    func save() async throws -> Activity {
+        guard var currentActivity = activity else {
+            return Activity()
+        }
         if !comment.isEmpty {
-            activity?.comment = comment
-            activity?.save(completion: completion)
+            currentActivity.comment = comment
+            activity = currentActivity
+            return try await currentActivity.save()
+        } else {
+            return currentActivity
         }
     }
 }

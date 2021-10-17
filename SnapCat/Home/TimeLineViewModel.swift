@@ -10,38 +10,30 @@ import Foundation
 import os.log
 import ParseSwift
 
+@MainActor
 class TimeLineViewModel: ObservableObject {
 
     // MARK: Intents
     class func likePost(_ post: Post,
-                        currentLikes: [Activity]?,
-                        completion: @escaping (Activity, Activity.LikeState) -> Void) {
+                        currentLikes: [Activity]?) async -> (Activity, Activity.LikeState) {
         guard let alreadyLikes = currentLikes?
                 .first(where: { User.current?.id == $0.fromUser?.id }) else {
-            let likeActivity = Activity.like(post: post)
-            likeActivity.save { result in
-                switch result {
-
-                case .success(let liked):
-                    completion(liked, .like)
-                case .failure(let error):
-                    Logger.home.error("Error liking post \(post): Error: \(error)")
-                    completion(likeActivity, .error)
-                }
-            }
-            return
+                    let likeActivity = Activity.like(post: post)
+                    do {
+                        let liked = try await likeActivity.save()
+                        return (liked, .like)
+                    } catch {
+                        Logger.home.error("Error liking post \(post): Error: \(error.localizedDescription)")
+                        return (likeActivity, .error)
+                    }
         }
-        alreadyLikes.delete { result in
-            switch result {
-
-            case .success:
-                completion(alreadyLikes, .unlike)
-            case .failure(let error):
-                Logger.home.error("Error deleting like: \(error)")
-                completion(alreadyLikes, .error)
-            }
+        do {
+            try await alreadyLikes.delete()
+            return (alreadyLikes, .unlike)
+        } catch {
+            Logger.home.error("Error deleting like: \(error.localizedDescription)")
+            return (alreadyLikes, .error)
         }
-        return
     }
 
     // MARK: Queries
