@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-// swiftlint:disable line_length
-
 struct TimeLineLikeCommentView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var post: Post
