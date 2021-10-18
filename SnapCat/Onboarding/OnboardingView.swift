@@ -74,13 +74,16 @@ struct OnboardingView: View {
                 }.padding([.leading, .trailing], 27.5)
 
                 Button(action: {
-
                     if signupLoginSegmentValue == 1 {
-                        viewModel.signup(username: usersname,
-                                         password: password,
-                                         name: name)
+                        Task {
+                            await viewModel.signup(username: usersname,
+                                                   password: password,
+                                                   name: name)
+                        }
                     } else {
-                        viewModel.login(username: usersname, password: password)
+                        Task {
+                            await viewModel.login(username: usersname, password: password)
+                        }
                     }
 
                 }, label: {
@@ -103,8 +106,9 @@ struct OnboardingView: View {
                 .cornerRadius(15)
 
                 Button(action: {
-
-                    viewModel.loginAnonymously()
+                    Task {
+                        await viewModel.loginAnonymously()
+                    }
 
                 }, label: {
 
@@ -133,7 +137,9 @@ struct OnboardingView: View {
 
                                         switch result {
                                         case .success(let authorization):
-                                            viewModel.loginWithApple(authorization: authorization)
+                                            Task {
+                                                await viewModel.loginWithApple(authorization: authorization)
+                                            }
                                         case .failure(let error):
                                             viewModel.loginError = SnapCatError(message: error.localizedDescription)
                                         }

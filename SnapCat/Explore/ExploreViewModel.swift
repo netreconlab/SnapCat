@@ -11,7 +11,7 @@ import os.log
 import ParseSwift
 import UIKit
 
-@dynamicMemberLookup
+@MainActor @dynamicMemberLookup
 class ExploreViewModel: ObservableObject {
     var isSettingForFirstTime = true
     var isShowingFollowers: Bool?
@@ -35,7 +35,7 @@ class ExploreViewModel: ObservableObject {
             }
         }
     }
-    @Published var users = [User]() {
+    var users = [User]() {
         willSet {
             newValue.forEach { object in
                 // Fetch images
@@ -45,12 +45,13 @@ class ExploreViewModel: ObservableObject {
                 guard profileImages[object.id] == nil else {
                     return
                 }
-                Utility.fetchImage(object.profileImage) { image in
-                    if let image = image {
+                Task {
+                    if let image = await Utility.fetchImage(object.profileImage) {
                         self.profileImages[object.id] = image
                     }
                 }
             }
+            objectWillChange.send()
         }
     }
 
@@ -82,24 +83,24 @@ class ExploreViewModel: ObservableObject {
             }
             self.isSettingForFirstTime = false
         } else {
-            queryUsersNotFollowing()
-        }
-        ProfileViewModel.queryFollowers().find { result in
-            switch result {
-
-            case .success(let activities):
-                self.currentUserFollowers = activities.compactMap { $0.fromUser }
-            case .failure(let error):
-                Logger.explore.error("Failed to query current followers: \(error)")
+            Task {
+                await queryUsersNotFollowing()
             }
         }
-        ProfileViewModel.queryFollowings().find { result in
-            switch result {
-
-            case .success(let activities):
+        Task {
+            do {
+                let activities = try await ProfileViewModel.queryFollowers().find()
+                self.currentUserFollowers = activities.compactMap { $0.fromUser }
+            } catch {
+                Logger.explore.error("Failed to query current followers: \(error.localizedDescription)")
+            }
+        }
+        Task {
+            do {
+                let activities = try await ProfileViewModel.queryFollowings().find()
                 self.currentUserFollowings = activities.compactMap { $0.toUser }
-            case .failure(let error):
-                Logger.explore.error("Failed to query current followings: \(error)")
+            } catch {
+                Logger.explore.error("Failed to query current followings: \(error.localizedDescription)")
             }
         }
     }
@@ -109,13 +110,12 @@ class ExploreViewModel: ObservableObject {
         do {
             let newActivity = try Activity(type: .follow, from: User.current, to: user)
                 .setupForFollowing()
-            newActivity.save { result in
-                switch result {
-
-                case .success(let activity):
-                    self.users = self.users.filter({ $0.objectId != activity.toUser?.objectId })
-                case .failure(let error):
-                    Logger.explore.error("Couldn't save follow: \(error)")
+            self.users = self.users.filter({ $0.objectId != user.objectId })
+            Task {
+                do {
+                    _ = try await newActivity.save()
+                } catch {
+                    Logger.explore.error("Couldn't save follow: \(error.localizedDescription)")
                 }
             }
         } catch {
@@ -138,42 +138,36 @@ class ExploreViewModel: ObservableObject {
               }) else {
             return
         }
-
-        activity.delete { result in
-            if case .failure(let error) = result {
-                Logger.explore.error("Couldn't delete activity \(error)")
-            } else {
-                self.followingsViewModel?.results.removeAll(where: { $0.hasSameObjectId(as: activity) })
-                self.updateFollowings()
+        self.followingsViewModel?.results.removeAll(where: { $0.hasSameObjectId(as: activity) })
+        self.updateFollowings()
+        Task {
+            do {
+                try await activity.delete()
+            } catch {
+                Logger.explore.error("Couldn't delete activity \(error.localizedDescription)")
             }
         }
     }
 
     // MARK: Helpers
-    func queryUsersNotFollowing() {
+    func queryUsersNotFollowing() async {
         guard let currentUserObjectId = User.current?.objectId else {
             Logger.explore.error("Couldn't get own objectId")
             return
         }
-        ProfileViewModel.queryFollowings().find { result in
-            switch result {
-
-            case .success(let foundUsers):
+        Task {
+            do {
+                let foundUsers = try await ProfileViewModel.queryFollowings().find()
                 var objectIds = foundUsers.compactMap { $0.toUser?.id }
                 objectIds.append(currentUserObjectId)
                 let query = User.query(notContainedIn(key: ParseKey.objectId, array: objectIds))
-
-                query.find { result in
-                    switch result {
-
-                    case .success(let users):
-                        self.users = users
-                    case .failure(let error):
-                        Logger.explore.error("Couldn't query users: \(error)")
-                    }
+                do {
+                    self.users = try await query.find()
+                } catch {
+                    Logger.explore.error("Couldn't query users: \(error.localizedDescription)")
                 }
-            case .failure(let error):
-                Logger.explore.error("Couldn't find followings: \(error)")
+            } catch {
+                Logger.explore.error("Couldn't find followings: \(error.localizedDescription)")
             }
         }
     }

@@ -7,6 +7,8 @@
 //
 
 import SwiftUI
+import os.log
+import ParseSwift
 
 struct ProfileEditView: View {
     @ObservedObject var viewModel: ProfileViewModel
@@ -27,9 +29,12 @@ struct ProfileEditView: View {
 
                 Section {
                     Button(action: {
-                        viewModel.resetPassword { result in
-                            if case .success = result {
+                        Task {
+                            do {
+                                try await viewModel.resetPassword()
                                 self.isPasswordResetSuccess = true
+                            } catch {
+                                Logger.profile.error("\(error.localizedDescription)")
                             }
                             self.isShowAlert = true
                         }
@@ -45,14 +50,19 @@ struct ProfileEditView: View {
             }, label: {
                 Text("Cancel")
             }), trailing: Button(action: {
-                viewModel.saveUpdates { result in
-                    if case .failure(let error) = result {
-                        if error.message.contains("No new changes") {
+                Task {
+                    do {
+                        _ = try await viewModel.saveUpdates()
+                    } catch {
+                        guard let parseError = error as? SnapCatError else {
+                            return
+                        }
+                        if parseError.message.contains("No new changes") {
                             self.presentationMode.wrappedValue.dismiss()
                             return
                         }
+                        self.isShowAlert = true
                     }
-                    self.isShowAlert = true
                 }
             }, label: {
                 Text("Done")

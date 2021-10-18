@@ -24,4 +24,5 @@ extension Logger {
     static let notification = Logger(subsystem: subsystem, category: "\(category).notification")
     static let utility = Logger(subsystem: subsystem, category: "\(category).utility")
     static let settings = Logger(subsystem: subsystem, category: "\(category).settings")
+    static let comment = Logger(subsystem: subsystem, category: "\(category).comment")
 }

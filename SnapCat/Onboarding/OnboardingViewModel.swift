@@ -11,6 +11,7 @@ import ParseSwift
 import AuthenticationServices
 import os.log
 
+@MainActor
 class OnboardingViewModel: ObservableObject {
 
     @Published private(set) var isLoggedIn = false
@@ -32,37 +33,34 @@ class OnboardingViewModel: ObservableObject {
      - parameter password: The password the user is signing in with.
      - parameter name: The name the user is signing in with.
     */
-    func signup(username: String, password: String, name: String) {
+    func signup(username: String, password: String, name: String) async {
         var user = User()
         user.username = username
         user.password = password
         user.name = name
-        user.signup { result in
-            switch result {
+        do {
+            let user = try await user.signup()
+            Logger.onboarding.debug("Signup Successful: \(user)")
+            self.completeOnboarding()
+        } catch {
+            guard let parseError = error as? ParseError else {
+                Logger.onboarding.error("\(error.localizedDescription)")
+                return
+            }
+            Logger.onboarding.error("\(parseError)")
+            switch parseError.code {
+            case .usernameTaken: // Account already exists for this username.
+                self.loginError = SnapCatError(parseError: parseError)
 
-            case .success(let user):
-                Logger.onboarding.debug("Signup Successful: \(user)")
-                self.completeOnboarding()
-
-            case .failure(let error):
-
-                Logger.onboarding.error("\(error)")
-                switch error.code {
-                case .usernameTaken: // Account already exists for this username.
-                    self.loginError = SnapCatError(parseError: error)
-
-                default:
-                    // There was a different issue that we don't know how to handle
-                    Logger.onboarding.error("""
+            default:
+                // There was a different issue that we don't know how to handle
+                Logger.onboarding.error("""
 *** Error Signing up as user for Parse Server. Are you running parse-hipaa
 and is the initialization complete? Check http://localhost:1337 in your
 browser. If you are still having problems check for help here:
 https://github.com/netreconlab/parse-postgres#getting-started ***
 """)
-                    Logger.onboarding.error("Signup Error: \(error)")
-
-                    self.loginError = SnapCatError(parseError: error)
-                }
+                self.loginError = SnapCatError(parseError: parseError)
             }
         }
     }
@@ -75,49 +73,47 @@ https://github.com/netreconlab/parse-postgres#getting-started ***
      - parameter username: The username the user is logging in with.
      - parameter password: The password the user is logging in with.
     */
-    func login(username: String, password: String) {
-
-        User.login(username: username, password: password) { result in
-
-            switch result {
-
-            case .success(let user):
-                Logger.onboarding.debug("Login Success: \(user, privacy: .private)")
-                self.completeOnboarding()
-            case .failure(let error):
-                Logger.onboarding.error("""
+    func login(username: String, password: String) async {
+        do {
+            let user = try await User.login(username: username, password: password)
+            Logger.onboarding.debug("Login Success: \(user, privacy: .private)")
+            self.completeOnboarding()
+        } catch {
+            guard let parseError = error as? ParseError else {
+                Logger.onboarding.error("\(error.localizedDescription)")
+                return
+            }
+            Logger.onboarding.error("""
 *** Error logging into Parse Server. If you are still having problems
 check for help here:
 https://github.com/netreconlab/parse-hipaa#getting-started ***
 """)
-                Logger.onboarding.debug("Login Error: \(error)")
-                self.loginError = SnapCatError(parseError: error)
-            }
+            Logger.onboarding.debug("Login Error: \(parseError)")
+            self.loginError = SnapCatError(parseError: parseError)
         }
+
     }
 
     /**
      Logs in the user anonymously *asynchronously*.
     */
-    func loginAnonymously() {
-
-        User.anonymous.login { result in
-
-            switch result {
-
-            case .success(let user):
-                Logger.onboarding.debug("Anonymous Login Success: \(user, privacy: .private)")
-                self.completeOnboarding()
-
-            case .failure(let error):
-                Logger.onboarding.error("""
+    func loginAnonymously() async {
+        do {
+            let user = try await User.anonymous.login()
+            Logger.onboarding.debug("Anonymous Login Success: \(user, privacy: .private)")
+            self.completeOnboarding()
+        } catch {
+            guard let parseError = error as? ParseError else {
+                Logger.onboarding.error("\(error.localizedDescription)")
+                return
+            }
+            Logger.onboarding.error("""
 *** Error logging into Parse Server. If you are still having
 problems check for help here:
 https://github.com/netreconlab/parse-hipaa#getting-started ***
 """)
-                Logger.onboarding.error("Anonymous Login Error: \(error)")
-                self.loginError = SnapCatError(parseError: error)
-            }
+            Logger.onboarding.error("Anonymous Login Error: \(parseError)")
+            self.loginError = SnapCatError(parseError: parseError)
         }
     }
 
@@ -125,7 +121,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
      Logs in the user with Apple *asynchronously*.
      - parameter authorization: The encapsulation of a successful authorization performed by a controller..
     */
-    func loginWithApple(authorization: ASAuthorization) {
+    func loginWithApple(authorization: ASAuthorization) async {
         guard let credentials = authorization.credential as? ASAuthorizationAppleIDCredential,
             let identityToken = credentials.identityToken else {
             let error = "Failed unwrapping Apple authorization credentials."
@@ -133,36 +129,34 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
             self.loginError = SnapCatError(message: error)
             return
         }
+        do {
+            _ = try await User.apple.login(user: credentials.user, identityToken: identityToken)
+            // This is a new user
+            User.current!.email = credentials.email
 
-        User.apple.login(user: credentials.user, identityToken: identityToken) { result in
-            switch result {
-
-            case .success:
-
-                // This is a new user
-                User.current!.email = credentials.email
-
-                if let name = credentials.fullName {
-                    var currentName = ""
-                    if let givenName = name.givenName {
-                        currentName = givenName
-                    }
-                    if let familyName = name.familyName {
-                        if currentName != "" {
-                            currentName = "\(currentName) \(familyName)"
-                        } else {
-                            currentName = familyName
-                        }
-                    }
-                    User.current!.name = currentName
+            if let name = credentials.fullName {
+                var currentName = ""
+                if let givenName = name.givenName {
+                    currentName = givenName
                 }
-                Logger.onboarding.debug("Apple Login Success: \(User.current!, privacy: .private)")
-                self.completeOnboarding()
-
-            case .failure(let error):
-                Logger.onboarding.error("Apple Login Error: \(error)")
-                self.loginError = SnapCatError(parseError: error)
+                if let familyName = name.familyName {
+                    if currentName != "" {
+                        currentName = "\(currentName) \(familyName)"
+                    } else {
+                        currentName = familyName
+                    }
+                }
+                User.current!.name = currentName
             }
+            Logger.onboarding.debug("Apple Login Success: \(User.current!, privacy: .private)")
+            self.completeOnboarding()
+        } catch {
+            guard let parseError = error as? ParseError else {
+                Logger.onboarding.error("\(error.localizedDescription)")
+                return
+            }
+            Logger.onboarding.error("Apple Login Error: \(parseError)")
+            self.loginError = SnapCatError(parseError: parseError)
         }
     }
 
@@ -176,16 +170,19 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
 
     func saveInstallation() {
         // Setup installation to receive push notifications
-        Installation.current?.channels = ["global"]
-        Installation.current?.save { result in
-            switch result {
-
-            case .success(let installation):
+        guard var currentInstallation = Installation.current else {
+            return
+        }
+        currentInstallation.channels = ["global"] // Subscribe to particular channels
+        let installation = currentInstallation
+        Task {
+            do {
+                let installation = try await installation.save()
                 Logger.installation.debug("""
 Parse Installation saved, can now receive
 push notificaitons. \(installation, privacy: .private)
 """)
-            case .failure(let error):
+            } catch {
                 Logger.installation.debug("Error saving Parse Installation saved: \(error.localizedDescription)")
             }
         }

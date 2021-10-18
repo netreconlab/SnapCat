@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// swiftlint:disable line_length
+
 struct TimeLinePostView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var post: Post
@@ -24,9 +26,12 @@ struct TimeLinePostView: View {
                                    alignment: .leading)
                             .clipShape(Rectangle())
                             .onTapGesture(count: 2) {
-                                TimeLineViewModel.likePost(post,
-                                                           currentLikes: timeLineViewModel
-                                                            .likes[post.id]) { (activity, status) in
+                                Task {
+                                    let currentTimeLine = timeLineViewModel
+
+                                    let (activity, status) = await TimeLineViewModel.likePost(post,
+                                                                                              currentLikes: currentTimeLine
+                                                                                                .likes[post.id])
                                     switch status {
 
                                     case .like:

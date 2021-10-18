@@ -10,6 +10,7 @@ import Foundation
 import os.log
 import ParseSwift
 
+@MainActor
 class ActivityViewModel: ObservableObject {
 
     class var queryFollowingsActivity: Query<Activity> {

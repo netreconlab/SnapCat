@@ -8,6 +8,7 @@
 
 import SwiftUI
 import ParseSwift
+import os.log
 
 struct CommentView: View {
     @ObservedObject var viewModel: CommentViewModel
@@ -28,11 +29,14 @@ struct CommentView: View {
             }, label: {
                 Text("Cancel")
             }), trailing: Button(action: {
-                viewModel.save { result in
-                    if case .success(let comment) = result {
+                Task {
+                    do {
+                        let comment = try await viewModel.save()
                         if let postId = viewModel.activity?.post?.id {
                             timeLineViewModel.comments[postId]?.insert(comment, at: 0)
                         }
+                    } catch {
+                        Logger.comment.error("Error saving: \(error.localizedDescription)")
                     }
                 }
                 self.presentationMode.wrappedValue.dismiss()

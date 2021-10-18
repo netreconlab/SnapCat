@@ -25,7 +25,9 @@ struct SettingsView: View {
 
                                         switch result {
                                         case .success(let authorization):
-                                            viewModel.linkWithApple(authorization: authorization)
+                                            Task {
+                                                await viewModel.linkWithApple(authorization: authorization)
+                                            }
                                         case .failure(let error):
                                             viewModel.linkError = SnapCatError(message: error.localizedDescription)
                                         }
@@ -34,7 +36,8 @@ struct SettingsView: View {
                     .cornerRadius(15)
             }
             Button(action: {
-                viewModel.logout { _ in
+                Task {
+                    await viewModel.logout()
                     presentationMode.wrappedValue.dismiss()
                 }
             }, label: {

@@ -35,7 +35,6 @@ struct HomeView: View {
             }
             Divider()
             TimeLineView(viewModel: timeLineViewModel)
-            Spacer()
         }.fullScreenCover(isPresented: $isShowingPost, content: {
             PostView(timeLineViewModel: timeLineViewModel)
         })

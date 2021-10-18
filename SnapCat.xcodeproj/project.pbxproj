@@ -214,8 +214,8 @@
 				916E092726914E9A00356C08 /* SnapCatApp.swift */,
 				916E09672691638600356C08 /* SnapCatError.swift */,
 				916E0961269159B400356C08 /* Utility.swift */,
-				916E09A22692AC5000356C08 /* Activity */,
 				916E092B26914E9C00356C08 /* Assets.xcassets */,
+				916E09A22692AC5000356C08 /* Activity */,
 				91F346CA269C83C2005727B6 /* CustomViewModels */,
 				916E096D26916BFB00356C08 /* Explore */,
 				916E098226921C0B00356C08 /* Extentions */,
@@ -902,7 +902,7 @@
 			repositoryURL = "https://github.com/parse-community/Parse-Swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 2.0.2;
 			};
 		};
 		916E09752691D61100356C08 /* XCRemoteSwiftPackageReference "DZNEmptyDataSet" */ = {
