@@ -30,12 +30,14 @@ class SettingsViewModel: ObservableObject {
         }
 
         do {
-            _ = try await User.apple.login(user: credentials.user,
+            var user = try await User.apple.login(user: credentials.user,
                                            identityToken: identityToken)
-            if User.current?.email == nil {
-                User.current!.email = credentials.email
+            var isUpdatedUser = false
+            if user.email == nil && user.email != nil {
+                user.email = credentials.email
+                isUpdatedUser = true
             }
-            if User.current?.name == nil {
+            if user.name == nil {
                 if let name = credentials.fullName {
                     var currentName = ""
                     if let givenName = name.givenName {
@@ -48,10 +50,17 @@ class SettingsViewModel: ObservableObject {
                             currentName = familyName
                         }
                     }
-                    User.current!.name = currentName
+                    user.name = currentName
+                    isUpdatedUser = true
                 }
             }
-            Logger.settings.debug("Apple Linking Success: \(User.current!, privacy: .private)")
+            let loggedInUser: User!
+            if isUpdatedUser {
+                loggedInUser = try await user.save()
+            } else {
+                loggedInUser = user
+            }
+            Logger.settings.debug("Apple Linking Success: \(loggedInUser, privacy: .private)")
         } catch {
             guard let parseError = error as? ParseError else {
                 Logger.settings.error("Apple Linking Error: \(error.localizedDescription)")

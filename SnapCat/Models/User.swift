@@ -9,7 +9,7 @@
 import Foundation
 import ParseSwift
 
-struct User: ParseUser {
+struct User: ParseUser, ParseObjectMutable {
 
     // Mandatory properties
     var authData: [String: [String: String]?]?
@@ -28,14 +28,4 @@ struct User: ParseUser {
     var profileThumbnail: ParseFile?
     var bio: String?
     var link: URL?
-}
-
-extension User {
-
-    var emptyObject: Self {
-        var object = Self()
-        object.objectId = objectId
-        object.createdAt = createdAt
-        return object
-    }
 }

@@ -130,25 +130,36 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
             return
         }
         do {
-            _ = try await User.apple.login(user: credentials.user, identityToken: identityToken)
-            // This is a new user
-            User.current!.email = credentials.email
-
-            if let name = credentials.fullName {
-                var currentName = ""
-                if let givenName = name.givenName {
-                    currentName = givenName
-                }
-                if let familyName = name.familyName {
-                    if currentName != "" {
-                        currentName = "\(currentName) \(familyName)"
-                    } else {
-                        currentName = familyName
-                    }
-                }
-                User.current!.name = currentName
+            var user = try await User.apple.login(user: credentials.user, identityToken: identityToken)
+            var isUpdatedUser = false
+            if credentials.email != nil {
+                user.email = credentials.email
+                isUpdatedUser = true
             }
-            Logger.onboarding.debug("Apple Login Success: \(User.current!, privacy: .private)")
+            if user.name == nil {
+                if let name = credentials.fullName {
+                    var currentName = ""
+                    if let givenName = name.givenName {
+                        currentName = givenName
+                    }
+                    if let familyName = name.familyName {
+                        if currentName != "" {
+                            currentName = "\(currentName) \(familyName)"
+                        } else {
+                            currentName = familyName
+                        }
+                    }
+                    user.name = currentName
+                    isUpdatedUser = true
+                }
+            }
+            let loggedInUser: User!
+            if isUpdatedUser {
+                loggedInUser = try await user.save()
+            } else {
+                loggedInUser = user
+            }
+            Logger.onboarding.debug("Apple Login Success: \(loggedInUser, privacy: .private)")
             self.completeOnboarding()
         } catch {
             guard let parseError = error as? ParseError else {
