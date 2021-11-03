@@ -43,7 +43,7 @@ struct SnapCatApp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        guard var currentInstallation = Installation.current?.emptyObject else {
+        guard var currentInstallation = Installation.current?.mutable else {
             return
         }
         currentInstallation.setDeviceToken(deviceToken)

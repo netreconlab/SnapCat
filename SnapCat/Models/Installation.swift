@@ -9,7 +9,7 @@
 import Foundation
 import ParseSwift
 
-struct Installation: ParseInstallation {
+struct Installation: ParseInstallation, ParseObjectMutable {
     var deviceType: String?
 
     var installationId: String?
@@ -39,14 +39,4 @@ struct Installation: ParseInstallation {
     var updatedAt: Date?
 
     var ACL: ParseACL?
-}
-
-extension Installation {
-
-    var emptyObject: Self {
-        var object = Self()
-        object.objectId = objectId
-        object.createdAt = createdAt
-        return object
-    }
 }

@@ -65,7 +65,7 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
             if !isSettingForFirstTime {
-                guard var currentUser = User.current?.emptyObject,
+                guard var currentUser = User.current?.mutable,
                       currentUser.hasSameObjectId(as: user),
                       let image = newValue,
                       let compressed = image.compressTo(3) else {
@@ -79,9 +79,11 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
                         let user = try await immutableCurrentUser.save()
                         self.user = user
                         do {
-                            let fetchedUser = try await user.fetch()
+                            let fetchedUser = try await user.fetch(options: [.cachePolicy(.useProtocolCachePolicy)])
                             do {
-                                _ = try await fetchedUser.profileImage?.fetch()
+                                _ = try await fetchedUser
+                                    .profileImage?
+                                    .fetch(options: [.cachePolicy(.useProtocolCachePolicy)])
                                 Logger.profile.info("Saved profile pic to cache")
                             } catch {
                                 Logger.profile.error("Error fetching pic \(error.localizedDescription)")
@@ -214,7 +216,7 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
     // MARK: - Intents
 
     func saveUpdates() async throws -> User {
-        guard var currentUser = User.current?.emptyObject else {
+        guard var currentUser = User.current?.mutable else {
             let snapCatError = SnapCatError(message: "Trying to save when user isn't logged in")
             Logger.profile.error("\(snapCatError.message)")
             throw snapCatError

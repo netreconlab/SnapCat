@@ -9,7 +9,7 @@
 import Foundation
 import ParseSwift
 
-struct Activity: ParseObject {
+struct Activity: ParseObjectMutable {
 
     var objectId: String?
     var createdAt: Date?
@@ -57,13 +57,6 @@ struct Activity: ParseObject {
 }
 
 extension Activity {
-
-    var emptyObject: Self {
-        var object = Self()
-        object.objectId = objectId
-        object.createdAt = createdAt
-        return object
-    }
 
     init(type: ActionType, from fromUser: User?, to toUser: User?) {
         self.type = type
