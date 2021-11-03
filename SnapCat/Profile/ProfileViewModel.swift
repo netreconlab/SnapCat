@@ -79,9 +79,11 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
                         let user = try await immutableCurrentUser.save()
                         self.user = user
                         do {
-                            let fetchedUser = try await user.fetch()
+                            let fetchedUser = try await user.fetch(options: [.cachePolicy(.useProtocolCachePolicy)])
                             do {
-                                _ = try await fetchedUser.profileImage?.fetch()
+                                _ = try await fetchedUser
+                                    .profileImage?
+                                    .fetch(options: [.cachePolicy(.useProtocolCachePolicy)])
                                 Logger.profile.info("Saved profile pic to cache")
                             } catch {
                                 Logger.profile.error("Error fetching pic \(error.localizedDescription)")

@@ -69,7 +69,9 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                             let currentPost = post
                             Task {
                                 do {
-                                    let fetchPost = try await currentPost.fetch(includeKeys: [PostKey.user])
+                                    let fetchPost = try await currentPost
+                                        .fetch(includeKeys: [PostKey.user],
+                                               options: [.cachePolicy(.useProtocolCachePolicy)])
                                     if let parseObject = fetchPost as? T {
                                         self.results[index] = parseObject
                                     }
