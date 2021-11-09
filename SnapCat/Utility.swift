@@ -13,6 +13,7 @@ import UIKit
 
 struct Utility {
 
+    @MainActor
     static func fetchImage(_ file: ParseFile?) async -> UIImage? {
         let defaultImage = UIImage(systemName: "camera")
         guard let file = file,
