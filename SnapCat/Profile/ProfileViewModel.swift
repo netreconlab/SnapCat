@@ -102,8 +102,8 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
                         self.error = SnapCatError(parseError: parseError)
                     }
                 }
-                objectWillChange.send()
             }
+            objectWillChange.send()
         }
     }
     private var isSettingForFirstTime = true
