@@ -13,6 +13,7 @@ import UIKit
 
 struct Utility {
 
+    @MainActor
     static func fetchImage(_ file: ParseFile?) async -> UIImage? {
         let defaultImage = UIImage(systemName: "camera")
         guard let file = file,
@@ -26,7 +27,7 @@ struct Utility {
         if FileManager.default.fileExists(atPath: fileLocation) {
             guard let image = UIImage(contentsOfFile: fileLocation) else {
                 do {
-                    let image = try await file.fetch(options: [.cachePolicy(.useProtocolCachePolicy)])
+                    let image = try await file.fetch()
                     if let path = image.localURL?.relativePath,
                        let image = UIImage(contentsOfFile: path) {
                         return image

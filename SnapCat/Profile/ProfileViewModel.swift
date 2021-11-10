@@ -79,12 +79,15 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
                         let user = try await immutableCurrentUser.save()
                         self.user = user
                         do {
-                            let fetchedUser = try await user.fetch(options: [.cachePolicy(.useProtocolCachePolicy)])
+                            let fetchedUser = try await user.fetch()
                             do {
-                                _ = try await fetchedUser
+                                guard let cachedFile = try await fetchedUser
                                     .profileImage?
-                                    .fetch(options: [.cachePolicy(.useProtocolCachePolicy)])
-                                Logger.profile.info("Saved profile pic to cache")
+                                        .fetch() else {
+                                            Logger.profile.error("Error fetching pic, couldn't unwrap")
+                                            return
+                                        }
+                                Logger.profile.info("Saved profile pic to cache: \(cachedFile, privacy: .private)")
                             } catch {
                                 Logger.profile.error("Error fetching pic \(error.localizedDescription)")
                             }
@@ -99,8 +102,8 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
                         self.error = SnapCatError(parseError: parseError)
                     }
                 }
-                objectWillChange.send()
             }
+            objectWillChange.send()
         }
     }
     private var isSettingForFirstTime = true
