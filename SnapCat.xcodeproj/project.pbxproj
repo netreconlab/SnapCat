@@ -902,7 +902,7 @@
 			repositoryURL = "https://github.com/parse-community/Parse-Swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.2.4;
+				minimumVersion = 2.2.6;
 			};
 		};
 		916E09752691D61100356C08 /* XCRemoteSwiftPackageReference "DZNEmptyDataSet" */ = {

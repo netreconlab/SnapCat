@@ -28,6 +28,5 @@ extension Post {
     init(image: ParseFile? = nil) {
         user = User.current
         self.image = image
-        ACL = try? ParseACL.defaultACL()
     }
 }

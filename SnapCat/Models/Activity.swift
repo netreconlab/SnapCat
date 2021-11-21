@@ -62,6 +62,5 @@ extension Activity {
         self.type = type
         self.fromUser = fromUser
         self.toUser = toUser
-        ACL = try? ParseACL.defaultACL()
     }
 }
