@@ -10,7 +10,6 @@ import Foundation
 import ParseSwift
 
 // swiftlint:disable line_length
-// swiftlint:disable function_body_length
 
 extension ParseSwift {
     /** Can setup a connection to Parse Server based on a ParseCareKit.plist file.
@@ -31,7 +30,7 @@ extension ParseSwift {
                                                      (URLSession.AuthChallengeDisposition,
                                                       URLCredential?) -> Void) -> Void)? = nil) {
         var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
-        var plistConfiguration: [String: AnyObject]
+        var parseDictionary: [String: AnyObject]
         var clientKey: String?
         var liveQueryURL: URL?
         var useTransactionsInternally = false
@@ -42,7 +41,7 @@ extension ParseSwift {
                 fatalError("Error in ParseCareKit.setupServer(). Can't find ParseCareKit.plist in this project")
         }
         do {
-            plistConfiguration =
+            parseDictionary =
                 try PropertyListSerialization.propertyList(from: xml,
                                                            options: .mutableContainersAndLeaves,
                                                            // swiftlint:disable:next force_cast
@@ -51,11 +50,10 @@ extension ParseSwift {
             fatalError("Error in ParseCareKit.setupServer(). Couldn't serialize plist. \(error)")
         }
 
-        guard let parseDictionary = plistConfiguration["ParseClientConfiguration"] as? [String: AnyObject],
-            let appID = parseDictionary["ApplicationID"] as? String,
+        guard let appID = parseDictionary["ApplicationID"] as? String,
             let server = parseDictionary["Server"] as? String,
             let serverURL = URL(string: server) else {
-                fatalError("Error in ParseCareKit.setupServer(). Missing keys in \(plistConfiguration)")
+                fatalError("Error in ParseCareKit.setupServer()")
         }
 
         if let client = parseDictionary["ClientKey"] as? String {
