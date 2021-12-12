@@ -19,7 +19,7 @@ extension ParseSwift {
     - ApplicationID - (String) The application id of your Parse application.
     - ClientKey - (String) The client key of your Parse application.
     - LiveQueryServer - (String) The live query server URL to connect to Parse Server.
-    - UseTransactionsInternally - (Boolean) Use transactions inside the Client SDK.
+    - UseTransactions - (Boolean) Use transactions inside the Client SDK.
     - parameter authentication: A callback block that will be used to receive/accept/decline network challenges.
      Defaults to `nil` in which the SDK will use the default OS authentication methods for challenges.
      It should have the following argument signature: `(challenge: URLAuthenticationChallenge,
@@ -33,7 +33,7 @@ extension ParseSwift {
         var parseDictionary: [String: AnyObject]
         var clientKey: String?
         var liveQueryURL: URL?
-        var useTransactionsInternally = false
+        var useTransactions = false
         var cacheMemoryCapacity = 512_000
         var cacheDiskCapacity = 10_000_000
         guard let path = Bundle.main.path(forResource: "ParseSwift", ofType: "plist"),
@@ -64,8 +64,8 @@ extension ParseSwift {
             liveQueryURL = URL(string: liveQuery)
         }
 
-        if let internalTransactions = parseDictionary["UseTransactionsInternally"] as? Bool {
-            useTransactionsInternally = internalTransactions
+        if let transactions = parseDictionary["UseTransactionsInternally"] as? Bool {
+            useTransactions = transactions
         }
 
         if let capacity = parseDictionary["CacheMemoryCapacity"] as? Int {
@@ -80,7 +80,7 @@ extension ParseSwift {
                               clientKey: clientKey,
                               serverURL: serverURL,
                               liveQueryServerURL: liveQueryURL,
-                              useTransactionsInternally: useTransactionsInternally,
+                              useTransactions: useTransactions,
                               requestCachePolicy: .reloadIgnoringLocalCacheData,
                               cacheMemoryCapacity: cacheMemoryCapacity,
                               cacheDiskCapacity: cacheDiskCapacity,
