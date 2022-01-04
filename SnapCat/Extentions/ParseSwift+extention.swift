@@ -80,7 +80,7 @@ extension ParseSwift {
                               clientKey: clientKey,
                               serverURL: serverURL,
                               liveQueryServerURL: liveQueryURL,
-                              useTransactions: useTransactions,
+                              isUsingTransactions: useTransactions,
                               requestCachePolicy: .reloadIgnoringLocalCacheData,
                               cacheMemoryCapacity: cacheMemoryCapacity,
                               cacheDiskCapacity: cacheDiskCapacity,

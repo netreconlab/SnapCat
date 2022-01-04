@@ -15,6 +15,7 @@ struct Activity: ParseObjectMutable {
     var createdAt: Date?
     var updatedAt: Date?
     var ACL: ParseACL?
+    var score: Double?
 
     var fromUser: User?
     var toUser: User?
