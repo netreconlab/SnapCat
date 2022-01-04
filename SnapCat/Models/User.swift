@@ -21,6 +21,7 @@ struct User: ParseUser, ParseObjectMutable {
     var createdAt: Date?
     var updatedAt: Date?
     var ACL: ParseACL?
+    var score: Double?
 
     // Custom properties
     var name: String?

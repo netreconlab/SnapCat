@@ -15,6 +15,7 @@ struct Post: ParseObjectMutable {
     var createdAt: Date?
     var updatedAt: Date?
     var ACL: ParseACL?
+    var score: Double?
 
     var user: User?
     var image: ParseFile?

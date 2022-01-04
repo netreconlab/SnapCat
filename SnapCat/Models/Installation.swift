@@ -39,4 +39,6 @@ struct Installation: ParseInstallation, ParseObjectMutable {
     var updatedAt: Date?
 
     var ACL: ParseACL?
+
+    var score: Double?
 }
