@@ -19,10 +19,6 @@ struct SearchBarView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .overlay(
                     HStack {
-                        /*Image(systemName: "magnifyingglass")
-                            .frame(alignment: .leading)
-                            .foregroundColor(.gray)
-                            .padding(.leading, 0)*/
                         Spacer()
                         if isEditing {
                             Button(action: {

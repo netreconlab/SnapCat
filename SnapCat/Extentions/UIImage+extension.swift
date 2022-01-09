@@ -91,10 +91,10 @@ extension UIImage {
     // Source: https://ruigomes.me/blog/how-to-rotate-an-uiimage-using-swift/
     func imageRotatedByDegrees(_ degrees: CGFloat, flip: Bool) -> UIImage {
         /*let radiansToDegrees: (CGFloat) -> CGFloat = {
-            return $0 * (180.0 / CGFloat(M_PI))
+            return $0 * (180.0 / CGFloat(Double.pi))
         }*/
         let degreesToRadians: (CGFloat) -> CGFloat = {
-            return $0 / 180.0 * CGFloat(Double.pi/*M_PI*/)
+            return $0 / 180.0 * CGFloat(Double.pi)
         }
 
         // calculate the size of the rotated view's containing box for our drawing space
