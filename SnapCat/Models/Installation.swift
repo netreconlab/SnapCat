@@ -41,4 +41,6 @@ struct Installation: ParseInstallation {
     var ACL: ParseACL?
 
     var score: Double?
+
+    var user: User?
 }

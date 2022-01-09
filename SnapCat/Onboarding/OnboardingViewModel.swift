@@ -184,6 +184,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
         guard var currentInstallation = Installation.current else {
             return
         }
+        currentInstallation.user = User.current
         currentInstallation.channels = ["global"] // Subscribe to particular channels
         let installation = currentInstallation
         Task {
