@@ -9,67 +9,83 @@
 import SwiftUI
 
 struct MainView: View {
+
+    @Environment(\.tintColor) private var tintColor
+    @StateObject var userStatus = UserStatus()
     @State private var selectedTab = 0
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
+
     var body: some View {
 
-        // User has to be logged in to use the app.
-        if User.current == nil {
-            OnboardingView()
-        } else {
+        NavigationView {
+            VStack {
+                NavigationLink(destination: OnboardingView(),
+                               isActive: $userStatus.isLoggedOut) {
+                   EmptyView()
+                }
 
-            TabView(selection: $selectedTab) {
+                TabView(selection: $selectedTab) {
 
-                HomeView()
-                    .tabItem {
-                        if selectedTab == 0 {
-                            Image(systemName: "house.fill")
-                                .renderingMode(.template)
-                        } else {
-                            Image(systemName: "house")
-                                .renderingMode(.template)
+                    HomeView()
+                        .tabItem {
+                            if selectedTab == 0 {
+                                Image(systemName: "house.fill")
+                                    .renderingMode(.template)
+                            } else {
+                                Image(systemName: "house")
+                                    .renderingMode(.template)
+                            }
                         }
-                    }
-                    .tag(0)
+                        .tag(0)
+                        .navigationBarTitle("")
+                        .navigationBarHidden(true)
 
-                ExploreView()
-                    .tabItem {
-                        if selectedTab == 1 {
-                            Image(systemName: "magnifyingglass.circle.fill")
-                                .renderingMode(.template)
-                        } else {
-                            Image(systemName: "magnifyingglass.circle")
-                                .renderingMode(.template)
+                    ExploreView()
+                        .tabItem {
+                            if selectedTab == 1 {
+                                Image(systemName: "magnifyingglass.circle.fill")
+                                    .renderingMode(.template)
+                            } else {
+                                Image(systemName: "magnifyingglass.circle")
+                                    .renderingMode(.template)
+                            }
                         }
-                    }
-                    .tag(1)
+                        .tag(1)
+                        .navigationBarTitle("")
+                        .navigationBarHidden(true)
 
-                ActivityView()
-                    .tabItem {
-                        if selectedTab == 2 {
-                            Image(systemName: "heart.fill")
-                                .renderingMode(.template)
-                        } else {
-                            Image(systemName: "heart")
-                                .renderingMode(.template)
+                    ActivityView()
+                        .tabItem {
+                            if selectedTab == 2 {
+                                Image(systemName: "heart.fill")
+                                    .renderingMode(.template)
+                            } else {
+                                Image(systemName: "heart")
+                                    .renderingMode(.template)
+                            }
                         }
-                    }
-                    .tag(2)
+                        .tag(2)
+                        .navigationBarTitle("")
+                        .navigationBarHidden(true)
 
-                ProfileView()
-                    .tabItem {
-                        if selectedTab == 3 {
-                            Image(systemName: "person.fill")
-                                .renderingMode(.template)
-                        } else {
-                            Image(systemName: "person")
-                                .renderingMode(.template)
+                    ProfileView()
+                        .tabItem {
+                            if selectedTab == 3 {
+                                Image(systemName: "person.fill")
+                                    .renderingMode(.template)
+                            } else {
+                                Image(systemName: "person")
+                                    .renderingMode(.template)
+                            }
                         }
-                    }
-                    .tag(3)
+                        .tag(3)
+                        .navigationBarTitle("")
+                        .navigationBarHidden(true)
+                }
             }
-            .accentColor(Color(tintColor))
         }
+        .environmentObject(userStatus)
+        .accentColor(Color(tintColor))
+        .statusBar(hidden: true)
     }
 }
 

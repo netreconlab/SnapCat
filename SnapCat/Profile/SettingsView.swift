@@ -10,9 +10,11 @@ import SwiftUI
 import AuthenticationServices
 
 struct SettingsView: View {
+
+    @Environment(\.tintColor) private var tintColor
+    @EnvironmentObject var userStatus: UserStatus
     @StateObject var viewModel = SettingsViewModel()
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
-    @Environment(\.presentationMode) var presentationMode
+
     var body: some View {
         VStack {
             Spacer()
@@ -38,7 +40,6 @@ struct SettingsView: View {
             Button(action: {
                 Task {
                     await viewModel.logout()
-                    presentationMode.wrappedValue.dismiss()
                 }
             }, label: {
                 Text("Log out")
@@ -68,16 +69,19 @@ struct SettingsView: View {
                     Spacer()
                 }
             }
-        }.onAppear(perform: {
-            if User.current == nil {
-                presentationMode.wrappedValue.dismiss()
+        }.onReceive(viewModel.$isLoggedOut, perform: { value in
+            if self.userStatus.isLoggedOut != value {
+                self.userStatus.check()
             }
         })
+        .navigationBarTitle("Settings")
+        .navigationBarHidden(false)
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
+            .environmentObject(UserStatus(isLoggedOut: false))
     }
 }

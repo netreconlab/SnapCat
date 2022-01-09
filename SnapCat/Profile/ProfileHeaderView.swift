@@ -9,13 +9,22 @@
 import SwiftUI
 
 struct ProfileHeaderView: View {
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
+    @Environment(\.tintColor) private var tintColor
+    @StateObject var postStatus = PostStatus()
     @ObservedObject var viewModel: ProfileViewModel
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
-    @State var isShowingPost = false
     @State var isShowingOptions = false
     var body: some View {
         HStack {
+            NavigationLink(destination: PostView(timeLineViewModel: timeLineViewModel)
+                            .environmentObject(postStatus),
+                           isActive: $postStatus.isShowing) {
+               EmptyView()
+            }
+            NavigationLink(destination: SettingsView(),
+                           isActive: $isShowingOptions) {
+               EmptyView()
+            }
             if let username = viewModel.user.username {
                 Text(username)
                     .font(.title)
@@ -25,7 +34,7 @@ struct ProfileHeaderView: View {
             Spacer()
             if viewModel.user.objectId == User.current?.objectId {
                 Button(action: {
-                    self.isShowingPost = true
+                    self.postStatus.isShowing = true
                 }, label: {
                     Image(systemName: "square.and.pencil")
                         .resizable()
@@ -42,11 +51,7 @@ struct ProfileHeaderView: View {
                         .padding([.trailing])
                 })
             }
-        }.fullScreenCover(isPresented: $isShowingPost, content: {
-            PostView(timeLineViewModel: timeLineViewModel)
-        }).sheet(isPresented: $isShowingOptions, onDismiss: {}, content: {
-            SettingsView()
-        })
+        }
     }
 }
 
@@ -55,5 +60,6 @@ struct ProfileHeaderView_Previews: PreviewProvider {
         ProfileHeaderView(viewModel: .init(user: User(),
                                            isShowingHeading: true),
                           timeLineViewModel: .init(query: Post.query()))
+            .environmentObject(PostStatus(isShowing: true))
     }
 }

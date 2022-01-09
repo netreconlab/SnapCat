@@ -9,7 +9,7 @@
 import Foundation
 import ParseSwift
 
-struct Post: ParseObjectMutable {
+struct Post: ParseObject {
 
     var objectId: String?
     var createdAt: Date?
@@ -22,9 +22,6 @@ struct Post: ParseObjectMutable {
     var thumbnail: ParseFile?
     var location: ParseGeoPoint?
     var caption: String?
-}
-
-extension Post {
 
     init(image: ParseFile? = nil) {
         user = User.current

@@ -53,6 +53,7 @@ struct ProfileEditView: View {
                 Task {
                     do {
                         _ = try await viewModel.saveUpdates()
+                        self.presentationMode.wrappedValue.dismiss()
                     } catch {
                         guard let parseError = error as? SnapCatError else {
                             return

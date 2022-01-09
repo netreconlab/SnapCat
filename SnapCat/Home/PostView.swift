@@ -10,13 +10,15 @@ import SwiftUI
 import ParseSwift
 
 struct PostView: View {
+
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var postStatus: PostStatus
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @StateObject var viewModel = PostViewModel()
     @State private var isShowingImagePicker = false
-    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        NavigationView {
+        VStack {
             GeometryReader { geometry in
                 Form {
                     Section {
@@ -68,14 +70,14 @@ struct PostView: View {
                 .navigationBarBackButtonHidden(true)
                 .navigationTitle(Text("Post"))
                 .navigationBarItems(leading: Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
+                    self.postStatus.isShowing = false
                 }, label: {
                     Text("Cancel")
                 }), trailing: Button(action: {
                     Task {
                         _ = try await viewModel.save()
                     }
-                    self.presentationMode.wrappedValue.dismiss()
+                    self.postStatus.isShowing = false
                 }, label: {
                     Text("Done")
                 }))
@@ -90,5 +92,6 @@ struct PostView: View {
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         PostView(timeLineViewModel: .init(query: Post.query()))
+            .environmentObject(PostStatus(isShowing: true))
     }
 }

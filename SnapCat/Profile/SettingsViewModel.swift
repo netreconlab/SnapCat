@@ -13,7 +13,7 @@ import AuthenticationServices
 
 @MainActor
 class SettingsViewModel: ObservableObject {
-    @Published var loggedOut = false
+    @Published var isLoggedOut = false
     @Published var linkError: SnapCatError?
 
     // MARK: - Intents
@@ -75,7 +75,7 @@ class SettingsViewModel: ObservableObject {
         do {
             _ = try await User.logout()
             Logger.settings.info("User logged out")
-            self.loggedOut = true
+            self.isLoggedOut = true
         } catch {
             guard let parseError = error as? ParseError else {
                 Logger.settings.error("Error logging out: \(error.localizedDescription)")

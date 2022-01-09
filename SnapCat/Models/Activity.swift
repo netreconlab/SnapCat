@@ -9,7 +9,7 @@
 import Foundation
 import ParseSwift
 
-struct Activity: ParseObjectMutable {
+struct Activity: ParseObject {
 
     var objectId: String?
     var createdAt: Date?

@@ -14,7 +14,7 @@ struct ViewAllComments: View {
     @State var post: Post
     var body: some View {
         if let comments = timeLineViewModel.comments[post.id] {
-            NavigationView {
+            // VStack {
                 List(comments, id: \.id) { result in
                     VStack(alignment: .leading) {
                         HStack {
@@ -46,11 +46,11 @@ struct ViewAllComments: View {
                 }, label: {
                     Text("Done")
                 }))
-                Text("Hello")
-                Spacer()
-            }
+                /*Spacer()
+            }*/
+        } else {
+            EmptyView()
         }
-        Text("")
     }
 }
 

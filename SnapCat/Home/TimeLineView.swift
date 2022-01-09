@@ -13,15 +13,24 @@ import UIKit
 
 struct TimeLineView: View {
 
-    let currentObjectId: String
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1) }
+    @Environment(\.tintColor) private var tintColor
+    // @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1) }
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var isShowingProfile = false
     @State var gradient = LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1)), Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1))]),
                                          startPoint: .top,
                                          endPoint: .bottom)
+    @State var userTapped = User()
+    let currentObjectId: String
     var body: some View {
         if !timeLineViewModel.results.isEmpty {
+            NavigationLink(destination: ProfileView(user: userTapped,
+                                                    isShowingHeading: false)
+                            .navigationTitle("")
+                            .navigationBarHidden(false),
+                           isActive: $isShowingProfile) {
+               EmptyView()
+            }
             NavigationView {
                 List(timeLineViewModel.results, id: \.id) { result in
                     VStack {
@@ -48,8 +57,11 @@ struct TimeLineView: View {
                             }
                             Spacer()
                         }.onTapGesture(count: 1) {
-                            self.timeLineViewModel.userOfInterest = result.user
-                            self.isShowingProfile = true
+                            if let user = result.user {
+                                self.timeLineViewModel.userOfInterest = user
+                                self.userTapped = user
+                                self.isShowingProfile = true
+                            }
                         }
                         TimeLinePostView(timeLineViewModel: timeLineViewModel,
                                          post: result)
@@ -64,9 +76,6 @@ struct TimeLineView: View {
                 }.navigationBarHidden(true)
             }.onAppear(perform: {
                 timeLineViewModel.find()
-            }).sheet(isPresented: $isShowingProfile, content: {
-                ProfileView(user: self.timeLineViewModel.userOfInterest,
-                            isShowingHeading: false)
             })
         } else {
             VStack {

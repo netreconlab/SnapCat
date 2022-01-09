@@ -10,6 +10,7 @@ import Foundation
 import ParseSwift
 
 // swiftlint:disable line_length
+// swiftlint:disable function_body_length
 
 extension ParseSwift {
     /** Can setup a connection to Parse Server based on a ParseCareKit.plist file.
@@ -30,50 +31,56 @@ extension ParseSwift {
                                                      (URLSession.AuthChallengeDisposition,
                                                       URLCredential?) -> Void) -> Void)? = nil) {
         var propertyListFormat =  PropertyListSerialization.PropertyListFormat.xml
-        var parseDictionary: [String: AnyObject]
+        var plistConfiguration: [String: AnyObject]
         var clientKey: String?
         var liveQueryURL: URL?
         var useTransactions = false
         var cacheMemoryCapacity = 512_000
         var cacheDiskCapacity = 10_000_000
+        var deleteKeychainIfNeeded = false
+
         guard let path = Bundle.main.path(forResource: "ParseSwift", ofType: "plist"),
             let xml = FileManager.default.contents(atPath: path) else {
-                fatalError("Error in ParseCareKit.setupServer(). Can't find ParseCareKit.plist in this project")
+                fatalError("Error in ParseSwift.setupServer(). Can't find ParseSwift.plist in this project")
         }
         do {
-            parseDictionary =
+            plistConfiguration =
                 try PropertyListSerialization.propertyList(from: xml,
                                                            options: .mutableContainersAndLeaves,
                                                            // swiftlint:disable:next force_cast
                                                            format: &propertyListFormat) as! [String: AnyObject]
         } catch {
-            fatalError("Error in ParseCareKit.setupServer(). Couldn't serialize plist. \(error)")
+            fatalError("Error in ParseSwift.setupServer(). Couldn't serialize plist. \(error)")
         }
 
-        guard let appID = parseDictionary["ApplicationID"] as? String,
-            let server = parseDictionary["Server"] as? String,
+        guard let appID = plistConfiguration["ApplicationID"] as? String,
+            let server = plistConfiguration["Server"] as? String,
             let serverURL = URL(string: server) else {
-                fatalError("Error in ParseCareKit.setupServer()")
+                fatalError("Error in ParseSwift.setupServer()")
         }
 
-        if let client = parseDictionary["ClientKey"] as? String {
+        if let client = plistConfiguration["ClientKey"] as? String {
             clientKey = client
         }
 
-        if let liveQuery = parseDictionary["LiveQueryServer"] as? String {
+        if let liveQuery = plistConfiguration["LiveQueryServer"] as? String {
             liveQueryURL = URL(string: liveQuery)
         }
 
-        if let transactions = parseDictionary["UseTransactionsInternally"] as? Bool {
+        if let transactions = plistConfiguration["UseTransactions"] as? Bool {
             useTransactions = transactions
         }
 
-        if let capacity = parseDictionary["CacheMemoryCapacity"] as? Int {
+        if let capacity = plistConfiguration["CacheMemoryCapacity"] as? Int {
             cacheMemoryCapacity = capacity
         }
 
-        if let capacity = parseDictionary["CacheDiskCapacity"] as? Int {
+        if let capacity = plistConfiguration["CacheDiskCapacity"] as? Int {
             cacheDiskCapacity = capacity
+        }
+
+        if let deleteKeychain = plistConfiguration["DeleteKeychainIfNeeded"] as? Bool {
+            deleteKeychainIfNeeded = deleteKeychain
         }
 
         ParseSwift.initialize(applicationId: appID,
@@ -84,6 +91,7 @@ extension ParseSwift {
                               requestCachePolicy: .reloadIgnoringLocalCacheData,
                               cacheMemoryCapacity: cacheMemoryCapacity,
                               cacheDiskCapacity: cacheDiskCapacity,
+                              isDeletingKeychainIfNeeded: deleteKeychainIfNeeded,
                               authentication: authentication)
     }
 }

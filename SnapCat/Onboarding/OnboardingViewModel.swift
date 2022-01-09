@@ -14,12 +14,12 @@ import os.log
 @MainActor
 class OnboardingViewModel: ObservableObject {
 
-    @Published private(set) var isLoggedIn = false
+    @Published private(set) var isLoggedOut = true
     @Published var loginError: SnapCatError?
 
     init() {
         if User.current != nil {
-            isLoggedIn = true
+            isLoggedOut = false
         }
     }
 
@@ -176,7 +176,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
         Self.setDefaultACL()
         saveInstallation()
         registerForNotifications()
-        isLoggedIn = true
+        isLoggedOut = false
     }
 
     func saveInstallation() {
