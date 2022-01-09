@@ -27,7 +27,6 @@ struct TimeLineCommentsView: View {
                         Text("View all \(comments.count) comments")
                             .font(.footnote)
                             .onTapGesture(count: 1) {
-                                self.timeLineViewModel.postSelected = post
                                 self.postSelected = post
                                 self.isShowingAllComments = true
                             }

@@ -12,6 +12,7 @@ struct TimeLineLikeCommentView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var post: Post
     @State var isShowingComment = false
+    @State var postSelected: Post?
     let currentObjectId: String
     var body: some View {
         VStack {
@@ -49,7 +50,7 @@ struct TimeLineLikeCommentView: View {
                         Image(systemName: "bubble.left")
                     }
                 }.onTapGesture(count: 1) {
-                    self.timeLineViewModel.postSelected = post
+                    self.postSelected = post
                     self.isShowingComment = true
                 }
                 Spacer()
@@ -82,7 +83,7 @@ struct TimeLineLikeCommentView: View {
                 Spacer()
             }
         }.sheet(isPresented: $isShowingComment, content: {
-            if let post = timeLineViewModel.postSelected {
+            if let post = self.postSelected {
                 CommentView(timeLineViewModel: timeLineViewModel,
                             post: post)
             }

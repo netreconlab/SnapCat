@@ -223,7 +223,6 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
     }
 
     var relatedUser = [String: User]()
-    var postSelected: Post?
 
     // MARK: Helpers
     func storeRelatedUser(_ user: User?) {

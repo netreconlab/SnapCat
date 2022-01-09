@@ -14,7 +14,6 @@ import UIKit
 struct TimeLineView: View {
 
     @Environment(\.tintColor) private var tintColor
-    // @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1) }
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var isShowingProfile = false
     @State var gradient = LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1)), Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1))]),
