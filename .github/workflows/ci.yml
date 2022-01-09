@@ -13,6 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build-Test
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project SnapCat.xcodeproj -scheme SnapCat -destination platform\=iOS\ Simulator,name\=iPhone\ 12\ Pro\ Max test | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project SnapCat.xcodeproj -scheme SnapCat -destination platform\=iOS\ Simulator,name\=iPhone\ 12\ Pro\ Max build | xcpretty
       env:
           DEVELOPER_DIR: ${{ env.CI_XCODE_13 }}
