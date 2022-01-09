@@ -18,7 +18,7 @@ struct SnapCatApp: App {
 
     var body: some Scene {
         WindowGroup {
-            OnboardingView()
+            MainView()
         }.onChange(of: scenePhase, perform: { _ in
 
         })
@@ -26,24 +26,12 @@ struct SnapCatApp: App {
 
     init() {
         ParseSwift.setupServer()
-
-        // Clear items out of the Keychain on app first run. Used for debugging
-        if UserDefaults.standard.object(forKey: Constants.firstRun) == nil {
-            try? User.logout()
-            // This is no longer the first run
-            UserDefaults.standard.setValue(String(Constants.firstRun),
-                                           forKey: Constants.firstRun)
-            UserDefaults.standard.synchronize()
-        }
-
-        // Set default ACL everytime app opens
-        OnboardingViewModel.setDefaultACL()
     }
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        guard var currentInstallation = Installation.current?.mutable else {
+        guard var currentInstallation = Installation.current else {
             return
         }
         currentInstallation.setDeviceToken(deviceToken)

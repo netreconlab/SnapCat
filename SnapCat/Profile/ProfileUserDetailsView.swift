@@ -10,20 +10,26 @@ import SwiftUI
 import ParseSwift
 
 struct ProfileUserDetailsView: View {
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.7843137255, green: 0.7843137255, blue: 0.7843137255, alpha: 1) }
-    @State var gradient = LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1)), Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1))]),
-                                         startPoint: .top,
-                                         endPoint: .bottom)
+    @Environment(\.tintColor) private var tintColor
     @ObservedObject var viewModel: ProfileViewModel
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
+    @State var gradient = LinearGradient(gradient: Gradient(colors: [Color(#colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1)), Color(#colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1))]),
+                                         startPoint: .top,
+                                         endPoint: .bottom)
+    @State var explorerView: ExploreView?
     @State var isShowingImagePicker = false
     @State var isShowingEditProfile = false
     @State var isShowingExplorer = false
 
     var body: some View {
         VStack {
+            NavigationLink(destination: self.explorerView
+                            .navigationBarHidden(false),
+                           isActive: $isShowingExplorer) {
+               EmptyView()
+            }
             HStack {
                 Button(action: {
                     self.isShowingImagePicker = true
@@ -58,7 +64,7 @@ struct ProfileUserDetailsView: View {
                     let explorerViewModel = ExploreViewModel(isShowingFollowers: true,
                                                              followersViewModel: followersViewModel,
                                                              followingsViewModel: followingsViewModel)
-                    self.viewModel.explorerView = ExploreView(viewModel: explorerViewModel, searchText: "")
+                    self.explorerView = ExploreView(viewModel: explorerViewModel)
                     self.isShowingExplorer = true
                 }, label: {
                     VStack {
@@ -73,7 +79,7 @@ struct ProfileUserDetailsView: View {
                     let explorerViewModel = ExploreViewModel(isShowingFollowers: false,
                                                              followersViewModel: followersViewModel,
                                                              followingsViewModel: followingsViewModel)
-                    self.viewModel.explorerView = ExploreView(viewModel: explorerViewModel, searchText: "")
+                    self.explorerView = ExploreView(viewModel: explorerViewModel)
                     self.isShowingExplorer = true
                 }, label: {
                     VStack {
@@ -152,9 +158,6 @@ struct ProfileUserDetailsView: View {
             ImagePickerView(image: $viewModel.profilePicture)
         }).sheet(isPresented: $isShowingEditProfile, onDismiss: {}, content: {
             ProfileEditView(viewModel: viewModel)
-        })
-        .sheet(isPresented: $isShowingExplorer, onDismiss: {}, content: {
-            self.viewModel.explorerView
         })
     }
 }

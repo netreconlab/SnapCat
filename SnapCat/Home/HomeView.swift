@@ -11,12 +11,17 @@ import ParseSwift
 
 struct HomeView: View {
 
+    @Environment(\.tintColor) private var tintColor
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
-    @State var isShowingPost = false
+    @StateObject var postStatus = PostStatus()
 
     var body: some View {
         VStack {
+            NavigationLink(destination: PostView(timeLineViewModel: timeLineViewModel)
+                            .environmentObject(postStatus),
+                           isActive: $postStatus.isShowing) {
+               EmptyView()
+            }
             HStack {
                 Text("SnapCat")
                     .font(Font.custom("noteworthy-bold", size: 30))
@@ -24,7 +29,7 @@ struct HomeView: View {
                     .padding()
                 Spacer()
                 Button(action: {
-                    self.isShowingPost = true
+                    self.postStatus.isShowing = true
                 }, label: {
                     Image(systemName: "square.and.pencil")
                         .resizable()
@@ -35,9 +40,7 @@ struct HomeView: View {
             }
             Divider()
             TimeLineView(viewModel: timeLineViewModel)
-        }.fullScreenCover(isPresented: $isShowingPost, content: {
-            PostView(timeLineViewModel: timeLineViewModel)
-        })
+        }
     }
 
     init() {

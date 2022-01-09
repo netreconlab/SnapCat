@@ -10,12 +10,11 @@ import SwiftUI
 import ParseSwift
 
 struct ProfileView: View {
-    @State private var tintColor = UIColor { $0.userInterfaceStyle == .light ?  #colorLiteral(red: 0, green: 0.2858072221, blue: 0.6897063851, alpha: 1) : #colorLiteral(red: 0.06253327429, green: 0.6597633362, blue: 0.8644603491, alpha: 1) }
+    @Environment(\.tintColor) private var tintColor
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @ObservedObject var followersViewModel: QueryViewModel<Activity>
     @ObservedObject var followingsViewModel: QueryViewModel<Activity>
     @ObservedObject var viewModel: ProfileViewModel
-    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         VStack {
@@ -44,10 +43,6 @@ struct ProfileView: View {
             Divider()
             TimeLineView(viewModel: timeLineViewModel)
         }.onAppear(perform: {
-            guard User.current != nil else {
-                self.presentationMode.wrappedValue.dismiss()
-                return
-            }
             followersViewModel.find()
             followingsViewModel.find()
         })
@@ -57,8 +52,10 @@ struct ProfileView: View {
         var userProfile: User!
         if let user = user {
             userProfile = user
+        } else if let currentUser = User.current {
+            userProfile = currentUser
         } else {
-            userProfile = User.current!
+            userProfile = User()
         }
         viewModel = ProfileViewModel(user: userProfile,
                                      isShowingHeading: isShowingHeading)

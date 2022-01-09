@@ -16,7 +16,7 @@ struct CommentView: View {
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        NavigationView {
+        VStack {
             Form {
                 Section {
                     TextField("Add a comment", text: $viewModel.comment)

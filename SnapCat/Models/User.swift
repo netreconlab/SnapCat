@@ -9,7 +9,7 @@
 import Foundation
 import ParseSwift
 
-struct User: ParseUser, ParseObjectMutable {
+struct User: ParseUser {
 
     // Mandatory properties
     var authData: [String: [String: String]?]?

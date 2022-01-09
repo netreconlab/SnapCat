@@ -9,7 +9,7 @@
 import Foundation
 import ParseSwift
 
-struct Installation: ParseInstallation, ParseObjectMutable {
+struct Installation: ParseInstallation {
     var deviceType: String?
 
     var installationId: String?

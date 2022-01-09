@@ -12,16 +12,23 @@ struct TimeLineCommentsView: View {
     @ObservedObject var timeLineViewModel: QueryImageViewModel<Post>
     @State var post: Post
     @State var isShowingAllComments = false
+    @State var postSelected = Post()
     var body: some View {
         VStack {
             if let comments = timeLineViewModel.comments[post.id],
                comments.count > 0 {
+                NavigationLink(destination: ViewAllComments(timeLineViewModel: timeLineViewModel,
+                                                            post: post),
+                               isActive: $isShowingAllComments) {
+                   EmptyView()
+                }
                 if comments.count > 1 {
                     HStack {
                         Text("View all \(comments.count) comments")
                             .font(.footnote)
                             .onTapGesture(count: 1) {
                                 self.timeLineViewModel.postSelected = post
+                                self.postSelected = post
                                 self.isShowingAllComments = true
                             }
                         Spacer()
@@ -46,12 +53,6 @@ struct TimeLineCommentsView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingAllComments, content: {
-            if let post = timeLineViewModel.postSelected {
-                ViewAllComments(timeLineViewModel: timeLineViewModel,
-                                post: post)
-            }
-        })
     }
 }
 

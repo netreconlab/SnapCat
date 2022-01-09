@@ -17,7 +17,7 @@ class ExploreViewModel: ObservableObject {
     var isShowingFollowers: Bool?
     var followersViewModel: QueryViewModel<Activity>? {
         willSet {
-            if !isSettingForFirstTime {
+            if isSettingForFirstTime {
                 guard let followers = newValue else {
                     return
                 }
@@ -27,7 +27,7 @@ class ExploreViewModel: ObservableObject {
     }
     var followingsViewModel: QueryViewModel<Activity>? {
         willSet {
-            if !isSettingForFirstTime {
+            if isSettingForFirstTime {
                 guard let followings = newValue else {
                     return
                 }
@@ -65,17 +65,9 @@ class ExploreViewModel: ObservableObject {
         return users
     }
 
-    init(isShowingFollowers: Bool? = nil,
-         followersViewModel: QueryViewModel<Activity>? = nil,
-         followingsViewModel: QueryViewModel<Activity>? = nil) {
-        if let isShowingFollowers = isShowingFollowers {
-            guard let followersViewModel = followersViewModel,
-                  let followingsViewModel = followingsViewModel else {
-                return
-            }
-            self.followersViewModel = followersViewModel
-            self.followingsViewModel = followingsViewModel
-            self.isShowingFollowers = isShowingFollowers
+    func update() {
+        self.isSettingForFirstTime = true
+        if let isShowingFollowers = self.isShowingFollowers {
             if isShowingFollowers {
                 updateFollowers()
             } else {
@@ -103,6 +95,26 @@ class ExploreViewModel: ObservableObject {
                 Logger.explore.error("Failed to query current followings: \(error.localizedDescription)")
             }
         }
+    }
+
+    init(isShowingFollowers: Bool? = nil,
+         followersViewModel: QueryViewModel<Activity>? = nil,
+         followingsViewModel: QueryViewModel<Activity>? = nil) {
+        if let isShowingFollowers = isShowingFollowers {
+            guard let followersViewModel = followersViewModel,
+                  let followingsViewModel = followingsViewModel else {
+                return
+            }
+            self.followersViewModel = followersViewModel
+            self.followingsViewModel = followingsViewModel
+            self.isShowingFollowers = isShowingFollowers
+            if isShowingFollowers {
+                updateFollowers()
+            } else {
+                updateFollowings()
+            }
+        }
+        self.update()
     }
 
     // MARK: Intents

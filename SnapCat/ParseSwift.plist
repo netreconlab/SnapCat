@@ -14,5 +14,7 @@
 	<real>60000000</real>
 	<key>CacheDiskCapacity</key>
 	<integer>100000000</integer>
+	<key>DeleteKeychainIfNeeded</key>
+	<true/>
 </dict>
 </plist>
