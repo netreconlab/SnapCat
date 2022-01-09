@@ -14,40 +14,37 @@ struct ViewAllComments: View {
     @State var post: Post
     var body: some View {
         if let comments = timeLineViewModel.comments[post.id] {
-            // VStack {
-                List(comments, id: \.id) { result in
-                    VStack(alignment: .leading) {
-                        HStack {
-                            if let username = result.fromUser?.username {
-                                Text("\(username)")
-                                    .font(.headline)
-                            }
-                            if let lastComment = result.comment {
-                                Text(lastComment)
-                            }
+            List(comments, id: \.id) { result in
+                VStack(alignment: .leading) {
+                    HStack {
+                        if let username = result.fromUser?.username {
+                            Text("\(username)")
+                                .font(.headline)
                         }
-                        if let createdAt = result.createdAt {
-                            HStack {
-                                Text(createdAt.relativeTime)
-                                    .font(.footnote)
-                                Spacer()
-                            }
+                        if let lastComment = result.comment {
+                            Text(lastComment)
+                        }
+                    }
+                    if let createdAt = result.createdAt {
+                        HStack {
+                            Text(createdAt.relativeTime)
+                                .font(.footnote)
+                            Spacer()
                         }
                     }
                 }
-                .navigationBarBackButtonHidden(true)
-                .navigationTitle(Text("Comments"))
-                .navigationBarItems(leading: Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }, label: {
-                    Text("Cancel")
-                }), trailing: Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }, label: {
-                    Text("Done")
-                }))
-                /*Spacer()
-            }*/
+            }
+            .navigationBarBackButtonHidden(true)
+            .navigationTitle(Text("Comments"))
+            .navigationBarItems(leading: Button(action: {
+                self.presentationMode.wrappedValue.dismiss()
+            }, label: {
+                Text("Cancel")
+            }), trailing: Button(action: {
+                self.presentationMode.wrappedValue.dismiss()
+            }, label: {
+                Text("Done")
+            }))
         } else {
             EmptyView()
         }
