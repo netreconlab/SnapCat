@@ -87,11 +87,11 @@ extension ParseSwift {
                               clientKey: clientKey,
                               serverURL: serverURL,
                               liveQueryServerURL: liveQueryURL,
-                              isUsingTransactions: useTransactions,
+                              usingTransactions: useTransactions,
                               requestCachePolicy: .reloadIgnoringLocalCacheData,
                               cacheMemoryCapacity: cacheMemoryCapacity,
                               cacheDiskCapacity: cacheDiskCapacity,
-                              isDeletingKeychainIfNeeded: deleteKeychainIfNeeded,
+                              deletingKeychainIfNeeded: deleteKeychainIfNeeded,
                               authentication: authentication)
     }
 }

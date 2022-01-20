@@ -21,7 +21,7 @@ struct User: ParseUser {
     var createdAt: Date?
     var updatedAt: Date?
     var ACL: ParseACL?
-    var score: Double?
+    var originalData: Data?
 
     // Custom properties
     var name: String?
@@ -29,4 +29,29 @@ struct User: ParseUser {
     var profileThumbnail: ParseFile?
     var bio: String?
     var link: URL?
+
+    func merge(with object: Self) throws -> Self {
+        var updated = try mergeParse(with: object)
+        if updated.shouldRestoreKey(\.name,
+                                     original: object) {
+            updated.name = object.name
+        }
+        if updated.shouldRestoreKey(\.profileImage,
+                                     original: object) {
+            updated.profileImage = object.profileImage
+        }
+        if updated.shouldRestoreKey(\.profileThumbnail,
+                                     original: object) {
+            updated.profileThumbnail = object.profileThumbnail
+        }
+        if updated.shouldRestoreKey(\.bio,
+                                     original: object) {
+            updated.bio = object.bio
+        }
+        if updated.shouldRestoreKey(\.link,
+                                     original: object) {
+            updated.link = object.link
+        }
+        return updated
+    }
 }

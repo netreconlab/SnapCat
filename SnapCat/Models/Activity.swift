@@ -15,7 +15,7 @@ struct Activity: ParseObject {
     var createdAt: Date?
     var updatedAt: Date?
     var ACL: ParseACL?
-    var score: Double?
+    var originalData: Data?
 
     var fromUser: User?
     var toUser: User?
@@ -34,6 +34,35 @@ struct Activity: ParseObject {
         case like
         case unlike
         case error
+    }
+
+    func merge(with object: Self) throws -> Self {
+        var updated = try mergeParse(with: object)
+        if updated.shouldRestoreKey(\.fromUser,
+                                     original: object) {
+            updated.fromUser = object.fromUser
+        }
+        if updated.shouldRestoreKey(\.toUser,
+                                     original: object) {
+            updated.toUser = object.toUser
+        }
+        if updated.shouldRestoreKey(\.type,
+                                     original: object) {
+            updated.type = object.type
+        }
+        if updated.shouldRestoreKey(\.comment,
+                                     original: object) {
+            updated.comment = object.comment
+        }
+        if updated.shouldRestoreKey(\.post,
+                                     original: object) {
+            updated.post = object.post
+        }
+        if updated.shouldRestoreKey(\.activity,
+                                     original: object) {
+            updated.activity = object.activity
+        }
+        return updated
     }
 
     func setupForFollowing() throws -> Activity {
