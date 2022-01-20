@@ -36,7 +36,7 @@ class PostViewModel: NSObject, ObservableObject {
         if post != nil {
             self.post = post
         } else {
-            self.post = Post()
+            self.post = Post(image: nil)
         }
         locationManager = CLLocationManager()
         authorizationStatus = locationManager.authorizationStatus

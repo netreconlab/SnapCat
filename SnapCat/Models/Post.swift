@@ -50,7 +50,7 @@ struct Post: ParseObject {
 }
 
 extension Post {
-    init(image: ParseFile? = nil) {
+    init(image: ParseFile?) {
         user = User.current
         self.image = image
     }
