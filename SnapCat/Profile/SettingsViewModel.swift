@@ -30,8 +30,8 @@ class SettingsViewModel: ObservableObject {
         }
 
         do {
-            var user = try await User.apple.login(user: credentials.user,
-                                           identityToken: identityToken)
+            var user = try await User.apple.link(user: credentials.user,
+                                                 identityToken: identityToken)
             var isUpdatedUser = false
             if user.email == nil && user.email != nil {
                 user.email = credentials.email

@@ -64,7 +64,7 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
     var profilePicture = UIImage(systemName: "person.circle") {
         willSet {
             if !isSettingForFirstTime {
-                guard var currentUser = User.current,
+                guard var currentUser = User.current?.mergeable,
                       currentUser.hasSameObjectId(as: user),
                       let image = newValue,
                       let compressed = image.compressTo(3) else {
@@ -218,7 +218,7 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
     // MARK: - Intents
 
     func saveUpdates() async throws -> User {
-        guard var currentUser = User.current else {
+        guard var currentUser = User.current?.mergeable else {
             let snapCatError = SnapCatError(message: "Trying to save when user isn't logged in")
             Logger.profile.error("\(snapCatError.message)")
             throw snapCatError
