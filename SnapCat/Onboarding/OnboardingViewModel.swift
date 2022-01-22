@@ -11,6 +11,8 @@ import ParseSwift
 import AuthenticationServices
 import os.log
 
+// swiftlint:disable cyclomatic_complexity
+
 @MainActor
 class OnboardingViewModel: ObservableObject {
 
@@ -39,6 +41,10 @@ class OnboardingViewModel: ObservableObject {
         user.password = password
         user.name = name
         do {
+            guard try ParseSwift.isServerAvailable() else {
+                Logger.onboarding.error("Server health is not \"ok\"")
+                return
+            }
             let user = try await user.signup()
             Logger.onboarding.debug("Signup Successful: \(user)")
             self.completeOnboarding()
@@ -75,6 +81,10 @@ https://github.com/netreconlab/parse-postgres#getting-started ***
     */
     func login(username: String, password: String) async {
         do {
+            guard try ParseSwift.isServerAvailable() else {
+                Logger.onboarding.error("Server health is not \"ok\"")
+                return
+            }
             let user = try await User.login(username: username, password: password)
             Logger.onboarding.debug("Login Success: \(user, privacy: .private)")
             self.completeOnboarding()
@@ -99,6 +109,10 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
     */
     func loginAnonymously() async {
         do {
+            guard try ParseSwift.isServerAvailable() else {
+                Logger.onboarding.error("Server health is not \"ok\"")
+                return
+            }
             let user = try await User.anonymous.login()
             Logger.onboarding.debug("Anonymous Login Success: \(user, privacy: .private)")
             self.completeOnboarding()
@@ -130,6 +144,10 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
             return
         }
         do {
+            guard try ParseSwift.isServerAvailable() else {
+                Logger.onboarding.error("Server health is not \"ok\"")
+                return
+            }
             var user = try await User.apple.login(user: credentials.user, identityToken: identityToken)
             var isUpdatedUser = false
             if credentials.email != nil {

@@ -94,4 +94,17 @@ extension ParseSwift {
                               deletingKeychainIfNeeded: deleteKeychainIfNeeded,
                               authentication: authentication)
     }
+
+    /**
+     Check server health.
+     - returns: **true** if the server is available. **false** if the server reponds with not healthy.
+     - throws: `ParseError`.
+     */
+    static func isServerAvailable() throws -> Bool {
+        let serverHealth = try ParseHealth.check()
+        guard serverHealth.contains("ok") else {
+            return false
+        }
+        return true
+    }
 }
