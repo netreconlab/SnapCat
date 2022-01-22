@@ -25,4 +25,5 @@ extension Logger {
     static let utility = Logger(subsystem: subsystem, category: "\(category).utility")
     static let settings = Logger(subsystem: subsystem, category: "\(category).settings")
     static let comment = Logger(subsystem: subsystem, category: "\(category).comment")
+    static let queryImageViewModel = Logger(subsystem: subsystem, category: "\(category).queryImageViewModel")
 }
