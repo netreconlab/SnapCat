@@ -86,6 +86,7 @@ struct MainView: View {
         .environmentObject(userStatus)
         .accentColor(Color(tintColor))
         .statusBar(hidden: true)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
