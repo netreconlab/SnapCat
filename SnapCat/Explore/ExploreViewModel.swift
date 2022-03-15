@@ -11,7 +11,7 @@ import os.log
 import ParseSwift
 import UIKit
 
-@MainActor @dynamicMemberLookup
+@dynamicMemberLookup
 class ExploreViewModel: ObservableObject {
     var isSettingForFirstTime = true
     var isShowingFollowers: Bool?

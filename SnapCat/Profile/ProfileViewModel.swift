@@ -12,7 +12,6 @@ import ParseSwift
 import SwiftUI
 import UIKit
 
-@MainActor
 class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_length
     @Published var user: User
     @Published var error: SnapCatError?

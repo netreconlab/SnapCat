@@ -12,7 +12,6 @@ import ParseSwift
 import UIKit
 import CoreLocation
 
-@MainActor
 class PostViewModel: NSObject, ObservableObject {
     @Published var post: Post?
     @Published var image: UIImage?
