@@ -11,7 +11,6 @@ import os.log
 import ParseSwift
 import AuthenticationServices
 
-@MainActor
 class SettingsViewModel: ObservableObject {
     @Published var isLoggedOut = false
     @Published var linkError: SnapCatError?

@@ -13,7 +13,6 @@ import os.log
 
 // swiftlint:disable cyclomatic_complexity
 
-@MainActor
 class OnboardingViewModel: ObservableObject {
 
     @Published private(set) var isLoggedOut = true
