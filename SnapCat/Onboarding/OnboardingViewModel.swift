@@ -20,7 +20,9 @@ class OnboardingViewModel: ObservableObject {
 
     init() {
         if User.current != nil {
-            isLoggedOut = false
+            DispatchQueue.main.async {
+                self.isLoggedOut = false
+            }
         }
     }
 
@@ -34,6 +36,7 @@ class OnboardingViewModel: ObservableObject {
      - parameter password: The password the user is signing in with.
      - parameter name: The name the user is signing in with.
     */
+    @MainActor
     func signup(username: String, password: String, name: String) async {
         var user = User()
         user.username = username
@@ -78,6 +81,7 @@ https://github.com/netreconlab/parse-postgres#getting-started ***
      - parameter username: The username the user is logging in with.
      - parameter password: The password the user is logging in with.
     */
+    @MainActor
     func login(username: String, password: String) async {
         do {
             guard try ParseSwift.isServerAvailable() else {
@@ -106,6 +110,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
     /**
      Logs in the user anonymously *asynchronously*.
     */
+    @MainActor
     func loginAnonymously() async {
         do {
             guard try ParseSwift.isServerAvailable() else {
@@ -134,6 +139,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
      Logs in the user with Apple *asynchronously*.
      - parameter authorization: The encapsulation of a successful authorization performed by a controller..
     */
+    @MainActor
     func loginWithApple(authorization: ASAuthorization) async {
         guard let credentials = authorization.credential as? ASAuthorizationAppleIDCredential,
             let identityToken = credentials.identityToken else {
@@ -189,6 +195,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
     }
 
     // MARK: - Helper Methods
+    @MainActor
     func completeOnboarding() {
         Self.setDefaultACL()
         saveInstallation()

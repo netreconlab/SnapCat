@@ -20,6 +20,7 @@ class SettingsViewModel: ObservableObject {
      Links the user with Apple *asynchronously*.
      - parameter authorization: The encapsulation of a successful authorization performed by a controller..
     */
+    @MainActor
     func linkWithApple(authorization: ASAuthorization) async {
         guard let credentials = authorization.credential as? ASAuthorizationAppleIDCredential,
             let identityToken = credentials.identityToken else {
