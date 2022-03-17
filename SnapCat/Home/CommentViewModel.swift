@@ -26,7 +26,7 @@ class CommentViewModel: ObservableObject {
     }
 
     // MARK: Intents
-
+    @MainActor
     func save() async throws -> Activity {
         guard var currentActivity = activity else {
             return Activity()

@@ -47,7 +47,9 @@ class ExploreViewModel: ObservableObject {
                 }
                 Task {
                     if let image = await Utility.fetchImage(object.profileImage) {
-                        self.profileImages[object.id] = image
+                        DispatchQueue.main.async {
+                            self.profileImages[object.id] = image
+                        }
                     }
                 }
             }
@@ -65,6 +67,30 @@ class ExploreViewModel: ObservableObject {
         return users
     }
 
+    init(isShowingFollowers: Bool? = nil,
+         followersViewModel: QueryViewModel<Activity>? = nil,
+         followingsViewModel: QueryViewModel<Activity>? = nil) {
+        DispatchQueue.main.async {
+            if let isShowingFollowers = isShowingFollowers {
+                guard let followersViewModel = followersViewModel,
+                      let followingsViewModel = followingsViewModel else {
+                    return
+                }
+                self.followersViewModel = followersViewModel
+                self.followingsViewModel = followingsViewModel
+                self.isShowingFollowers = isShowingFollowers
+                if isShowingFollowers {
+                    self.updateFollowers()
+                } else {
+                    self.updateFollowings()
+                }
+            }
+            self.update()
+        }
+    }
+
+    // MARK: Helpers
+    @MainActor
     func update() {
         self.isSettingForFirstTime = true
         if let isShowingFollowers = self.isShowingFollowers {
@@ -97,27 +123,8 @@ class ExploreViewModel: ObservableObject {
         }
     }
 
-    init(isShowingFollowers: Bool? = nil,
-         followersViewModel: QueryViewModel<Activity>? = nil,
-         followingsViewModel: QueryViewModel<Activity>? = nil) {
-        if let isShowingFollowers = isShowingFollowers {
-            guard let followersViewModel = followersViewModel,
-                  let followingsViewModel = followingsViewModel else {
-                return
-            }
-            self.followersViewModel = followersViewModel
-            self.followingsViewModel = followingsViewModel
-            self.isShowingFollowers = isShowingFollowers
-            if isShowingFollowers {
-                updateFollowers()
-            } else {
-                updateFollowings()
-            }
-        }
-        self.update()
-    }
-
     // MARK: Intents
+    @MainActor
     func followUser(_ user: User) {
         do {
             let newActivity = try Activity(type: .follow, from: User.current, to: user)
@@ -135,6 +142,7 @@ class ExploreViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func unfollowUser(_ toUser: User) {
         guard let currentUser = User.current,
               let activity = followingsViewModel?.results.first(where: { activity in
@@ -162,6 +170,7 @@ class ExploreViewModel: ObservableObject {
     }
 
     // MARK: Helpers
+    @MainActor
     func queryUsersNotFollowing() async {
         guard let currentUserObjectId = User.current?.objectId else {
             Logger.explore.error("Couldn't get own objectId")
@@ -194,12 +203,15 @@ class ExploreViewModel: ObservableObject {
         return currentUserFollowings.first(where: { $0.hasSameObjectId(as: user) }) != nil
     }
 
+    @MainActor
     func updateFollowers() {
         guard let followersViewModel = followersViewModel else {
             return
         }
         self.users = followersViewModel.results.compactMap { $0.fromUser }
     }
+
+    @MainActor
     func updateFollowings() {
         guard let followingsViewModel = followingsViewModel else {
             return

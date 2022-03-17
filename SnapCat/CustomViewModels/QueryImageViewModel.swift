@@ -126,7 +126,9 @@ class QueryImageViewModel<T: ParseObject>: Subscription<T> {
                                 .queryComments(post: object)
                                 .include(ActivityKey.fromUser)
                                 .find()
-                            self.comments[object.id] = foundComments
+                            DispatchQueue.main.async {
+                                self.comments[object.id] = foundComments
+                            }
                         } catch {
                             // swiftlint:disable:next line_length
                             Logger.post.error("QueryImageViewModel: couldn't find comments: \(error.localizedDescription)")

@@ -13,7 +13,7 @@ import SwiftUI
 import UIKit
 
 class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_length
-    @Published var user: User
+    @Published var user = User()
     @Published var error: SnapCatError?
     var username: String = "" {
         willSet {
@@ -75,7 +75,9 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
                 Task {
                     do {
                         let user = try await immutableCurrentUser.save()
-                        self.user = user
+                        DispatchQueue.main.async {
+                            self.user = user
+                        }
                         do {
                             let fetchedUser = try await user.fetch()
                             do {
@@ -97,7 +99,9 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
                             return
                         }
                         Logger.profile.error("Error saving profile pic \(error.localizedDescription)")
-                        self.error = SnapCatError(parseError: parseError)
+                        DispatchQueue.main.async {
+                            self.error = SnapCatError(parseError: parseError)
+                        }
                     }
                 }
             }
@@ -109,51 +113,52 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
     init(user: User?, isShowingHeading: Bool) {
         guard let currentUser = User.current else {
             Logger.profile.error("User should be logged in to perfom action.")
-            self.user = User()
             return
         }
-        if let user = user {
-            self.user = user
-        } else {
-            self.user = currentUser
-        }
-        self.isShowingHeading = isShowingHeading
-        if let username = self.user.username {
-            self.username = username
-        }
-        if let email = self.user.email {
-            self.email = email
-        }
-        if let name = self.user.name {
-            self.name = name
-        }
-        if let bio = self.user.bio {
-            self.bio = bio
-        }
-        if let link = self.user.link {
-            self.link = link.absoluteString
-        }
-        self.isSettingForFirstTime = false
-        Task {
-            let image = await Utility.fetchImage(self.user.profileImage)
-            self.isSettingForFirstTime = true
-            self.profilePicture = image
-            self.isSettingForFirstTime = false
-        }
-        Task {
-            do {
-                let activities = try await Self.queryFollowers().find()
-                self.currentUserFollowers = activities.compactMap { $0.fromUser }
-            } catch {
-                Logger.explore.error("Failed to query current followers: \(error.localizedDescription)")
+        DispatchQueue.main.async {
+            if let user = user {
+                self.user = user
+            } else {
+                self.user = currentUser
             }
-        }
-        Task {
-            do {
-                let activities = try await Self.queryFollowings().find()
-                self.currentUserFollowings = activities.compactMap { $0.toUser }
-            } catch {
-                Logger.explore.error("Failed to query current followings: \(error.localizedDescription)")
+            self.isShowingHeading = isShowingHeading
+            if let username = self.user.username {
+                self.username = username
+            }
+            if let email = self.user.email {
+                self.email = email
+            }
+            if let name = self.user.name {
+                self.name = name
+            }
+            if let bio = self.user.bio {
+                self.bio = bio
+            }
+            if let link = self.user.link {
+                self.link = link.absoluteString
+            }
+            self.isSettingForFirstTime = false
+            Task {
+                let image = await Utility.fetchImage(self.user.profileImage)
+                self.isSettingForFirstTime = true
+                self.profilePicture = image
+                self.isSettingForFirstTime = false
+            }
+            Task {
+                do {
+                    let activities = try await Self.queryFollowers().find()
+                    self.currentUserFollowers = activities.compactMap { $0.fromUser }
+                } catch {
+                    Logger.explore.error("Failed to query current followers: \(error.localizedDescription)")
+                }
+            }
+            Task {
+                do {
+                    let activities = try await Self.queryFollowings().find()
+                    self.currentUserFollowings = activities.compactMap { $0.toUser }
+                } catch {
+                    Logger.explore.error("Failed to query current followings: \(error.localizedDescription)")
+                }
             }
         }
     }
@@ -215,7 +220,7 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
     }
 
     // MARK: - Intents
-
+    @MainActor
     func saveUpdates() async throws -> User {
         guard var currentUser = User.current?.mergeable else {
             let snapCatError = SnapCatError(message: "Trying to save when user isn't logged in")
