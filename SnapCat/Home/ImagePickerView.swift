@@ -41,11 +41,11 @@ struct ImagePickerView: UIViewControllerRepresentable {
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
             DispatchQueue.main.async {
-            if let uiImage = info[.originalImage] as? UIImage {
-                self.parent.image = uiImage
+                if let uiImage = info[.originalImage] as? UIImage {
+                    self.parent.image = uiImage
+                }
+                    self.parent.presentationMode.wrappedValue.dismiss()
             }
-                self.parent.presentationMode.wrappedValue.dismiss()
-        }
         }
     }
 }
