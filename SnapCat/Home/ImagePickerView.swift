@@ -40,10 +40,12 @@ struct ImagePickerView: UIViewControllerRepresentable {
         }
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-            if let uiImage = info[.originalImage] as? UIImage {
-                parent.image = uiImage
+            DispatchQueue.main.async {
+                if let uiImage = info[.originalImage] as? UIImage {
+                    self.parent.image = uiImage
+                }
+                    self.parent.presentationMode.wrappedValue.dismiss()
             }
-            parent.presentationMode.wrappedValue.dismiss()
         }
     }
 }

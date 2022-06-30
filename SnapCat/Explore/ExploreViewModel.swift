@@ -85,7 +85,9 @@ class ExploreViewModel: ObservableObject {
                     self.updateFollowings()
                 }
             }
-            self.update()
+            DispatchQueue.main.async {
+                       self.update()
+            }
         }
     }
 
@@ -94,10 +96,12 @@ class ExploreViewModel: ObservableObject {
     func update() {
         self.isSettingForFirstTime = true
         if let isShowingFollowers = self.isShowingFollowers {
-            if isShowingFollowers {
-                updateFollowers()
-            } else {
-                updateFollowings()
+            DispatchQueue.main.async {
+                if isShowingFollowers {
+                    self.updateFollowers()
+                } else {
+                    self.updateFollowings()
+                }
             }
             self.isSettingForFirstTime = false
         } else {

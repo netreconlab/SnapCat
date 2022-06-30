@@ -138,11 +138,13 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
                 self.link = link.absoluteString
             }
             self.isSettingForFirstTime = false
-            Task {
-                let image = await Utility.fetchImage(self.user.profileImage)
-                self.isSettingForFirstTime = true
-                self.profilePicture = image
-                self.isSettingForFirstTime = false
+            DispatchQueue.main.async {
+                Task {
+                    let image = await Utility.fetchImage(self.user.profileImage)
+                    self.isSettingForFirstTime = true
+                    self.profilePicture = image
+                    self.isSettingForFirstTime = false
+                }
             }
             Task {
                 do {
