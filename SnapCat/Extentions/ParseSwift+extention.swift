@@ -41,7 +41,7 @@ extension Utility {
 
         guard let path = Bundle.main.path(forResource: "ParseSwift", ofType: "plist"),
             let xml = FileManager.default.contents(atPath: path) else {
-                fatalError("Error in ParseSwift.setupServer(). Can't find ParseSwift.plist in this project")
+                fatalError("Error in Utility.setupServer(). Can't find ParseSwift.plist in this project")
         }
         do {
             plistConfiguration =
@@ -50,13 +50,13 @@ extension Utility {
                                                            // swiftlint:disable:next force_cast
                                                            format: &propertyListFormat) as! [String: AnyObject]
         } catch {
-            fatalError("Error in ParseSwift.setupServer(). Couldn't serialize plist. \(error)")
+            fatalError("Error in Utility.setupServer(). Couldn't serialize plist. \(error)")
         }
 
         guard let appID = plistConfiguration["ApplicationID"] as? String,
             let server = plistConfiguration["Server"] as? String,
             let serverURL = URL(string: server) else {
-                fatalError("Error in ParseSwift.setupServer()")
+                fatalError("Error in Utility.setupServer()")
         }
 
         if let client = plistConfiguration["ClientKey"] as? String {
