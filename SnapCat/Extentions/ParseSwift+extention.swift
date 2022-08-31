@@ -12,7 +12,7 @@ import ParseSwift
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 
-extension ParseSwift {
+extension Utility {
     /** Can setup a connection to Parse Server based on a ParseCareKit.plist file.
     
    The key/values supported in the file are a dictionary named `ParseClientConfiguration`:
