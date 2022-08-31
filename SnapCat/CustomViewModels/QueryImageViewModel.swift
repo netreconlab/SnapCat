@@ -290,7 +290,7 @@ public extension Query {
      */
     internal var subscribeCustom: QueryImageViewModel<ResultType>? {
         do {
-            guard try ParseSwift.isServerAvailable() else {
+            guard try Utility.isServerAvailable() else {
                 Logger.queryImageViewModel.error("Server health is not \"ok\"")
                 return nil
             }
@@ -310,7 +310,7 @@ public extension Query {
      - returns: The subscription that has just been registered
      */
     internal func subscribeCustom(_ client: ParseLiveQuery) throws -> QueryImageViewModel<ResultType> {
-        guard try ParseSwift.isServerAvailable() else {
+        guard try Utility.isServerAvailable() else {
             let errorMessage = "Server health is not \"ok\""
             Logger.queryImageViewModel.error("\(errorMessage)")
             throw SnapCatError(message: errorMessage)

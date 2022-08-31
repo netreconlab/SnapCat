@@ -25,7 +25,7 @@ struct SnapCatApp: App {
     }
 
     init() {
-        ParseSwift.setupServer()
+        Utility.setupServer()
     }
 }
 
