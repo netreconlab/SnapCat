@@ -289,16 +289,7 @@ public extension Query {
      indepedently as a ViewModel in MVVM.
      */
     internal var subscribeCustom: QueryImageViewModel<ResultType>? {
-        do {
-            guard try Utility.isServerAvailable() else {
-                Logger.queryImageViewModel.error("Server health is not \"ok\"")
-                return nil
-            }
-            return try? ParseLiveQuery.client?.subscribeCustom(self)
-        } catch {
-            Logger.queryImageViewModel.error("Server health: \(error.localizedDescription)")
-            return nil
-        }
+        try? ParseLiveQuery.client?.subscribeCustom(self)
     }
 
     /**
@@ -309,8 +300,8 @@ public extension Query {
      - parameter client: A specific client.
      - returns: The subscription that has just been registered
      */
-    internal func subscribeCustom(_ client: ParseLiveQuery) throws -> QueryImageViewModel<ResultType> {
-        guard try Utility.isServerAvailable() else {
+    internal func subscribeCustom(_ client: ParseLiveQuery) async throws -> QueryImageViewModel<ResultType> {
+        guard try await Utility.isServerAvailable() else {
             let errorMessage = "Server health is not \"ok\""
             Logger.queryImageViewModel.error("\(errorMessage)")
             throw SnapCatError(message: errorMessage)

@@ -9,7 +9,7 @@
 import Foundation
 import ParseSwift
 
-class CloudImageViewModel<T: ParseCloud>: CloudViewModel<T> {
+class CloudImageViewModel<T: ParseCloudable>: CloudViewModel<T> {
 
     override var results: T.ReturnType? {
         willSet {
