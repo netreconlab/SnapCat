@@ -43,7 +43,7 @@ class OnboardingViewModel: ObservableObject {
         user.password = password
         user.name = name
         do {
-            guard try Utility.isServerAvailable() else {
+            guard try await Utility.isServerAvailable() else {
                 Logger.onboarding.error("Server health is not \"ok\"")
                 return
             }
@@ -84,7 +84,7 @@ https://github.com/netreconlab/parse-postgres#getting-started ***
     @MainActor
     func login(username: String, password: String) async {
         do {
-            guard try Utility.isServerAvailable() else {
+            guard try await Utility.isServerAvailable() else {
                 Logger.onboarding.error("Server health is not \"ok\"")
                 return
             }
@@ -113,7 +113,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
     @MainActor
     func loginAnonymously() async {
         do {
-            guard try Utility.isServerAvailable() else {
+            guard try await Utility.isServerAvailable() else {
                 Logger.onboarding.error("Server health is not \"ok\"")
                 return
             }
@@ -149,7 +149,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
             return
         }
         do {
-            guard try Utility.isServerAvailable() else {
+            guard try await Utility.isServerAvailable() else {
                 Logger.onboarding.error("Server health is not \"ok\"")
                 return
             }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -530,6 +530,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		916E096526915D7B00356C08 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -930,7 +931,7 @@
 			repositoryURL = "https://github.com/parse-community/Parse-Swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.9.2;
+				minimumVersion = 4.14.1;
 			};
 		};
 		916E09752691D61100356C08 /* XCRemoteSwiftPackageReference "DZNEmptyDataSet" */ = {
