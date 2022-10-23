@@ -10,6 +10,7 @@
 		7026163626A3C3690002E374 /* TimeLinePostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163526A3C3690002E374 /* TimeLinePostView.swift */; };
 		7026163826A3C7AA0002E374 /* TimeLineLikeCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163726A3C7AA0002E374 /* TimeLineLikeCommentView.swift */; };
 		7026163A26A3CA920002E374 /* TimeLineCommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7026163926A3CA920002E374 /* TimeLineCommentsView.swift */; };
+		703DF36D2904CC4A00C314C4 /* ParseSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 703DF36C2904CC4A00C314C4 /* ParseSwift */; };
 		70A98D57278A08F0009B58F2 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A98D56278A08F0009B58F2 /* UserStatus.swift */; };
 		70A98D5A278A0982009B58F2 /* TintColorKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A98D59278A0982009B58F2 /* TintColorKey.swift */; };
 		70A98D6C278A8200009B58F2 /* PostStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A98D6B278A8200009B58F2 /* PostStatus.swift */; };
@@ -29,7 +30,6 @@
 		916E092F26914E9C00356C08 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 916E092E26914E9C00356C08 /* Preview Assets.xcassets */; };
 		916E093A26914E9C00356C08 /* SnapCatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E093926914E9C00356C08 /* SnapCatTests.swift */; };
 		916E094526914E9D00356C08 /* SnapCatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E094426914E9D00356C08 /* SnapCatUITests.swift */; };
-		916E0954269150F800356C08 /* ParseSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 916E0953269150F800356C08 /* ParseSwift */; };
 		916E09572691523A00356C08 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E09562691523A00356C08 /* User.swift */; };
 		916E09592691533800356C08 /* Installation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E09582691533800356C08 /* Installation.swift */; };
 		916E095B2691539700356C08 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916E095A2691539700356C08 /* Activity.swift */; };
@@ -165,8 +165,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				703DF36D2904CC4A00C314C4 /* ParseSwift in Frameworks */,
 				916E09772691D61200356C08 /* DZNEmptyDataSet in Frameworks */,
-				916E0954269150F800356C08 /* ParseSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,8 +407,8 @@
 			);
 			name = SnapCat;
 			packageProductDependencies = (
-				916E0953269150F800356C08 /* ParseSwift */,
 				916E09762691D61200356C08 /* DZNEmptyDataSet */,
+				703DF36C2904CC4A00C314C4 /* ParseSwift */,
 			);
 			productName = AnyPicSwift;
 			productReference = 916E092426914E9A00356C08 /* SnapCat.app */;
@@ -483,8 +483,8 @@
 			);
 			mainGroup = 916E091B26914E9A00356C08;
 			packageReferences = (
-				916E0952269150F800356C08 /* XCRemoteSwiftPackageReference "Parse-Swift" */,
 				916E09752691D61100356C08 /* XCRemoteSwiftPackageReference "DZNEmptyDataSet" */,
+				703DF36B2904CC4A00C314C4 /* XCRemoteSwiftPackageReference "Parse-Swift" */,
 			);
 			productRefGroup = 916E092526914E9A00356C08 /* Products */;
 			projectDirPath = "";
@@ -926,12 +926,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		916E0952269150F800356C08 /* XCRemoteSwiftPackageReference "Parse-Swift" */ = {
+		703DF36B2904CC4A00C314C4 /* XCRemoteSwiftPackageReference "Parse-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/parse-community/Parse-Swift.git";
+			repositoryURL = "https://github.com/netreconlab/Parse-Swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.14.1;
+				minimumVersion = 4.15.1;
 			};
 		};
 		916E09752691D61100356C08 /* XCRemoteSwiftPackageReference "DZNEmptyDataSet" */ = {
@@ -945,9 +945,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		916E0953269150F800356C08 /* ParseSwift */ = {
+		703DF36C2904CC4A00C314C4 /* ParseSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 916E0952269150F800356C08 /* XCRemoteSwiftPackageReference "Parse-Swift" */;
+			package = 703DF36B2904CC4A00C314C4 /* XCRemoteSwiftPackageReference "Parse-Swift" */;
 			productName = ParseSwift;
 		};
 		916E09762691D61200356C08 /* DZNEmptyDataSet */ = {
