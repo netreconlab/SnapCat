@@ -3,7 +3,7 @@
 
 <img src="https://user-images.githubusercontent.com/8621344/126432401-b1ffce20-ec39-4a44-9757-ced7ca7f59d7.png" width="250"> <img src="https://user-images.githubusercontent.com/8621344/126432735-10159e91-1a7f-4b70-854c-ffbb087ae239.png" width="250"> <img src="https://user-images.githubusercontent.com/8621344/126432438-143fea01-7e88-4eea-945d-ea81ef9c45b7.png" width="250">
 
-SnapCat is a social media application for posting pictures, comments, and finding friends. SnapCat is designed using SwiftUI and the [ParseSwift SDK](https://github.com/parse-community/Parse-Swift). The app is meant to serve as a base app for University of Kentucky graudate researchers and undergraduate students learning iOS mobile app development.
+SnapCat is a social media application for posting pictures, comments, and finding friends. SnapCat is designed using SwiftUI and the [ParseSwift SDK](https://github.com/netreconlab/Parse-Swift). The app is meant to serve as a base app for University of Kentucky graudate researchers and undergraduate students learning iOS mobile app development.
 
 ## Setup Your Parse Server
 You can setup your parse-server locally to test using [snapcat branch](https://github.com/netreconlab/parse-hipaa/tree/snapcat) of [parse-hipaa](https://github.com/netreconlab/parse-hipaa). Simply type the following to get your parse-server running with postgres locally:
