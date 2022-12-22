@@ -110,6 +110,7 @@ class ProfileViewModel: ObservableObject { // swiftlint:disable:this type_body_l
     }
     private var isSettingForFirstTime = true
 
+    // swiftlint:disable:next function_body_length
     init(user: User?, isShowingHeading: Bool) {
         guard let currentUser = User.current else {
             Logger.profile.error("User should be logged in to perfom action.")

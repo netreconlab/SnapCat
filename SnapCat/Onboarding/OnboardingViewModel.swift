@@ -140,7 +140,7 @@ https://github.com/netreconlab/parse-hipaa#getting-started ***
      - parameter authorization: The encapsulation of a successful authorization performed by a controller..
     */
     @MainActor
-    func loginWithApple(authorization: ASAuthorization) async {
+    func loginWithApple(authorization: ASAuthorization) async { // swiftlint:disable:this function_body_length
         guard let credentials = authorization.credential as? ASAuthorizationAppleIDCredential,
             let identityToken = credentials.identityToken else {
             let error = "Failed unwrapping Apple authorization credentials."
